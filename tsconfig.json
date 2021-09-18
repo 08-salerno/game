@@ -1,0 +1,28 @@
+{
+    "include": [
+        "./src"
+    ],
+    "exclude": [
+        "node_modules"
+    ],
+    "compilerOptions": {
+        "jsx": "react",
+        "rootDir": "src",
+        "module": "ESNext",
+        "target": "es5",
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "esModuleInterop": true,
+        "noEmit": false,
+        "strict": true,
+        "strictFunctionTypes": true,
+        "alwaysStrict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true
+    }
+}
