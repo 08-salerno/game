@@ -1,6 +1,6 @@
 {
     "include": [
-        "./src"
+        "src"
     ],
     "exclude": [
         "node_modules"
@@ -9,7 +9,7 @@
         "jsx": "react",
         "rootDir": "src",
         "module": "ESNext",
-        "target": "es5",
+        "target": "esnext",
         "sourceMap": true,
         "moduleResolution": "node",
         "noImplicitReturns": true,
@@ -23,6 +23,16 @@
         "alwaysStrict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "declaration": true,
+        "inlineSourceMap": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "lib": [
+            "esnext",
+            "dom"
+        ],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     }
 }
