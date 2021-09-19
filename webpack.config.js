@@ -8,25 +8,25 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/static/index.html',
-      title: 'Development'
+      title: 'Development',
     }),
     new ForkTsCheckerWebpackPlugin({
       eslint: {
-        files: './src/**/*.tsx'
-      }
-    })
+        files: './src/**/*.tsx',
+      },
+    }),
   ],
   devtool: 'inline-source-map',
   devServer: {
     static: ['dist'],
     port: 3000,
     client: {
-      overlay: true
+      overlay: false,
     },
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
     },
-    historyApiFallback: true
+    historyApiFallback: true,
   },
   module: {
     rules: [
@@ -38,19 +38,19 @@ module.exports = {
           presets: [
             '@babel/preset-env',
             '@babel/preset-react',
-            '@babel/preset-typescript'
-          ]
-        }
-      }
-    ]
+            '@babel/preset-typescript',
+          ],
+        },
+      },
+    ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.jsx']
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
   },
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    publicPath: '/'
-  }
+    publicPath: '/',
+  },
 };

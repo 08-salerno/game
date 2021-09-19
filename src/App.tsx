@@ -6,6 +6,8 @@ import {
   Link,
   RouteProps,
 } from 'react-router-dom';
+import Forum from './pages/forum/Forum';
+import ForumRoutes from './pages/forum/routes';
 
 type AppRoute = {
   title: string;
@@ -16,7 +18,13 @@ type AppRoute = {
 /**
  * Добавляй руты сюда, а не в разметку
  */
-const routes: AppRoute[] = [];
+const routes: AppRoute[] = [
+  {
+    title: 'Форум',
+    link: ForumRoutes.HOME,
+    component: Forum,
+  },
+];
 
 const App: React.FC = () => (
   <Router>
