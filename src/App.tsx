@@ -39,7 +39,7 @@ const App: React.FC = () => (
           /**
            * Добавь недостающий пропс
            */
-          <Route path={route.path ? route.path : route.link}>{route.component}</Route>
+          <Route path={route.path ? route.path : route.link} component={route.component} />
         ))}
         <Route path="/">
           <h1>Отсюда всё начинается :)</h1>
