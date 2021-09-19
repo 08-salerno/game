@@ -4,7 +4,7 @@ import {
   Switch,
   Route,
   Link,
-  RouteProps
+  RouteProps,
 } from 'react-router-dom';
 
 type AppRoute = {
