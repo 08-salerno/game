@@ -6,6 +6,9 @@ import {
   Link,
   RouteProps,
 } from 'react-router-dom';
+import Register from './pages/Register/Register';
+import Auth from './pages/Auth/Auth';
+import Profile from './pages/Profile/Profile';
 
 type AppRoute = {
   title: string;
@@ -16,7 +19,23 @@ type AppRoute = {
 /**
  * Добавляй руты сюда, а не в разметку
  */
-const routes: AppRoute[] = [];
+const routes: AppRoute[] = [
+  {
+    title: 'Регистрация',
+    link: '/register',
+    component: Register,
+  },
+  {
+    title: 'Авторизация',
+    link: '/auth',
+    component: Auth,
+  },
+  {
+    title: 'Страница пользователя',
+    link: '/profile',
+    component: Profile,
+  },
+];
 
 const App: React.FC = () => (
   <Router>
