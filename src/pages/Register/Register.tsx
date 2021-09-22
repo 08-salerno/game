@@ -1,13 +1,18 @@
+/* eslint-disable no-console */
 import * as React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/components/FormField';
+import AuthService from '../../modules/api/AuthService';
+
+const authService = new AuthService();
 
  interface MyFormValues {
    firstName: string;
    secondName: string;
    email: string;
    login: string;
+   phone: string;
    password: string;
    checkPassword: string;
  }
@@ -28,6 +33,9 @@ const SignUpSchema = Yup.object().shape({
     .min(2, 'Login is too short')
     .max(30, 'Login is too long')
     .required('Required'),
+  phone: Yup.string()
+    .matches(/^(\+7|8)[0-9]{10}$/, 'This is not correct format')
+    .required('Required'),
   password: Yup.string()
     .min(6, 'Password must contain at least 6 symbols')
     .required('Required'),
@@ -42,12 +50,19 @@ export const Register: React.FC<{}> = () => {
     secondName: '',
     email: '',
     login: '',
+    phone: '',
     password: '',
     checkPassword: '',
   };
   const handleSubmit = (values: MyFormValues): void => {
-    // eslint-disable-next-line no-console
-    console.log({ values });
+    console.log({
+      first_name: values.firstName,
+      second_name: values.secondName,
+      ...values,
+    });
+    authService.sihnUp(values)
+      .then(console.log)
+      .catch(console.log);
   };
   return (
      <div>
@@ -63,6 +78,7 @@ export const Register: React.FC<{}> = () => {
             <FormFiled name="secondName" label="Second Name" />
             <FormFiled name="email" label="Email" type="email" />
             <FormFiled name="login" label="Login" />
+            <FormFiled name="phone" label="Phone" type="tel" />
             <FormFiled name="password" label="Password" type="password" />
             <FormFiled name="checkPassword" label="Check Password" type="password" />
             <button type="submit" disabled={!dirty || !isValid}>Submit</button>
