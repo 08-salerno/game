@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/components/FormField';
@@ -55,13 +56,10 @@ export const Register: React.FC<{}> = () => {
     checkPassword: '',
   };
   const handleSubmit = (values: MyFormValues): void => {
-    console.log({
-      first_name: values.firstName,
-      second_name: values.secondName,
-      ...values,
-    });
     authService.sihnUp(values)
-      .then(console.log)
+      .then(() => {
+      // REDIRECT TO "/"
+      })
       .catch(console.log);
   };
   return (
@@ -85,6 +83,7 @@ export const Register: React.FC<{}> = () => {
           </Form>
        )}
        </Formik>
+       <Link to="/auth">Authorize</Link>
      </div>
   );
 };

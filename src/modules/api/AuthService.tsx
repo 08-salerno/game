@@ -12,8 +12,7 @@ interface signUpData {
 }
 
 interface signInData {
-  // eslint-disable-next-line camelcase
-  firstName: string;
+  login: string;
   password: string;
 }
 export default class AuthService {
@@ -29,7 +28,6 @@ export default class AuthService {
       ...data,
     }),
   })
-    .then((response) => response.json());
 
   signIn = (data: signInData): Promise<any> => fetch(`${url}/signin`, {
     method: 'POST',
@@ -37,21 +35,15 @@ export default class AuthService {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify({
-      first_name: data.firstName,
-      password: data.password,
-    }),
+    body: JSON.stringify(data),
   })
-    .then((response) => response.json());
 
   logOut = (): Promise<any> => fetch(`${url}/logout`, {
     method: 'POST',
     credentials: 'include',
   })
-    .then((response) => response.json());
 
   getUser = (): Promise<any> => fetch(`${url}/user`, {
     credentials: 'include',
   })
-    .then((response) => response.json());
 }

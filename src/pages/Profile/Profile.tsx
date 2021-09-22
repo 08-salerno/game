@@ -1,18 +1,26 @@
+/* eslint-disable no-console */
 import * as React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/components/FormField';
+import UserService from '../../modules/api/UserService';
 
- interface MyFormValues {
-   firstName: string;
-   secondName: string;
-   email: string;
-   login: string;
-   password: string;
-   checkPassword: string;
- }
+const userService = new UserService();
 
-const SignUpSchema = Yup.object().shape({
+interface userDataFormValues {
+  firstName: string;
+  secondName: string;
+  displayName: string;
+  email: string;
+  login: string;
+  phone: string;
+}
+interface userPasswordFormValues {
+  oldPassword: string;
+  newPassword: string;
+}
+
+const userDataSchema = Yup.object().shape({
   firstName: Yup.string()
     .min(2, 'Name is too short')
     .max(30, 'Name is too long')
@@ -21,6 +29,9 @@ const SignUpSchema = Yup.object().shape({
     .min(2, 'Surname is too short')
     .max(30, 'Surname is too long')
     .required('Required'),
+  displayName: Yup.string()
+    .min(2, 'Display name is too short')
+    .max(30, 'Display name is too long'),
   email: Yup.string()
     .email('Email is invalid')
     .required('Required'),
@@ -28,47 +39,82 @@ const SignUpSchema = Yup.object().shape({
     .min(2, 'Login is too short')
     .max(30, 'Login is too long')
     .required('Required'),
-  password: Yup.string()
-    .min(6, 'Password must contain at least 6 symbols')
-    .required('Required'),
-  checkPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords should match')
+  phone: Yup.string()
+    .matches(/^(\+7|8)[0-9]{10}$/, 'This is not correct format')
     .required('Required'),
 });
-
+const userPasswordSchema = Yup.object().shape({
+  oldPassword: Yup.string()
+    .min(6, 'Password must contain at least 6 symbols')
+    .required('Required'),
+  newPassword: Yup.string()
+    .oneOf([Yup.ref('oldPassword'), null], 'Passwords should match')
+    .required('Required'),
+});
 export const Profile: React.FC<{}> = () => {
-  const initialValues: MyFormValues = {
+  const userInitialValues: userDataFormValues = {
     firstName: '',
     secondName: '',
+    displayName: '',
     email: '',
     login: '',
-    password: '',
-    checkPassword: '',
+    phone: '',
   };
-  const handleSubmit = (values: MyFormValues): void => {
-    // eslint-disable-next-line no-console
-    console.log({ values });
+  const userPasswordsInitialValues: userPasswordFormValues = {
+    oldPassword: '',
+    newPassword: '',
+  };
+  const handleSubmitData = (values: userDataFormValues): void => {
+    userService.changeUserInfo(values)
+      .then(() => {
+      // REDIRECT TO "back"
+      })
+      .catch(console.log);
+  };
+  const handleSubmitPasswords = (values: userPasswordFormValues): void => {
+    userService.changePassword(values)
+      .then(() => {
+      // REDIRECT TO "back"
+      })
+      .catch(console.log);
+  };
+  const goBack = (): void => {
+    // go back
   };
   return (
      <div>
        <h1>Profile Page</h1>
        <Formik
-         initialValues={initialValues}
-         onSubmit={(handleSubmit)}
-         validationSchema={SignUpSchema}
+         initialValues={userInitialValues}
+         onSubmit={(handleSubmitData)}
+         validationSchema={userDataSchema}
        >
        {({ dirty, isValid }): React.ReactElement => (
           <Form>
             <FormFiled name="firstName" label="First Name" />
             <FormFiled name="secondName" label="Second Name" />
+            <FormFiled name="displayName" label="Display Name" />
             <FormFiled name="email" label="Email" type="email" />
             <FormFiled name="login" label="Login" />
-            <FormFiled name="password" label="Password" type="password" />
-            <FormFiled name="checkPassword" label="Check Password" type="password" />
+            <FormFiled name="phone" label="Phone" type="tel" />
             <button type="submit" disabled={!dirty || !isValid}>Submit</button>
           </Form>
        )}
        </Formik>
+       <Formik
+         initialValues={userPasswordsInitialValues}
+         onSubmit={(handleSubmitPasswords)}
+         validationSchema={userPasswordSchema}
+       >
+       {({ dirty, isValid }): React.ReactElement => (
+          <Form>
+            <FormFiled name="oldPassword" label="Old Password" type="password" />
+            <FormFiled name="newPassword" label="New Password" type="password" />
+            <button type="submit" disabled={!dirty || !isValid}>Submit</button>
+          </Form>
+       )}
+       </Formik>
+            <button type="button" onClick={():void => goBack()}>Go back</button>
      </div>
   );
 };

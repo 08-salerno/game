@@ -1,16 +1,22 @@
+/* eslint-disable no-console */
 import * as React from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/components/FormField';
+import AuthService from '../../modules/api/AuthService';
+
+const authService = new AuthService();
 
  interface MyFormValues {
-   email: string;
+   login: string;
    password: string;
  }
 
-const SignUpSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Email is invalid')
+const SignInSchema = Yup.object().shape({
+  login: Yup.string()
+    .min(2, 'Login is too short')
+    .max(30, 'Login is too long')
     .required('Required'),
   password: Yup.string()
     .min(6, 'Password must contain at least 6 symbols')
@@ -19,12 +25,15 @@ const SignUpSchema = Yup.object().shape({
 
 export const Auth: React.FC<{}> = () => {
   const initialValues: MyFormValues = {
-    email: '',
+    login: '',
     password: '',
   };
   const handleSubmit = (values: MyFormValues): void => {
-    // eslint-disable-next-line no-console
-    console.log({ values });
+    authService.signIn(values)
+      .then(() => {
+        // REDIRECT TO "/"
+      })
+      .catch(console.log);
   };
   return (
      <div>
@@ -32,18 +41,19 @@ export const Auth: React.FC<{}> = () => {
        <Formik
          initialValues={initialValues}
          onSubmit={(handleSubmit)}
-         validationSchema={SignUpSchema}
+         validationSchema={SignInSchema}
        >
        {({ dirty, isValid }): React.ReactElement => (
           <Form>
-            <FormFiled name="email" label="Email" type="email" />
+            <FormFiled name="login" label="Login" />
             <FormFiled name="password" label="Password" type="password" />
             <button type="submit" disabled={!dirty || !isValid}>Submit</button>
           </Form>
        )}
        </Formik>
+       <Link to="/register">Register</Link>
      </div>
   );
 };
 
-export default Auth;
+export default withRouter(Auth);
