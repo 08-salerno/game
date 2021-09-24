@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import * as React from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -66,6 +67,15 @@ export const Register: React.FC<{}> = () => {
   const goAuth = (): void => {
     history.push('/auth');
   };
+
+  useEffect(() => {
+    authService.getUser()
+      .then(() => {
+        history.push('/');
+      })
+      .catch((err) => console.log('error', err));
+  });
+
   return (
     <div>
       <Formik

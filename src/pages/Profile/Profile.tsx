@@ -1,12 +1,15 @@
 /* eslint-disable no-console */
 import * as React from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/FormField';
 import UserService from '../../modules/api/UserService';
+import AuthService from '../../modules/api/AuthService';
 
 const userService = new UserService();
+const authService = new AuthService();
 
 interface userDataFormValues {
   firstName: string;
@@ -69,20 +72,35 @@ export const Profile: React.FC<{}> = () => {
   const handleSubmitData = (values: userDataFormValues): void => {
     userService.changeUserInfo(values)
       .then(() => {
-      // REDIRECT TO "back"
+        history.push('/');
       })
       .catch(console.log);
   };
   const handleSubmitPasswords = (values: userPasswordFormValues): void => {
     userService.changePassword(values)
       .then(() => {
-      // REDIRECT TO "back"
+        history.push('/');
       })
       .catch(console.log);
   };
   const goBack = (): void => {
     history.push('/');
   };
+  const logOut = (): void => {
+    authService.logOut()
+      .then(() => {
+        history.push('/auth');
+      })
+      .catch(console.log);
+  };
+
+  useEffect(() => {
+    authService.getUser()
+      .catch(() => {
+        history.push('/');
+      });
+  });
+
   return (
     <div>
       <Formik
@@ -116,6 +134,7 @@ export const Profile: React.FC<{}> = () => {
         </Form>
       )}
       </Formik>
+      <button type="button" onClick={():void => logOut()} className="button">Log out</button>
       <button type="button" onClick={():void => goBack()} className="button">Go back</button>
     </div>
   );

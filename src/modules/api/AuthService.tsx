@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const url = 'https://ya-praktikum.tech/api/v2/auth';
 
 interface signUpData {
@@ -26,6 +27,7 @@ export default class AuthService {
       ...data,
     }),
   })
+    .then((res) => res.json())
 
   signIn = (data: signInData): Promise<any> => fetch(`${url}/signin`, {
     method: 'POST',
@@ -35,13 +37,31 @@ export default class AuthService {
     credentials: 'include',
     body: JSON.stringify(data),
   })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response;
+    })
 
   logOut = (): Promise<any> => fetch(`${url}/logout`, {
     method: 'POST',
     credentials: 'include',
   })
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(response);
+      }
+      return response;
+    })
 
   getUser = (): Promise<any> => fetch(`${url}/user`, {
     credentials: 'include',
   })
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(response);
+      }
+      return response;
+    })
 }
