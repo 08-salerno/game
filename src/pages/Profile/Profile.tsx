@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import FormFiled from '../../components/components/FormField';
+import FormFiled from '../../components/FormField';
 import UserService from '../../modules/api/UserService';
 
 const userService = new UserService();
@@ -52,6 +53,7 @@ const userPasswordSchema = Yup.object().shape({
     .required('Required'),
 });
 export const Profile: React.FC<{}> = () => {
+  const history = useHistory();
   const userInitialValues: userDataFormValues = {
     firstName: '',
     secondName: '',
@@ -79,43 +81,43 @@ export const Profile: React.FC<{}> = () => {
       .catch(console.log);
   };
   const goBack = (): void => {
-    // go back
+    history.push('/');
   };
   return (
-     <div>
-       <h1>Profile Page</h1>
-       <Formik
-         initialValues={userInitialValues}
-         onSubmit={(handleSubmitData)}
-         validationSchema={userDataSchema}
-       >
-       {({ dirty, isValid }): React.ReactElement => (
-          <Form>
-            <FormFiled name="firstName" label="First Name" />
-            <FormFiled name="secondName" label="Second Name" />
-            <FormFiled name="displayName" label="Display Name" />
-            <FormFiled name="email" label="Email" type="email" />
-            <FormFiled name="login" label="Login" />
-            <FormFiled name="phone" label="Phone" type="tel" />
-            <button type="submit" disabled={!dirty || !isValid}>Submit</button>
-          </Form>
-       )}
-       </Formik>
-       <Formik
-         initialValues={userPasswordsInitialValues}
-         onSubmit={(handleSubmitPasswords)}
-         validationSchema={userPasswordSchema}
-       >
-       {({ dirty, isValid }): React.ReactElement => (
-          <Form>
-            <FormFiled name="oldPassword" label="Old Password" type="password" />
-            <FormFiled name="newPassword" label="New Password" type="password" />
-            <button type="submit" disabled={!dirty || !isValid}>Submit</button>
-          </Form>
-       )}
-       </Formik>
-            <button type="button" onClick={():void => goBack()}>Go back</button>
-     </div>
+    <div>
+      <Formik
+        initialValues={userInitialValues}
+        onSubmit={(handleSubmitData)}
+        validationSchema={userDataSchema}
+      >
+      {({ dirty, isValid }): React.ReactElement => (
+        <Form className="form">
+          <h1 className="form__title">Profile Page</h1>
+          <FormFiled name="firstName" label="First Name" />
+          <FormFiled name="secondName" label="Second Name" />
+          <FormFiled name="displayName" label="Display Name" />
+          <FormFiled name="email" label="Email" type="email" />
+          <FormFiled name="login" label="Login" />
+          <FormFiled name="phone" label="Phone" type="tel" />
+          <button type="submit" disabled={!dirty || !isValid} className="button form__button">Submit</button>
+        </Form>
+      )}
+      </Formik>
+      <Formik
+        initialValues={userPasswordsInitialValues}
+        onSubmit={(handleSubmitPasswords)}
+        validationSchema={userPasswordSchema}
+      >
+      {({ dirty, isValid }): React.ReactElement => (
+        <Form className="form">
+          <FormFiled name="oldPassword" label="Old Password" type="password" />
+          <FormFiled name="newPassword" label="New Password" type="password" />
+          <button type="submit" disabled={!dirty || !isValid} className="button form__button">Submit</button>
+        </Form>
+      )}
+      </Formik>
+      <button type="button" onClick={():void => goBack()} className="button">Go back</button>
+    </div>
   );
 };
 

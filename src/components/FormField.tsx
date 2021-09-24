@@ -11,16 +11,19 @@ interface FormikFieldProps {
 const FormField: React.FC<FormikFieldProps> = ({
   name, label, type = 'text',
 }) => (
-    <div>
-    <label htmlFor="firstName">{label}</label>
+    <div className="formField">
+    <label htmlFor="firstName" className="formField__label">{label}</label>
       <Field
         label={label}
         name={name}
         type={type}
         autoComplete="off"
         helperText={<ErrorMessage name={name} />}
+        className="formField__input"
       />
-      <ErrorMessage component="div" name={name} />
+      <div className="formField__error-placeholder">
+        <ErrorMessage component="p" className="formField__error" name={name} />
+      </div>
     </div>
 );
 

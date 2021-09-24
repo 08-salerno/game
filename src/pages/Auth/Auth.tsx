@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import * as React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import FormFiled from '../../components/components/FormField';
+import FormFiled from '../../components/FormField';
 import AuthService from '../../modules/api/AuthService';
 
 const authService = new AuthService();
@@ -24,6 +24,7 @@ const SignInSchema = Yup.object().shape({
 });
 
 export const Auth: React.FC<{}> = () => {
+  const history = useHistory();
   const initialValues: MyFormValues = {
     login: '',
     password: '',
@@ -35,25 +36,28 @@ export const Auth: React.FC<{}> = () => {
       })
       .catch(console.log);
   };
+  const goRegister = (): void => {
+    history.push('/register');
+  };
   return (
-     <div>
-       <h1>Auth Page</h1>
-       <Formik
-         initialValues={initialValues}
-         onSubmit={(handleSubmit)}
-         validationSchema={SignInSchema}
-       >
-       {({ dirty, isValid }): React.ReactElement => (
-          <Form>
-            <FormFiled name="login" label="Login" />
-            <FormFiled name="password" label="Password" type="password" />
-            <button type="submit" disabled={!dirty || !isValid}>Submit</button>
-          </Form>
-       )}
-       </Formik>
-       <Link to="/register">Register</Link>
-     </div>
+    <div>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(handleSubmit)}
+        validationSchema={SignInSchema}
+      >
+      {({ dirty, isValid }): React.ReactElement => (
+        <Form className="form">
+          <h1 className="form__title">Auth Page</h1>
+          <FormFiled name="login" label="Login" />
+          <FormFiled name="password" label="Password" type="password" />
+          <button type="submit" disabled={!dirty || !isValid} className="button form__button">Submit</button>
+        </Form>
+      )}
+      </Formik>
+      <button type="button" className="button" onClick={goRegister}>Don&apos;t have an account?</button>
+    </div>
   );
 };
 
-export default withRouter(Auth);
+export default Auth;

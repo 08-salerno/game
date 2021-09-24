@@ -1,9 +1,7 @@
 const url = 'https://ya-praktikum.tech/api/v2/auth';
 
 interface signUpData {
-  // eslint-disable-next-line camelcase
   firstName: string;
-  // eslint-disable-next-line camelcase
   secondName: string;
   login: string;
   email: string;
