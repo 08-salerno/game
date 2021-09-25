@@ -10,6 +10,8 @@ import styled from 'styled-components';
 import Register from './pages/Register/Register';
 import Auth from './pages/Auth/Auth';
 import Profile from './pages/Profile/Profile';
+import { LeaderBordRoutes } from './pages/leader-bord/routes';
+import LeaderBord from './pages/leader-bord/LeaderBord';
 
 type AppRoute = {
   title: string;
@@ -35,6 +37,11 @@ const routes: AppRoute[] = [
     title: 'Страница пользователя',
     link: '/profile',
     component: Profile,
+  },
+  {
+    title: 'Таблица лидеров',
+    link: LeaderBordRoutes.HOME,
+    component: LeaderBord,
   },
 ];
 
