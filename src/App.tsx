@@ -38,11 +38,11 @@ const routes: AppRoute[] = [
     link: '/profile',
     component: Profile,
   },
-    {
-        title: 'Форум',
-        link: ForumRoutes.HOME,
-        component: Forum,
-    },
+  {
+    title: 'Форум',
+    link: ForumRoutes.HOME,
+    component: Forum,
+  },
 ];
 
 const NavBar = styled.nav`
