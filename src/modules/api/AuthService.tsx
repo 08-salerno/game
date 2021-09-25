@@ -16,7 +16,7 @@ interface SignInData {
   password: string;
 }
 
-type User ={
+export type User = {
   id: number,
   first_name: string,
   second_name: string,
@@ -26,6 +26,7 @@ type User ={
   phone: string,
   avatar: string,
 }
+
 export default class AuthService {
   signUp = (data: SignUpData): Promise<any> => fetch(`${url}/signup`, {
     method: 'POST',

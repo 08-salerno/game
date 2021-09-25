@@ -1,7 +1,9 @@
+import { User } from '../../../modules/api/AuthService';
+
 export type TopicPreview = {
     id: string;
     title: string;
-    author: any; // User
+    author: User;
     commentCount: string;
     createdAt: string;
 }

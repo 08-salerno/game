@@ -1,7 +1,9 @@
+import { User } from '../../../modules/api/AuthService';
+
 export type Comment = {
   id: string;
   topicId: string;
   text: string;
-  author: any; // User
+  author: User;
   createdAt: string;
 };

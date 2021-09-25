@@ -45,6 +45,7 @@ const TopicListPage: React.VFC = () => {
                 <input placeholder="Поиск" />
             </span>
             <span>
+                {{/*todo только для авторизированного пользователя*/}}
                 <button type="button" onClick={handleCreateTopicButtonClick}>Создать тему</button>
             </span>
         </div>

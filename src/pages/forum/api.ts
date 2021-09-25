@@ -11,8 +11,15 @@ function mockTopics(): TopicPreview[] {
       id: String(i),
       title: `Topic title for ${i}`,
       author: {
-        login: 'Test author',
-      }, // User
+        id: i,
+        first_name: '',
+        second_name: '',
+        display_name: '',
+        login: `Test User_${i}`,
+        email: '',
+        phone: '',
+        avatar: '',
+      },
       commentCount: i === 1 ? '100' : '0',
       createdAt: 'Date',
     });
@@ -28,7 +35,14 @@ function mockComments(topicId: string): Comment[] {
       topicId,
       text: 'Bla bla bla',
       author: {
-        login: 'Test author in comments',
+        id: i,
+        first_name: '',
+        second_name: '',
+        display_name: '',
+        login: `Test User_${i}`,
+        email: '',
+        phone: '',
+        avatar: '',
       }, // User
       createdAt: 'Date',
     });
