@@ -4,8 +4,9 @@ import {
   Switch,
   Route,
   Link,
-  RouteProps
+  RouteProps,
 } from 'react-router-dom';
+import GameGrid from './components/GameGrid/GameGrid';
 
 type AppRoute = {
   title: string;
@@ -16,7 +17,13 @@ type AppRoute = {
 /**
  * Добавляй руты сюда, а не в разметку
  */
-const routes: AppRoute[] = [];
+const routes: AppRoute[] = [
+  {
+    title: 'game',
+    link: '/game',
+    component: GameGrid,
+  },
+];
 
 const App: React.FC = () => (
   <Router>
@@ -26,8 +33,8 @@ const App: React.FC = () => (
           <li>
             <Link to="/">Главная</Link>
           </li>
-          {routes.map((route: AppRoute) => (
-            <li>
+          {routes.map((route: AppRoute, i) => (
+            <li key={i}>
               <Link to={route.link}>{route.title}</Link>
             </li>
           ))}
@@ -35,11 +42,11 @@ const App: React.FC = () => (
       </nav>
 
       <Switch>
-        {routes.map((route: AppRoute) => (
+        {routes.map((route: AppRoute, i) => (
           /**
            * Добавь недостающий пропс
            */
-          <Route path={route.path ? route.path : route.link}>{route.component}</Route>
+          <Route key={i} component={route.component} path={route.path ? route.path : route.link} />
         ))}
         <Route path="/">
           <h1>Отсюда всё начинается :)</h1>
