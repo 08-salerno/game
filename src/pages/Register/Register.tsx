@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/FormField';
@@ -76,6 +77,63 @@ export const Register: React.FC<{}> = () => {
       .catch((err) => console.log('error', err));
   });
 
+  const FormContainer = styled(Form)`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  `;
+  const Title = styled.h1`
+    font-family: Arial;
+    margin: 20px;
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 500;
+  `;
+  const Button = styled.button`
+    display: inline-block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-family: Arial;
+    font-weight: normal;
+    font-size: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  `;
+  const SubmitButton = styled(Button)`
+    width: auto;
+    height: 37px;
+    margin: 5px auto;
+    padding: 0 8px;
+    border-radius: 8px;
+    color: black;
+    background-color: #D6EAF8;
+
+    &:hover {
+      background-color: #AED6F1;
+    }
+    &:disabled {
+      background-color: #EBF5FB;
+    }
+  `;
+  const AuthorizeButton = styled(Button)`
+    width: auto;
+    height: 37px;
+    margin: 5px auto;
+    padding: 0 8px;
+    border-radius: 8px;
+    color: black;
+    background-color: #E8DAEF;
+
+    &:hover {
+      background-color: #D2B4DE;
+    }
+  `;
+
   return (
     <div>
       <Formik
@@ -84,8 +142,8 @@ export const Register: React.FC<{}> = () => {
         validationSchema={SignUpSchema}
       >
       {({ dirty, isValid }): React.ReactElement => (
-        <Form className="form">
-          <h1 className="form__title">Register Page</h1>
+        <FormContainer className="form">
+          <Title className="form__title">Register Page</Title>
           <FormFiled name="firstName" label="First Name" />
           <FormFiled name="secondName" label="Second Name" />
           <FormFiled name="email" label="Email" type="email" />
@@ -93,11 +151,11 @@ export const Register: React.FC<{}> = () => {
           <FormFiled name="phone" label="Phone" type="tel" />
           <FormFiled name="password" label="Password" type="password" />
           <FormFiled name="checkPassword" label="Check Password" type="password" />
-          <button type="submit" disabled={!dirty || !isValid} className="button form__button">Submit</button>
-        </Form>
+          <SubmitButton type="submit" disabled={!dirty || !isValid} className="button form__button">Submit</SubmitButton>
+        </FormContainer>
       )}
       </Formik>
-      <button type="button" className="button" onClick={goAuth}>Already have an account?</button>
+      <AuthorizeButton type="button" className="button" onClick={goAuth}>Already have an account?</AuthorizeButton>
     </div>
   );
 };
