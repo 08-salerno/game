@@ -1,5 +1,5 @@
 const url = 'https://ya-praktikum.tech/api/v2/user';
-interface changeInfoData {
+interface ChangeInfoData {
   firstName: string;
   secondName: string;
   displayName: string;
@@ -8,12 +8,12 @@ interface changeInfoData {
   phone: string;
 }
 
-interface changePasswordData {
+interface ChangePasswordData {
   oldPassword: string;
   newPassword: string;
 }
 export default class AuthService {
-  changeUserInfo = (data: changeInfoData): Promise<any> => fetch(`${url}/profile`, {
+  changeUserInfo = (data: ChangeInfoData): Promise<any> => fetch(`${url}/profile`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export default class AuthService {
     }),
   })
 
-  changePassword = (data: changePasswordData): Promise<any> => fetch(`${url}/password`, {
+  changePassword = (data: ChangePasswordData): Promise<any> => fetch(`${url}/password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

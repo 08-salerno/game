@@ -1,7 +1,8 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-console */
 const url = 'https://ya-praktikum.tech/api/v2/auth';
 
-interface signUpData {
+interface SignUpData {
   firstName: string;
   secondName: string;
   login: string;
@@ -10,12 +11,23 @@ interface signUpData {
   phone: string;
 }
 
-interface signInData {
+interface SignInData {
   login: string;
   password: string;
 }
+
+type User ={
+  id: number,
+  first_name: string,
+  second_name: string,
+  display_name: string,
+  login: string,
+  email: string,
+  phone: string,
+  avatar: string,
+}
 export default class AuthService {
-  sihnUp = (data: signUpData): Promise<any> => fetch(`${url}/signup`, {
+  signUp = (data: SignUpData): Promise<any> => fetch(`${url}/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -29,7 +41,7 @@ export default class AuthService {
   })
     .then((res) => res.json())
 
-  signIn = (data: signInData): Promise<any> => fetch(`${url}/signin`, {
+  signIn = (data: SignInData): Promise<any> => fetch(`${url}/signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -55,13 +67,13 @@ export default class AuthService {
       return response;
     })
 
-  getUser = (): Promise<any> => fetch(`${url}/user`, {
+  getUser = (): Promise<User> => fetch(`${url}/user`, {
     credentials: 'include',
   })
     .then((response) => {
       if (!response.ok) {
         return Promise.reject(response);
       }
-      return response;
+      return response.json().then((value) => Promise.resolve(value as User));
     })
 }

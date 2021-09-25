@@ -31,13 +31,12 @@ export const Auth: React.FC<{}> = () => {
     login: '',
     password: '',
   };
-  const handleSubmit = (values: MyFormValues): void => {
-    authService.signIn(values)
-      .then(() => {
-        history.push('/');
-      })
-      .catch(console.log);
-  };
+  const handleSubmit = (values: MyFormValues): Promise<any> => authService.signIn(values)
+    .then(() => {
+      history.push('/');
+    })
+    .catch(console.log);
+
   const goRegister = (): void => {
     history.push('/register');
   };
@@ -47,7 +46,7 @@ export const Auth: React.FC<{}> = () => {
       .then(() => {
         history.push('/');
       })
-      .catch((err) => console.log('error', err));
+      .catch(console.log);
   });
 
   const FormContainer = styled(Form)`
@@ -114,12 +113,12 @@ export const Auth: React.FC<{}> = () => {
         onSubmit={(handleSubmit)}
         validationSchema={SignInSchema}
       >
-      {({ dirty, isValid }): React.ReactElement => (
+      {({ dirty, isValid, isSubmitting }): React.ReactElement => (
         <FormContainer className="form">
           <Title className="form__title">Auth Page</Title>
           <FormFiled name="login" label="Login" />
           <FormFiled name="password" label="Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid} className="button form__button">Submit</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Submit</SubmitButton>
         </FormContainer>
       )}
       </Formik>

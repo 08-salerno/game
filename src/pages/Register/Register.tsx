@@ -58,13 +58,12 @@ export const Register: React.FC<{}> = () => {
     password: '',
     checkPassword: '',
   };
-  const handleSubmit = (values: MyFormValues): void => {
-    authService.sihnUp(values)
-      .then(() => {
-      // REDIRECT TO "/"
-      })
-      .catch(console.log);
-  };
+  const handleSubmit = (values: MyFormValues): Promise<any> => authService.signUp(values)
+    .then(() => {
+      history.push('/');
+    })
+    .catch(console.log);
+
   const goAuth = (): void => {
     history.push('/auth');
   };
@@ -141,7 +140,7 @@ export const Register: React.FC<{}> = () => {
         onSubmit={(handleSubmit)}
         validationSchema={SignUpSchema}
       >
-      {({ dirty, isValid }): React.ReactElement => (
+      {({ dirty, isValid, isSubmitting }): React.ReactElement => (
         <FormContainer className="form">
           <Title className="form__title">Register Page</Title>
           <FormFiled name="firstName" label="First Name" />
@@ -151,7 +150,7 @@ export const Register: React.FC<{}> = () => {
           <FormFiled name="phone" label="Phone" type="tel" />
           <FormFiled name="password" label="Password" type="password" />
           <FormFiled name="checkPassword" label="Check Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid} className="button form__button">Submit</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Submit</SubmitButton>
         </FormContainer>
       )}
       </Formik>

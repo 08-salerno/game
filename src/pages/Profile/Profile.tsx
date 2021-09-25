@@ -12,7 +12,7 @@ import AuthService from '../../modules/api/AuthService';
 const userService = new UserService();
 const authService = new AuthService();
 
-interface userDataFormValues {
+interface UserDataFormValues {
   firstName: string;
   secondName: string;
   displayName: string;
@@ -20,7 +20,7 @@ interface userDataFormValues {
   login: string;
   phone: string;
 }
-interface userPasswordFormValues {
+interface UserPasswordFormValues {
   oldPassword: string;
   newPassword: string;
 }
@@ -58,7 +58,7 @@ const userPasswordSchema = Yup.object().shape({
 });
 export const Profile: React.FC<{}> = () => {
   const history = useHistory();
-  const userInitialValues: userDataFormValues = {
+  const userInitialValues: UserDataFormValues = {
     firstName: '',
     secondName: '',
     displayName: '',
@@ -66,24 +66,22 @@ export const Profile: React.FC<{}> = () => {
     login: '',
     phone: '',
   };
-  const userPasswordsInitialValues: userPasswordFormValues = {
+  const userPasswordsInitialValues: UserPasswordFormValues = {
     oldPassword: '',
     newPassword: '',
   };
-  const handleSubmitData = (values: userDataFormValues): void => {
-    userService.changeUserInfo(values)
-      .then(() => {
-        history.push('/');
-      })
-      .catch(console.log);
-  };
-  const handleSubmitPasswords = (values: userPasswordFormValues): void => {
-    userService.changePassword(values)
-      .then(() => {
-        history.push('/');
-      })
-      .catch(console.log);
-  };
+
+  const handleSubmitData = (values: UserDataFormValues): Promise<any> => userService.changeUserInfo(values)
+    .then(() => {
+      history.push('/');
+    })
+    .catch(console.log);
+  const handleSubmitPasswords = (values: UserPasswordFormValues): Promise<any> => userService.changePassword(values)
+    .then(() => {
+      history.push('/');
+    })
+    .catch(console.log);
+
   const goBack = (): void => {
     history.push('/');
   };
@@ -179,7 +177,7 @@ export const Profile: React.FC<{}> = () => {
         onSubmit={(handleSubmitData)}
         validationSchema={userDataSchema}
       >
-      {({ dirty, isValid }): React.ReactElement => (
+      {({ dirty, isValid, isSubmitting }): React.ReactElement => (
         <FormContainer className="form">
           <Title className="form__title">Profile Page</Title>
           <FormFiled name="firstName" label="First Name" />
@@ -188,7 +186,7 @@ export const Profile: React.FC<{}> = () => {
           <FormFiled name="email" label="Email" type="email" />
           <FormFiled name="login" label="Login" />
           <FormFiled name="phone" label="Phone" type="tel" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid} className="button form__button">Submit</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Submit</SubmitButton>
         </FormContainer>
       )}
       </Formik>
@@ -197,16 +195,16 @@ export const Profile: React.FC<{}> = () => {
         onSubmit={(handleSubmitPasswords)}
         validationSchema={userPasswordSchema}
       >
-      {({ dirty, isValid }): React.ReactElement => (
+      {({ dirty, isValid, isSubmitting }): React.ReactElement => (
         <FormContainer className="form">
           <FormFiled name="oldPassword" label="Old Password" type="password" />
           <FormFiled name="newPassword" label="New Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid} className="button form__button">Change Password</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Change Password</SubmitButton>
         </FormContainer>
       )}
       </Formik>
-      <GoBackButton type="button" onClick={():void => goBack()} className="button">Go back</GoBackButton>
-      <LogOutButton type="button" onClick={():void => logOut()} className="button">Log out</LogOutButton>
+      <GoBackButton type="button" onClick={goBack} className="button">Go back</GoBackButton>
+      <LogOutButton type="button" onClick={logOut} className="button">Log out</LogOutButton>
     </div>
   );
 };
