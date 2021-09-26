@@ -28,6 +28,7 @@ export type User = {
   phone: string,
   avatar: string,
 }
+
 export default class AuthService {
   signUp = (data: SignUpData): Promise<any> => fetch(`${url}/signup`, {
     method: 'POST',

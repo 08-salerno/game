@@ -10,6 +10,8 @@ import styled from 'styled-components';
 import Register from './pages/Register/Register';
 import Auth from './pages/Auth/Auth';
 import Profile from './pages/Profile/Profile';
+import Forum from './pages/forum/Forum';
+import ForumRoutes from './pages/forum/routes';
 import { LeaderBordRoutes } from './pages/leader-bord/routes';
 import LeaderBord from './pages/leader-bord/LeaderBord';
 
@@ -37,6 +39,11 @@ const routes: AppRoute[] = [
     title: 'Страница пользователя',
     link: '/profile',
     component: Profile,
+  },
+  {
+    title: 'Форум',
+    link: ForumRoutes.HOME,
+    component: Forum,
   },
   {
     title: 'Таблица лидеров',
