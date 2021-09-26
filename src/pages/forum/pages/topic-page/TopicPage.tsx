@@ -43,6 +43,7 @@ const TopicPage: React.VFC = () => {
   };
 
   const handleLoadMoreCommentButtonClick = (): void => {
+    // todo [sitnik] исправить потенциальную ошибку с некорректным смещением
     setCommentsOffset(commentsOffset + defaultQueryOffset);
   };
 

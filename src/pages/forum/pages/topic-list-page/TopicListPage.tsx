@@ -35,6 +35,7 @@ const TopicListPage: React.VFC = () => {
   };
 
   const handleLoadMoreTopicsButtonClick = (): void => {
+    // todo [sitnik] исправить потенциальную ошибку с некорректным смещением
     setTopicsOffset(topicsOffset + defaultQueryOffset);
   };
 
