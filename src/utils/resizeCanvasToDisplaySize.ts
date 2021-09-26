@@ -1,4 +1,4 @@
-function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement) {
+function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement):boolean {
   const { width, height } = canvas.getBoundingClientRect();
 
   if (canvas.width !== width || canvas.height !== height) {
