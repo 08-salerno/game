@@ -10,6 +10,8 @@ import styled from 'styled-components';
 import Register from './pages/Register/Register';
 import Auth from './pages/Auth/Auth';
 import Profile from './pages/Profile/Profile';
+import Forum from './pages/forum/Forum';
+import ForumRoutes from './pages/forum/routes';
 
 type AppRoute = {
   title: string;
@@ -35,6 +37,11 @@ const routes: AppRoute[] = [
     title: 'Страница пользователя',
     link: '/profile',
     component: Profile,
+  },
+  {
+    title: 'Форум',
+    link: ForumRoutes.HOME,
+    component: Forum,
   },
 ];
 

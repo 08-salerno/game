@@ -21,7 +21,7 @@ module.exports = {
     static: ['dist'],
     port: 3000,
     client: {
-      overlay: true,
+      overlay: false,
     },
     headers: {
       'Access-Control-Allow-Origin': '*',
