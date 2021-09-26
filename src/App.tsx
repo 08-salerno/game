@@ -130,8 +130,8 @@ const App: React.FC = () => (
           <DropDownButton type="button">Routes DD</DropDownButton>
           <DropDownContent>
             <DropDownLink to="/">Главная</DropDownLink>
-            {routes.map((route: AppRoute) => (
-              <DropDownLink to={route.link}>{route.title}</DropDownLink>
+            {routes.map((route: AppRoute, i) => (
+              <DropDownLink key={i} to={route.link}>{route.title}</DropDownLink>
             ))}
           </DropDownContent>
         </DropDown>
@@ -139,11 +139,11 @@ const App: React.FC = () => (
       </NavBar>
       <Layout>
         <Switch>
-          {routes.map((route: AppRoute) => (
+          {routes.map((route: AppRoute, i) => (
             /**
              * Добавь недостающий пропс
              */
-            <Route path={route.path ? route.path : route.link} component={route.component} />
+            <Route key={i} path={route.path ? route.path : route.link} component={route.component} />
           ))}
           <Route path="/">
             <h1>Отсюда всё начинается :)</h1>
