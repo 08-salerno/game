@@ -58,7 +58,7 @@ export const Register: React.FC<{}> = () => {
     password: '',
     checkPassword: '',
   };
-  const handleSubmit = (values: MyFormValues): Promise<any> => authService.signUp(values)
+  const handleSubmit = (values: MyFormValues): Promise<void> => authService.signUp(values)
     .then(() => {
       history.push('/');
     })

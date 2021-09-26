@@ -31,7 +31,7 @@ export const Auth: React.FC<{}> = () => {
     login: '',
     password: '',
   };
-  const handleSubmit = (values: MyFormValues): Promise<any> => authService.signIn(values)
+  const handleSubmit = (values: MyFormValues): Promise<void> => authService.signIn(values)
     .then(() => {
       history.push('/');
     })

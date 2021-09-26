@@ -30,7 +30,7 @@ export type User = {
 }
 
 export default class AuthService {
-  signUp = (data: SignUpData): Promise<any> => fetch(`${url}/signup`, {
+  signUp = (data: SignUpData): Promise<User> => fetch(`${url}/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -42,9 +42,14 @@ export default class AuthService {
       ...data,
     }),
   })
-    .then((res) => res.json())
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(response);
+      }
+      return response.json().then((value) => Promise.resolve(value as User));
+    })
 
-  signIn = (data: SignInData): Promise<any> => fetch(`${url}/signin`, {
+  signIn = (data: SignInData): Promise<Response> => fetch(`${url}/signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -59,7 +64,7 @@ export default class AuthService {
       return response;
     })
 
-  logOut = (): Promise<any> => fetch(`${url}/logout`, {
+  logOut = (): Promise<Response> => fetch(`${url}/logout`, {
     method: 'POST',
     credentials: 'include',
   })

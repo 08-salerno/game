@@ -71,12 +71,12 @@ export const Profile: React.FC<{}> = () => {
     newPassword: '',
   };
 
-  const handleSubmitData = (values: UserDataFormValues): Promise<any> => userService.changeUserInfo(values)
+  const handleSubmitData = (values: UserDataFormValues): Promise<void> => userService.changeUserInfo(values)
     .then(() => {
       history.push('/');
     })
     .catch(console.log);
-  const handleSubmitPasswords = (values: UserPasswordFormValues): Promise<any> => userService.changePassword(values)
+  const handleSubmitPasswords = (values: UserPasswordFormValues): Promise<void> => userService.changePassword(values)
     .then(() => {
       history.push('/');
     })
