@@ -12,6 +12,8 @@ import Auth from './pages/Auth/Auth';
 import Profile from './pages/Profile/Profile';
 import Forum from './pages/forum/Forum';
 import ForumRoutes from './pages/forum/routes';
+import { LeaderBordRoutes } from './pages/leader-bord/routes';
+import LeaderBord from './pages/leader-bord/LeaderBord';
 
 type AppRoute = {
   title: string;
@@ -42,6 +44,11 @@ const routes: AppRoute[] = [
     title: 'Форум',
     link: ForumRoutes.HOME,
     component: Forum,
+  },
+  {
+    title: 'Таблица лидеров',
+    link: LeaderBordRoutes.HOME,
+    component: LeaderBord,
   },
 ];
 

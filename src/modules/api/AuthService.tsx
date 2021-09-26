@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-console */
-const url = 'https://ya-praktikum.tech/api/v2/auth';
+import apiUrl from './api-url';
+
+const url = apiUrl('/auth');
 
 interface SignUpData {
   firstName: string;

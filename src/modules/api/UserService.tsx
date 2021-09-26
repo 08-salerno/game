@@ -1,4 +1,7 @@
-const url = 'https://ya-praktikum.tech/api/v2/user';
+import apiUrl from './api-url';
+
+const url = apiUrl('/user');
+
 interface ChangeInfoData {
   firstName: string;
   secondName: string;
