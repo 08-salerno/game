@@ -14,6 +14,7 @@ import Forum from './pages/forum/Forum';
 import ForumRoutes from './pages/forum/routes';
 import { LeaderBordRoutes } from './pages/leader-bord/routes';
 import LeaderBord from './pages/leader-bord/LeaderBord';
+import GameGrid from './components/GameGrid/GameGrid';
 
 type AppRoute = {
   title: string;
@@ -29,6 +30,11 @@ const routes: AppRoute[] = [
     title: 'Регистрация',
     link: '/register',
     component: Register,
+  },
+  {
+    title: 'game',
+    link: '/game',
+    component: GameGrid,
   },
   {
     title: 'Авторизация',
