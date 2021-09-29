@@ -1,33 +1,17 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.tsx',
+  entry: {
+    app: './src/index.tsx',
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/static/index.html',
-      title: 'Development',
-    }),
-    new ForkTsCheckerWebpackPlugin({
-      eslint: {
-        files: './src/**/*.tsx',
-      },
+      title: '08-salerno',
     }),
   ],
-  devtool: 'inline-source-map',
-  devServer: {
-    static: ['dist'],
-    port: 3000,
-    client: {
-      overlay: false,
-    },
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    },
-    historyApiFallback: true,
-  },
   module: {
     rules: [
       {
@@ -48,7 +32,6 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
   },
   output: {
-    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
     publicPath: '/',
