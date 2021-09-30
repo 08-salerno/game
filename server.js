@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 
-const PORT = 9000;
+const PORT = process.env.PORT || 3001;
 
 const STATIC = path.resolve(__dirname, 'dist');
 const INDEX = path.resolve(STATIC, 'index.html');
