@@ -48,43 +48,48 @@ const TopicPage: React.VFC = () => {
   };
 
   return (
-    <div>
-        {loading ? 'Загрузка' : (
+    <>
+      {loading ? (
+        'Загрузка'
+      ) : (
         <>
-            {
-                !topic ? <div>Не найдено или редирект</div>
-                  : (
-                    <>
-                        <TopicPreviewer
-                          id={topic.id}
-                          title={topic.title}
-                          author={topic.author}
-                          commentCount={topic.commentCount}
-                          createdAt={topic.createdAt}
-                        />
-                        <CommentLeaver handleLeaveComment={handleLeaveComment} />
-                        <div>
-                            {comments.map((comment) => (
-                                <CommentViewer
-                                  key={comment.id}
-                                  id={comment.id}
-                                  text={comment.text}
-                                  author={comment.author}
-                                  createdAt={comment.createdAt}
-                                />
-                            ))}
-                            {loadingComments ? 'Загрузка комментариев' : (
-                                <div>
-                                    <button type="button" onClick={handleLoadMoreCommentButtonClick}>Загрузить ещё</button>
-                                </div>
-                            )}
-                        </div>
-                    </>
-                  )
-            }
+          {!topic ? (
+            <div>Не найдено или редирект</div>
+          ) : (
+            <>
+              <TopicPreviewer
+                id={topic.id}
+                title={topic.title}
+                author={topic.author}
+                commentCount={topic.commentCount}
+                createdAt={topic.createdAt}
+              />
+              <CommentLeaver handleLeaveComment={handleLeaveComment} />
+              <div>
+                {comments.map((comment) => (
+                  <CommentViewer
+                    key={comment.id}
+                    id={comment.id}
+                    text={comment.text}
+                    author={comment.author}
+                    createdAt={comment.createdAt}
+                  />
+                ))}
+                {loadingComments ? (
+                  'Загрузка комментариев'
+                ) : (
+                  <div>
+                    <button type="button" onClick={handleLoadMoreCommentButtonClick}>
+                      Загрузить ещё
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </>
-        )}
-    </div>
+      )}
+    </>
   );
 };
 

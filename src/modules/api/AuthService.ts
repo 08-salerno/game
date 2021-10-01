@@ -1,33 +1,7 @@
-/* eslint-disable camelcase */
-/* eslint-disable no-console */
-import apiUrl from './api-url';
+import { apiUrl, asUser } from './utils';
+import { SignInData, SignUpData, User } from './types';
 
 const url = apiUrl('/auth');
-
-interface SignUpData {
-  firstName: string;
-  secondName: string;
-  login: string;
-  email: string;
-  password: string;
-  phone: string;
-}
-
-interface SignInData {
-  login: string;
-  password: string;
-}
-
-export type User = {
-  id: number,
-  first_name: string,
-  second_name: string,
-  display_name: string,
-  login: string,
-  email: string,
-  phone: string,
-  avatar: string,
-}
 
 export default class AuthService {
   signUp = (data: SignUpData): Promise<User> => fetch(`${url}/signup`, {
@@ -46,10 +20,10 @@ export default class AuthService {
       if (!response.ok) {
         return Promise.reject(response);
       }
-      return response.json().then((value) => Promise.resolve(value as User));
+      return response.json().then(asUser);
     })
 
-  signIn = (data: SignInData): Promise<Response> => fetch(`${url}/signin`, {
+  signIn = (data: SignInData): Promise<void> => fetch(`${url}/signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -61,10 +35,10 @@ export default class AuthService {
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      return response;
+      return Promise.resolve();
     })
 
-  logOut = (): Promise<Response> => fetch(`${url}/logout`, {
+  logOut = (): Promise<void> => fetch(`${url}/logout`, {
     method: 'POST',
     credentials: 'include',
   })
@@ -72,7 +46,7 @@ export default class AuthService {
       if (!response.ok) {
         return Promise.reject(response);
       }
-      return response;
+      return Promise.resolve();
     })
 
   getUser = (): Promise<User> => fetch(`${url}/user`, {
@@ -82,6 +56,6 @@ export default class AuthService {
       if (!response.ok) {
         return Promise.reject(response);
       }
-      return response.json().then((value) => Promise.resolve(value as User));
+      return response.json().then(asUser);
     })
 }

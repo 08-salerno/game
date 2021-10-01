@@ -1,32 +1,9 @@
 /* eslint-disable camelcase */
-import apiUrl from './api-url';
+import { apiUrl, asUser } from './utils';
+import { ChangeInfoData, ChangePasswordData, User } from './types';
 
 const url = apiUrl('/user');
 
-interface ChangeInfoData {
-  firstName: string;
-  secondName: string;
-  displayName: string;
-  login: string;
-  email: string;
-  phone: string;
-}
-
-interface ChangePasswordData {
-  oldPassword: string;
-  newPassword: string;
-}
-
-export type User = {
-  id: number,
-  first_name: string,
-  second_name: string,
-  display_name: string,
-  login: string,
-  email: string,
-  phone: string,
-  avatar: string,
-}
 export default class AuthService {
   changeUserInfo = (data: ChangeInfoData): Promise<User> => fetch(`${url}/profile`, {
     method: 'POST',
@@ -45,7 +22,7 @@ export default class AuthService {
       if (!response.ok) {
         return Promise.reject(response);
       }
-      return response.json().then((value) => Promise.resolve(value as User));
+      return response.json().then(asUser);
     })
 
   changePassword = (data: ChangePasswordData): Promise<Response> => fetch(`${url}/password`, {

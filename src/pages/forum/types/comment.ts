@@ -1,4 +1,4 @@
-import { User } from '../../../modules/api/AuthService';
+import { User } from '../../../modules/api/types';
 
 export type Comment = {
   id: string;
