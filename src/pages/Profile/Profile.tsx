@@ -178,15 +178,15 @@ export const Profile: React.FC<{}> = () => {
         validationSchema={userDataSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-        <FormContainer className="form">
-          <Title className="form__title">Profile Page</Title>
+        <FormContainer>
+          <Title>Profile Page</Title>
           <FormFiled name="firstName" label="First Name" />
           <FormFiled name="secondName" label="Second Name" />
           <FormFiled name="displayName" label="Display Name" />
           <FormFiled name="email" label="Email" type="email" />
           <FormFiled name="login" label="Login" />
           <FormFiled name="phone" label="Phone" type="tel" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Submit</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
         </FormContainer>
       )}
       </Formik>
@@ -196,15 +196,15 @@ export const Profile: React.FC<{}> = () => {
         validationSchema={userPasswordSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-        <FormContainer className="form">
+        <FormContainer>
           <FormFiled name="oldPassword" label="Old Password" type="password" />
           <FormFiled name="newPassword" label="New Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Change Password</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Change Password</SubmitButton>
         </FormContainer>
       )}
       </Formik>
-      <GoBackButton type="button" onClick={goBack} className="button">Go back</GoBackButton>
-      <LogOutButton type="button" onClick={logOut} className="button">Log out</LogOutButton>
+      <GoBackButton type="button" onClick={goBack}>Go back</GoBackButton>
+      <LogOutButton type="button" onClick={logOut}>Log out</LogOutButton>
     </div>
   );
 };

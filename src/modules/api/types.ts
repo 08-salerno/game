@@ -38,3 +38,7 @@ export type ChangePasswordData = {
     oldPassword: string;
     newPassword: string;
 }
+
+export type ErrorReason = {
+    reason: string;
+}

@@ -1,10 +1,12 @@
-import { apiUrl, asUser } from './utils';
-import { SignInData, SignUpData, User } from './types';
+import { apiUrl, asError, asUser } from './utils';
+import {
+  ErrorReason, SignInData, SignUpData, User,
+} from './types';
 
 const url = apiUrl('/auth');
 
 export default class AuthService {
-  signUp = (data: SignUpData): Promise<User> => fetch(`${url}/signup`, {
+  signUp = (data: SignUpData): Promise<User | ErrorReason> => fetch(`${url}/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -18,12 +20,12 @@ export default class AuthService {
   })
     .then((response) => {
       if (!response.ok) {
-        return Promise.reject(response);
+        return response.json().then(asError);
       }
       return response.json().then(asUser);
     })
 
-  signIn = (data: SignInData): Promise<void> => fetch(`${url}/signin`, {
+  signIn = (data: SignInData): Promise<void | ErrorReason> => fetch(`${url}/signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -33,7 +35,7 @@ export default class AuthService {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error(response.statusText);
+        return response.json().then(asError);
       }
       return Promise.resolve();
     })

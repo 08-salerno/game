@@ -141,8 +141,8 @@ export const Register: React.FC<{}> = () => {
         validationSchema={SignUpSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-        <FormContainer className="form">
-          <Title className="form__title">Register Page</Title>
+        <FormContainer>
+          <Title>Register Page</Title>
           <FormFiled name="firstName" label="First Name" />
           <FormFiled name="secondName" label="Second Name" />
           <FormFiled name="email" label="Email" type="email" />
@@ -150,11 +150,11 @@ export const Register: React.FC<{}> = () => {
           <FormFiled name="phone" label="Phone" type="tel" />
           <FormFiled name="password" label="Password" type="password" />
           <FormFiled name="checkPassword" label="Check Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Submit</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
         </FormContainer>
       )}
       </Formik>
-      <AuthorizeButton type="button" className="button" onClick={goAuth}>Already have an account?</AuthorizeButton>
+      <AuthorizeButton type="button" onClick={goAuth}>Already have an account?</AuthorizeButton>
     </div>
   );
 };
