@@ -15,6 +15,7 @@ import ForumRoutes from './pages/forum/routes';
 import { LeaderBordRoutes } from './pages/leader-bord/routes';
 import LeaderBord from './pages/leader-bord/LeaderBord';
 import GameGrid from './components/GameGrid/GameGrid';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 type AppRoute = {
   title: string;
@@ -123,38 +124,51 @@ const Layout = styled.div`
 `;
 
 const App: React.FC = () => (
-  <Router>
-    <div>
-      <NavBar>
-        <DropDown>
-          <DropDownButton type="button">Routes DD</DropDownButton>
-          <DropDownContent>
-            <DropDownLink to="/">Главная</DropDownLink>
+  <ErrorBoundary>
+    <Router>
+      <div>
+        <NavBar>
+          <DropDown>
+            <DropDownButton type="button">Routes DD</DropDownButton>
+            <DropDownContent>
+              <DropDownLink to="/">Главная</DropDownLink>
+              {routes.map((route: AppRoute, i) => (
+                <DropDownLink key={i} to={route.link}>
+                  {route.title}
+                </DropDownLink>
+              ))}
+            </DropDownContent>
+          </DropDown>
+          <NavBarLink
+            href="https://github.com/08-salerno/game"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Github
+          </NavBarLink>
+        </NavBar>
+        <Layout>
+          <Switch>
             {routes.map((route: AppRoute, i) => (
-              <DropDownLink key={i} to={route.link}>{route.title}</DropDownLink>
+              /**
+               * Добавь недостающий пропс
+               */
+              <Route
+                key={i}
+                path={route.path ? route.path : route.link}
+                component={route.component}
+              />
             ))}
-          </DropDownContent>
-        </DropDown>
-        <NavBarLink href="https://github.com/08-salerno/game" target="_blank" rel="noreferrer">Github</NavBarLink>
-      </NavBar>
-      <Layout>
-        <Switch>
-          {routes.map((route: AppRoute, i) => (
-            /**
-             * Добавь недостающий пропс
-             */
-            <Route key={i} path={route.path ? route.path : route.link} component={route.component} />
-          ))}
-          <Route path="/">
-            <h1>Отсюда всё начинается :)</h1>
-            Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять на
-            страницу с игрой при странных рутах
-          </Route>
-        </Switch>
-      </Layout>
-
-    </div>
-  </Router>
+            <Route path="/">
+              <h1>Отсюда всё начинается :)</h1>
+              Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять
+              на страницу с игрой при странных рутах
+            </Route>
+          </Switch>
+        </Layout>
+      </div>
+    </Router>
+  </ErrorBoundary>
 );
 
 export default App;

@@ -10,7 +10,6 @@ const Forum: React.FC = () => {
 
   return (
     <div>
-      <div>Forum</div>
       <Switch>
         <Route exact path={path}>
           <TopicListPage />
