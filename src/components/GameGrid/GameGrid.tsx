@@ -349,7 +349,6 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
   return newGridData;
 }
 
-
 const GameGrid: React.FC = () => {
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
   const [firstRendered, setFirstRender] = useState<boolean>(false);
@@ -372,7 +371,9 @@ const GameGrid: React.FC = () => {
       const hasSuccessCombination = combinationsIncludesCoords(combinations as CombinationListWithItemsForRemove,
         [firstClickCoord, currentItemCoord]);
       if (hasSuccessCombination) {
-        const updatedDataGrid = getUpdatedDataGrid(gridData, combinations as CombinationListWithItemsForRemove, firstClickCoord, currentItemCoord);
+        const updatedDataGrid = getUpdatedDataGrid(
+          gridData, combinations as CombinationListWithItemsForRemove, firstClickCoord, currentItemCoord,
+        );
         const updatedCombinations = findCombinations(updatedDataGrid);
         setPoints((points) => points + 1);
         setGridData(updatedDataGrid);

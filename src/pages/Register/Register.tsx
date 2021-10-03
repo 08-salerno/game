@@ -97,6 +97,9 @@ export const Register: React.FC<{}> = () => {
     font-size: inherit;
     text-decoration: none;
     cursor: pointer;
+    &:disabled {
+      cursor: not-allowed;
+    }
   `;
   const SubmitButton = styled(Button)`
     width: auto;

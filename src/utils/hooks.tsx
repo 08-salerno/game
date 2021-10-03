@@ -23,7 +23,7 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D, frameCount: number) => 
       if (options.postdraw) {
         options.postdraw();
       }
-       // animationFrameId = window.requestAnimationFrame(render);
+      // animationFrameId = window.requestAnimationFrame(render);
     };
     render();
     return (): void => {
