@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Formik, Form } from 'formik';
@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import FormFiled from '../../components/FormField';
 import UserService from '../../modules/api/UserService';
 import AuthService from '../../modules/api/AuthService';
+import { ErrorReason } from '../../modules/api/types';
 
 const userService = new UserService();
 const authService = new AuthService();
@@ -53,7 +54,7 @@ const userPasswordSchema = Yup.object().shape({
     .min(6, 'Password must contain at least 6 symbols')
     .required('Required'),
   newPassword: Yup.string()
-    .oneOf([Yup.ref('oldPassword'), null], 'Passwords should match')
+    .min(6, 'Password must contain at least 6 symbols')
     .required('Required'),
 });
 export const Profile: React.FC<{}> = () => {
@@ -66,21 +67,11 @@ export const Profile: React.FC<{}> = () => {
     login: '',
     phone: '',
   };
+  const [formValues, setformValues] = useState(userInitialValues);
   const userPasswordsInitialValues: UserPasswordFormValues = {
     oldPassword: '',
     newPassword: '',
   };
-
-  const handleSubmitData = (values: UserDataFormValues): Promise<void> => userService.changeUserInfo(values)
-    .then(() => {
-      history.push('/');
-    })
-    .catch(console.log);
-  const handleSubmitPasswords = (values: UserPasswordFormValues): Promise<void> => userService.changePassword(values)
-    .then(() => {
-      history.push('/');
-    })
-    .catch(console.log);
 
   const goBack = (): void => {
     history.push('/');
@@ -90,15 +81,30 @@ export const Profile: React.FC<{}> = () => {
       .then(() => {
         history.push('/auth');
       })
-      .catch(console.log);
+      .catch((err) => {
+        console.log(err);
+        history.push('/auth');
+      });
   };
 
   useEffect(() => {
     authService.getUser()
+      .then((res) => {
+        console.log(res);
+        setformValues((formValues) => ({
+          ...formValues,
+          firstName: res.first_name || '',
+          secondName: res.second_name || '',
+          displayName: res.display_name || '',
+          email: res.email || '',
+          login: res.login || '',
+          phone: res.phone || '',
+        }));
+      })
       .catch(() => {
         history.push('/');
       });
-  });
+  }, []);
 
   const FormContainer = styled(Form)`
     display: flex;
@@ -173,8 +179,15 @@ export const Profile: React.FC<{}> = () => {
   return (
     <div>
       <Formik
-        initialValues={userInitialValues}
-        onSubmit={(handleSubmitData)}
+        enableReinitialize
+        initialValues={formValues || userInitialValues}
+        onSubmit={(values, actions): Promise<void> => userService.changeUserInfo(values)
+          .then(() => {
+            history.push('/');
+          })
+          .catch((err: ErrorReason) => {
+            actions.setFieldError('phone', err.reason);
+          })}
         validationSchema={userDataSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (
@@ -192,7 +205,13 @@ export const Profile: React.FC<{}> = () => {
       </Formik>
       <Formik
         initialValues={userPasswordsInitialValues}
-        onSubmit={(handleSubmitPasswords)}
+        onSubmit={(values, actions): Promise<void> => userService.changePassword(values)
+          .then(() => {
+            history.push('/');
+          })
+          .catch((err: ErrorReason) => {
+            actions.setFieldError('newPassword', err.reason);
+          })}
         validationSchema={userPasswordSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (
