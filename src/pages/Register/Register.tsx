@@ -7,6 +7,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/FormField';
 import AuthService from '../../modules/api/AuthService';
+import { User, ErrorReason } from '../../modules/api/types';
 
 const authService = new AuthService();
 
@@ -58,12 +59,6 @@ export const Register: React.FC<{}> = () => {
     password: '',
     checkPassword: '',
   };
-  const handleSubmit = (values: MyFormValues): Promise<void> => authService.signUp(values)
-    .then(() => {
-      history.push('/');
-    })
-    .catch(console.log);
-
   const goAuth = (): void => {
     history.push('/auth');
   };
@@ -137,7 +132,13 @@ export const Register: React.FC<{}> = () => {
     <div>
       <Formik
         initialValues={initialValues}
-        onSubmit={(handleSubmit)}
+        onSubmit={(values, actions): Promise<void> => authService.signUp(values)
+          .then(() => {
+            history.push('/');
+          })
+          .catch((err: ErrorReason) => {
+            actions.setFieldError('checkPassword', err.reason);
+          })}
         validationSchema={SignUpSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (

@@ -39,6 +39,6 @@ export type ChangePasswordData = {
     newPassword: string;
 }
 
-export type ErrorReason = {
+export interface ErrorReason {
     reason: string;
 }

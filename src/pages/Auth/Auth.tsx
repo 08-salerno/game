@@ -32,17 +32,6 @@ export const Auth: React.FC<{}> = () => {
     login: '',
     password: '',
   };
-  const handleSubmit = (
-    values: MyFormValues, actions,
-  ): Promise<void> => authService.signIn(values)
-    .then((res: void | ErrorReason) => {
-      if (res) {
-        console.log(res.reason);
-        actions.setFieldError('login', res.reason);
-      }
-      console.log('hello');
-    })
-    .finally(actions.setSubmitting(false));
 
   const goRegister = (): void => {
     history.push('/register');
@@ -116,7 +105,13 @@ export const Auth: React.FC<{}> = () => {
     <div>
       <Formik
         initialValues={initialValues}
-        onSubmit={(handleSubmit)}
+        onSubmit={(values, actions): Promise<void> => authService.signIn(values)
+          .then(() => {
+            history.push('/');
+          })
+          .catch((err: ErrorReason) => {
+            actions.setFieldError('password', err.reason);
+          })}
         validationSchema={SignInSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (

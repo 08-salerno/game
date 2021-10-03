@@ -20,7 +20,7 @@ export default class AuthService {
   })
     .then((response) => {
       if (!response.ok) {
-        return response.json().then(asError);
+        return response.json().then(asError).then((err) => Promise.reject(err));
       }
       return response.json().then(asUser);
     })
@@ -35,7 +35,7 @@ export default class AuthService {
   })
     .then((response) => {
       if (!response.ok) {
-        return response.json().then(asError);
+        return response.json().then(asError).then((err) => Promise.reject(err));
       }
       return Promise.resolve();
     })
