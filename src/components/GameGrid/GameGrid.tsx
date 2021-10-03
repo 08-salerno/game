@@ -2,6 +2,7 @@ import React, {
   useCallback,
   useState,
 } from 'react';
+import styled from 'styled-components';
 import Canvas from '../Canvas/Canvas';
 
 // TIR = Three in row
@@ -349,6 +350,34 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
   return newGridData;
 }
 
+const Button = styled.button`
+  display: inline-block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  font-family: Arial;
+  font-weight: normal;
+  font-size: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  width: auto;
+  height: 37px;
+  margin: 5px auto;
+  padding: 0 8px;
+  border-radius: 8px;
+  color: black;
+  background-color: #D6EAF8;
+
+  &:hover {
+    background-color: #AED6F1;
+  }
+  &:disabled {
+    background-color: #EBF5FB;
+    cursor: not-allowed;
+  }
+`;
+
 const GameGrid: React.FC = () => {
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
   const [firstRendered, setFirstRender] = useState<boolean>(false);
@@ -415,7 +444,20 @@ const GameGrid: React.FC = () => {
     <div>
       <h1>Комбинаций осталось: {combinations?.length}</h1>
       <h1>Очков набрано {points * 100}</h1>
+      <Button onClick={():void => {
+        setGridData(getInitialGrid());
+        setFirstRender(false);
+      }}
+      >Начать заново
+      </Button>
+      {combinations?.length === 0 && (
+        <div>
+          <h1>Поздравляем! Игра завершена.</h1>
+        </div>
+      )}
+      <div>
       <Canvas onClick={memoHandleClick} width={gridSize * 100} height={gridSize * 100} draw={draw} />
+      </div>
     </div>
 
   );
