@@ -126,7 +126,7 @@ const Layout = styled.div`
 const App: React.FC = () => (
   <ErrorBoundary>
     <Router>
-      <div>
+      <>
         <NavBar>
           <DropDown>
             <DropDownButton type="button">Routes DD</DropDownButton>
@@ -166,7 +166,7 @@ const App: React.FC = () => (
             </Route>
           </Switch>
         </Layout>
-      </div>
+      </>
     </Router>
   </ErrorBoundary>
 );

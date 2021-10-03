@@ -1,9 +1,14 @@
 import React from 'react';
 import { TopicPreview } from '../../types/topic-preview';
+import FakeAvatar from '../styled/FakeAvatar';
+import FlexContainer from '../styled/FlexContainer';
+import TopicContainer from '../styled/TopicContainer';
+import LineItem from '../styled/LineItem';
+import TopicInfo from '../styled/TopicInfo';
 
 export type TopicItemProps = TopicPreview & {
-    onClick?: (topicId: string) => void
-}
+  onClick?: (topicId: string) => void;
+};
 
 const TopicPreviewer: React.VFC<TopicItemProps> = (props) => {
   const {
@@ -14,22 +19,23 @@ const TopicPreviewer: React.VFC<TopicItemProps> = (props) => {
     if (onClick) onClick(id);
   };
 
+  const hasOnClick = !!onClick;
+
   return (
-    <div className="TopicItem" onClick={handleTopicClick}>
-        <div>-----------------------------------------------------</div>
-        <div className="TopicItem__header">
-            <span>Avatar</span>
-            <span>Name</span>
-            { /* todo [sitnik] подумать над парсингом даты */}
-            <span>{createdAt}</span>
-        </div>
-        <div className="TopicItem__title">
-            <h1>{title}</h1>
-        </div>
-        <div className="TopicItem__footer">
-            <span>Комментариев: {commentCount || 0}</span>
-        </div>
-    </div>
+    <TopicContainer hoverable={hasOnClick} onClick={handleTopicClick}>
+      <FlexContainer>
+        <LineItem>
+            <FakeAvatar />
+        </LineItem>
+        <LineItem>Name</LineItem>
+        {/* todo [sitnik] подумать над парсингом даты */}
+        <LineItem>{createdAt}</LineItem>
+      </FlexContainer>
+      <h1>{title}</h1>
+      <FlexContainer>
+        <TopicInfo>Комментариев: {commentCount || 0}</TopicInfo>
+      </FlexContainer>
+    </TopicContainer>
   );
 };
 
