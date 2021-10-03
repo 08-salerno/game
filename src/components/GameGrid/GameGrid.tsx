@@ -340,6 +340,7 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
     return columnCopy;
   });
   if (gridHasTIR(newGridData)) {
+    //TODO нету свапа и нужна нормальная рекурсия с подсчетом очков возможно
     // Рекурсивный вызов, чтобы при взрыве НЕ появилось новых TIR,
     // Можно переписать на появление и взрыв новых с использованием findCombination и подсчитать очки
     //Бывает ошибка с слишком большим кол-во вызовов
@@ -347,8 +348,7 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
   }
   return newGridData;
 }
-//TODO нету свапа, и (НЕ ТОЧНО) не взрывается 4 по горизонтали
-// и нужна нормальная рекурсия с подсчетом очков возможно
+
 
 const GameGrid: React.FC = () => {
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
@@ -387,12 +387,13 @@ const GameGrid: React.FC = () => {
   const draw = useCallback((ctx: CanvasRenderingContext2D): void => {
     let gridDataCopy: GridData = [...gridData];
 
-    let gridHasCombination = gridHasTIR(gridDataCopy);
+    let gridHasTir = gridHasTIR(gridDataCopy);
 
     function firstRender(): void {
-      if (gridHasCombination) {
+      if (gridHasTir) {
+        //TODO добавить проверку на наличие комбинацций(актуально для маленьких сеток)
         gridDataCopy = replaceCombinations(gridDataCopy);
-        gridHasCombination = gridHasTIR(gridDataCopy);
+        gridHasTir = gridHasTIR(gridDataCopy);
         firstRender();
       } else {
         setFirstRender(true);
