@@ -7,6 +7,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/FormField';
 import AuthService from '../../modules/api/AuthService';
+import { ErrorReason } from '../../modules/api/types';
 
 const authService = new AuthService();
 
@@ -58,12 +59,6 @@ export const Register: React.FC<{}> = () => {
     password: '',
     checkPassword: '',
   };
-  const handleSubmit = (values: MyFormValues): Promise<void> => authService.signUp(values)
-    .then(() => {
-      history.push('/');
-    })
-    .catch(console.log);
-
   const goAuth = (): void => {
     history.push('/auth');
   };
@@ -73,7 +68,7 @@ export const Register: React.FC<{}> = () => {
       .then(() => {
         history.push('/');
       })
-      .catch((err) => console.log('error', err));
+      .catch((err: ErrorReason) => console.log(`Instant log in failed: ${err.reason}`));
   });
 
   const FormContainer = styled(Form)`
@@ -137,12 +132,18 @@ export const Register: React.FC<{}> = () => {
     <div>
       <Formik
         initialValues={initialValues}
-        onSubmit={(handleSubmit)}
+        onSubmit={(values, actions): Promise<void> => authService.signUp(values)
+          .then(() => {
+            history.push('/');
+          })
+          .catch((err: ErrorReason) => {
+            actions.setFieldError('checkPassword', err.reason);
+          })}
         validationSchema={SignUpSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-        <FormContainer className="form">
-          <Title className="form__title">Register Page</Title>
+        <FormContainer>
+          <Title>Register Page</Title>
           <FormFiled name="firstName" label="First Name" />
           <FormFiled name="secondName" label="Second Name" />
           <FormFiled name="email" label="Email" type="email" />
@@ -150,11 +151,11 @@ export const Register: React.FC<{}> = () => {
           <FormFiled name="phone" label="Phone" type="tel" />
           <FormFiled name="password" label="Password" type="password" />
           <FormFiled name="checkPassword" label="Check Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Submit</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
         </FormContainer>
       )}
       </Formik>
-      <AuthorizeButton type="button" className="button" onClick={goAuth}>Already have an account?</AuthorizeButton>
+      <AuthorizeButton type="button" onClick={goAuth}>Already have an account?</AuthorizeButton>
     </div>
   );
 };

@@ -45,18 +45,17 @@ const ErrorText = styled(ErrorMessage)`
 const FormField: React.FC<FormikFieldProps> = ({
   name, label, type = 'text',
 }) => (
-    <FormElement className="formField">
-      <Label htmlFor="firstName" className="formField__label">{label}</Label>
+    <FormElement>
+      <Label htmlFor="firstName">{label}</Label>
       <Input
         label={label}
         name={name}
         type={type}
         autoComplete="off"
-        helperText={<ErrorMessage name={name} />}
-        className="formField__input"
+
       />
-      <ErrorPlaceholder className="formField__error-placeholder">
-        <ErrorText component="p" className="formField__error" name={name} />
+      <ErrorPlaceholder>
+        <ErrorText component="p" name={name} />
       </ErrorPlaceholder>
     </FormElement>
 );

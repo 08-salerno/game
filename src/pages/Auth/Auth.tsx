@@ -7,6 +7,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/FormField';
 import AuthService from '../../modules/api/AuthService';
+import { ErrorReason } from '../../modules/api/types';
 
 const authService = new AuthService();
 
@@ -31,11 +32,6 @@ export const Auth: React.FC<{}> = () => {
     login: '',
     password: '',
   };
-  const handleSubmit = (values: MyFormValues): Promise<void> => authService.signIn(values)
-    .then(() => {
-      history.push('/');
-    })
-    .catch(console.log);
 
   const goRegister = (): void => {
     history.push('/register');
@@ -46,7 +42,7 @@ export const Auth: React.FC<{}> = () => {
       .then(() => {
         history.push('/');
       })
-      .catch(console.log);
+      .catch((err: ErrorReason) => console.log(`Instant log in failed: ${err.reason}`));
   });
 
   const FormContainer = styled(Form)`
@@ -105,24 +101,29 @@ export const Auth: React.FC<{}> = () => {
       background-color: #D2B4DE;
     }
   `;
-
   return (
     <div>
       <Formik
         initialValues={initialValues}
-        onSubmit={(handleSubmit)}
+        onSubmit={(values, actions): Promise<void> => authService.signIn(values)
+          .then(() => {
+            history.push('/');
+          })
+          .catch((err: ErrorReason) => {
+            actions.setFieldError('password', err.reason);
+          })}
         validationSchema={SignInSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-        <FormContainer className="form">
-          <Title className="form__title">Auth Page</Title>
+        <FormContainer>
+          <Title>Auth Page</Title>
           <FormFiled name="login" label="Login" />
           <FormFiled name="password" label="Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting} className="button form__button">Submit</SubmitButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
         </FormContainer>
       )}
       </Formik>
-      <RegisterButton type="button" className="button" onClick={goRegister}>Don&apos;t have an account?</RegisterButton>
+      <RegisterButton type="button" onClick={goRegister}>Don&apos;t have an account?</RegisterButton>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { User } from './types';
+import { User, ErrorReason } from './types';
 
 const url = 'https://ya-praktikum.tech/api/v2';
 
@@ -11,4 +11,8 @@ export function apiUrl(endPoint: string): string {
 
 export function asUser(value: unknown): User {
   return value as User;
+}
+
+export function asError(value: unknown): ErrorReason {
+  return value as ErrorReason;
 }
