@@ -7,7 +7,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import FormFiled from '../../components/FormField';
 import AuthService from '../../modules/api/AuthService';
-import { User, ErrorReason } from '../../modules/api/types';
+import { ErrorReason } from '../../modules/api/types';
 
 const authService = new AuthService();
 
@@ -68,7 +68,7 @@ export const Register: React.FC<{}> = () => {
       .then(() => {
         history.push('/');
       })
-      .catch((err) => console.log('error', err));
+      .catch((err: ErrorReason) => console.log(`Instant log in failed: ${err.reason}`));
   });
 
   const FormContainer = styled(Form)`

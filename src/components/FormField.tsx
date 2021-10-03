@@ -52,7 +52,6 @@ const FormField: React.FC<FormikFieldProps> = ({
         name={name}
         type={type}
         autoComplete="off"
-        helperText={<ErrorMessage name={name} />}
 
       />
       <ErrorPlaceholder>

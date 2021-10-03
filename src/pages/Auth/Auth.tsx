@@ -42,7 +42,7 @@ export const Auth: React.FC<{}> = () => {
       .then(() => {
         history.push('/');
       })
-      .catch(console.log);
+      .catch((err: ErrorReason) => console.log(`Instant log in failed: ${err.reason}`));
   });
 
   const FormContainer = styled(Form)`
