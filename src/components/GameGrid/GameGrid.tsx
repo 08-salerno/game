@@ -4,18 +4,14 @@ import React, {
 } from 'react';
 import Canvas from '../Canvas/Canvas';
 
-// Корректно НЕ РАБОТАЕТ, что-то перерисовывается раз через раз, но не адекватно
-// нужно отдебажить. Самописные логика игры и алгоритмы пересчетов.
-// По завершению появятся развернутые комментарии на каждое движение, иначе не разобраться.
+// TIR = Three in row
 
 type Color = 'red' | 'green' | 'blue' | 'yellow' | 'white' | 'pink' | 'purple';
-
 type Coordinates = [number, number]
 type Item = { color: Color, x: number, y: number };
 type Combination = [Coordinates, Coordinates]
-type CombinationWithItemsForRemove = [Coordinates, Coordinates, Coordinates[]]
-// type CombinationList = [Coordinates, Coordinates][];
 type ItemsForRemove = Coordinates[]
+type CombinationWithItemsForRemove = [Coordinates, Coordinates, ItemsForRemove]
 type CombinationListWithItemsForRemove = [Coordinates, Coordinates, Coordinates[]][];
 
 const colors: Color[] = ['red', 'green', 'blue', 'yellow', 'white', 'pink', 'purple'];
@@ -23,6 +19,8 @@ const colors: Color[] = ['red', 'green', 'blue', 'yellow', 'white', 'pink', 'pur
 type GridData = Item[][];
 
 const squareColors = ['rgba(56, 66, 75, 1)', 'rgba(69, 79, 87, 1)'];
+
+const gridSize = 9;
 
 const squareSize = 100;
 
@@ -40,7 +38,7 @@ function getRandomColor(excludes?: Color[]): Color {
   return colorsCopy[Math.floor(Math.random() * colorsCopy.length)];
 }
 
-function getItemByCoord([x, y]: Coordinates): Coordinates {
+function getItemCoordsByClickCoords([x, y]: Coordinates): Coordinates {
   const res: Coordinates = [0, 0];
   if (x !== 0) {
     res[0] = Math.floor(x / 100) * 100;
@@ -65,8 +63,8 @@ function drawGrid(ctx: CanvasRenderingContext2D, data: GridData): void {
 
 function getInitialGrid(): [Item][] {
   const gridObj: GridData = [];
-  for (let column = 0; column < 9; column++) {
-    for (let row = 0; row < 9; row++) {
+  for (let column = 0; column < gridSize; column++) {
+    for (let row = 0; row < gridSize; row++) {
       const cellX = column * squareSize;
       const cellY = row * squareSize;
 
@@ -86,7 +84,7 @@ function getInitialGrid(): [Item][] {
   return gridObj as [Item][];
 }
 
-function hasDuplicates(arr: (string | number)[]): boolean {
+function arrHasTIR(arr: (string | number)[]): boolean {
   let lastItem = arr[0];
   let counter = 0;
   for (let i = 0; i < arr.length; i++) {
@@ -104,16 +102,16 @@ function hasDuplicates(arr: (string | number)[]): boolean {
   return false;
 }
 
-function checkGridHasCombination(grid: GridData): boolean {
+function gridHasTIR(grid: GridData): boolean {
   return grid
-    .map((column) => hasDuplicates(column.map((item) => item.color)))
+    .map((column) => arrHasTIR(column.map((item) => item.color)))
     .some((arrHasDuplicates) => arrHasDuplicates)
     || turnDataGrid(grid)
-      .map((column) => hasDuplicates(column.map((item) => item.color)))
+      .map((column) => arrHasTIR(column.map((item) => item.color)))
       .some((arrHasDuplicates) => arrHasDuplicates);
 }
 
-function checkCombinationsEquals(first: CombinationWithItemsForRemove | Combination,
+function combinationsEquals(first: CombinationWithItemsForRemove | Combination,
   second: CombinationWithItemsForRemove | Combination): boolean {
   const fistCombinationsEquals = first[0][0] === second[0][0]
     && first[0][1] === second[0][1];
@@ -131,11 +129,11 @@ function checkCombinationsEquals(first: CombinationWithItemsForRemove | Combinat
     || (swappedFistCombinationsEquals && swappedSecondCombinationsEquals);
 }
 
-function findCombination(grid: GridData): CombinationListWithItemsForRemove {
+function findCombinations(grid: GridData): CombinationListWithItemsForRemove {
   const res: CombinationListWithItemsForRemove = [];
 
   function checkGridBorderCorrect(index: number): boolean {
-    return index >= 0 && index <= 8;
+    return index >= 0 && index <= gridSize - 1;
   }
 
   function checkItemsHaveNeededColor(currentColor: Color,
@@ -147,7 +145,7 @@ function findCombination(grid: GridData): CombinationListWithItemsForRemove {
     const listCopy = [...combinationList];
     listCopy.forEach((_, i) => {
       if (listCopy[i + 1] === undefined) return;
-      if (checkCombinationsEquals(listCopy[i], listCopy[i + 1])) {
+      if (combinationsEquals(listCopy[i], listCopy[i + 1])) {
         listCopy.splice(i, 1);
       }
     });
@@ -156,28 +154,28 @@ function findCombination(grid: GridData): CombinationListWithItemsForRemove {
 
   function findCombinationInColumnDirection(grid: GridData): CombinationListWithItemsForRemove {
     const res: CombinationListWithItemsForRemove = [];
-    grid.forEach(((column, i) => {
-      column.forEach((item, k) => {
+    grid.forEach(((column, columnIndex) => {
+      column.forEach((item, itemIndex) => {
         const currentColor = item.color;
         const itemSplit = [-2, -1, 1, 2];
         itemSplit.forEach((split) => {
-          const inBorder = checkGridBorderCorrect(k + split);
+          const inBorder = checkGridBorderCorrect(itemIndex + split);
           const position = Math.abs(split) === 1 ? 'near' : 'far';
           if (inBorder) {
-            if (column[k + split].color === currentColor) {
+            if (column[itemIndex + split].color === currentColor) {
               const itemsForCheck: Item[] = [];
               let columnSplit: number;
               const rowSplit = 1;
               if (position === 'near') {
-                columnSplit = split < 0 ? k - 2 : k + 2;
+                columnSplit = split < 0 ? itemIndex - 2 : itemIndex + 2;
               } else {
-                columnSplit = split < 0 ? k - 1 : k + 1;
+                columnSplit = split < 0 ? itemIndex - 1 : itemIndex + 1;
               }
-              if (checkGridBorderCorrect(i - rowSplit) && checkGridBorderCorrect(columnSplit)) {
-                itemsForCheck.push(grid[i - rowSplit][columnSplit]);
+              if (checkGridBorderCorrect(columnIndex - rowSplit) && checkGridBorderCorrect(columnSplit)) {
+                itemsForCheck.push(grid[columnIndex - rowSplit][columnSplit]);
               }
-              if (checkGridBorderCorrect(i + rowSplit) && checkGridBorderCorrect(columnSplit)) {
-                itemsForCheck.push(grid[i + rowSplit][columnSplit]);
+              if (checkGridBorderCorrect(columnIndex + rowSplit) && checkGridBorderCorrect(columnSplit)) {
+                itemsForCheck.push(grid[columnIndex + rowSplit][columnSplit]);
               }
               const combinationList: CombinationListWithItemsForRemove = checkItemsHaveNeededColor(currentColor,
                 itemsForCheck)
@@ -204,15 +202,21 @@ function findCombination(grid: GridData): CombinationListWithItemsForRemove {
                 });
 
               if (position === 'near') {
-                const columnSplitForFurther = split < 0 ? k - 3 : k + 3;
+                const columnSplitForFurther = split < 0 ? itemIndex - 3 : itemIndex + 3;
                 if (checkGridBorderCorrect(columnSplitForFurther)
                   && column[columnSplitForFurther].color === currentColor) {
-                  const plusOneSplit = split < 0 ? k - 1 : k + 1;
-                  combinationList.push([
+                  const plusTwoSplit = split < 0 ? itemIndex - 2 : itemIndex + 2;
+                  const plusOneSplit = split < 0 ? itemIndex - 1 : itemIndex + 1;
+                  const itemsForRemove:ItemsForRemove = [[column[plusTwoSplit].x, column[plusTwoSplit].y],
+                    [column[itemIndex].x, column[itemIndex].y],
+                    [column[plusOneSplit].x, column[plusOneSplit].y]];
+                  const combinationForPush:[Coordinates, Coordinates, Coordinates[]] = [
                     [column[columnSplitForFurther].x, column[columnSplitForFurther].y],
-                    [column[plusOneSplit].x, column[plusOneSplit].y],
-                    [],
-                  ]);
+                    [column[plusTwoSplit].x, column[plusTwoSplit].y],
+                    itemsForRemove,
+                  ];
+
+                  combinationList.push(combinationForPush);
                 }
               }
               res.push(...combinationList);
@@ -244,10 +248,10 @@ function replaceHorizontalCombination(data: GridData): GridData {
   return turnDataGrid(replaceVerticalCombination(turnDataGrid(data)));
 }
 
-function replaceVerticalCombination(data: GridData): GridData {
-  return data.map((itemArray) => {
+function replaceVerticalCombination(grid: GridData): GridData {
+  return grid.map((column) => {
     const duplicateCounter: { [key in Color]?: number } = {};
-    (itemArray.map((item) => item.color) as Color[]).forEach((color) => {
+    (column.map((item) => item.color) as Color[]).forEach((color) => {
       if (duplicateCounter[color] !== undefined) {
         (duplicateCounter[color] as number) += 1;
       } else {
@@ -258,7 +262,7 @@ function replaceVerticalCombination(data: GridData): GridData {
     const duplicatesColors: Color[] = (Object.keys(duplicateCounter) as Color[])
       .filter((color) => (duplicateCounter[color] as number) >= 3);
 
-    return itemArray.map((item) => {
+    return column.map((item) => {
       if (duplicatesColors.includes(item.color as Color)) {
         return {
           ...item,
@@ -280,79 +284,99 @@ function turnDataGrid(data: GridData): GridData {
   return emptyGrid;
 }
 
-function checkCombinationsIncludesCoords(combinations: CombinationListWithItemsForRemove,
+function combinationsIncludesCoords(combinations: CombinationListWithItemsForRemove,
   coords: Combination): boolean {
-  return combinations.some(((combination) => checkCombinationsEquals(combination, coords)));
+  return combinations.some(((combination) => combinationsEquals(combination, coords)));
 }
 
-function checkItemsCoordsEquals(first: Coordinates, second: Coordinates): boolean {
+function itemsCoordsEquals(first: Coordinates, second: Coordinates): boolean {
   return first[0] === second[0] && first[1] === second[1];
 }
 
-function checkItemsSiblings(first: Coordinates, second: Coordinates): boolean {
+function itemsSiblings(first: Coordinates, second: Coordinates): boolean {
   return (Math.abs(first[0] - second[0]) === 100 && Math.abs(first[1] - second[1]) === 0)
     || (Math.abs(first[1] - second[1]) === 100 && Math.abs(first[0] - second[0]) === 0);
 }
+
+function coordsArrIncludesNeededCoords(coordArr:Coordinates[], coord:Coordinates):boolean {
+  return coordArr.some((coordinate) => coordinate[0] === coord[0] && coordinate[1] === coord[1]);
+}
+function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItemsForRemove,
+  firstClickCoord:Coordinates, secondClickCoord:Coordinates):GridData {
+  const currentCombination = ((combinations as CombinationListWithItemsForRemove)
+    .find((combination) => combinationsEquals(combination, [firstClickCoord as Coordinates,
+      secondClickCoord])) as CombinationWithItemsForRemove);
+
+  const itemsForRemove:ItemsForRemove = currentCombination[2];
+
+  let newGridData = data.map((column, i) => {
+    const currentColumnItemsForRemove = itemsForRemove
+      .filter((coords) => coords[0] === column[i].x);
+    const beginRemovingIndex = currentColumnItemsForRemove.length === 0 ? 0
+      : Math.min(...currentColumnItemsForRemove.map((coords) => coords[1])) / 100;
+
+    const deletedQuantity = currentColumnItemsForRemove.length;
+    const columnCopy = [...column]
+      .filter((item) => !coordsArrIncludesNeededCoords(currentColumnItemsForRemove, [item.x, item.y]))
+      .map((item, i) => {
+        if (!deletedQuantity) return item;
+        if (i < beginRemovingIndex) {
+          return {
+            ...item,
+            x: item.x,
+            y: item.y + deletedQuantity * 100,
+          };
+        }
+        return item;
+      });
+    for (let k = columnCopy.length; k !== gridSize; k++) {
+      columnCopy.unshift({
+        x: column[i].x,
+        y: (gridSize - k - 1) * 100,
+        color: getRandomColor(),
+      });
+    }
+
+    return columnCopy;
+  });
+  if (gridHasTIR(newGridData)) {
+    // Рекурсивный вызов, чтобы при взрыве НЕ появилось новых TIR,
+    // Можно переписать на появление и взрыв новых с использованием findCombination и подсчитать очки
+    //Бывает ошибка с слишком большим кол-во вызовов
+    newGridData = getUpdatedDataGrid(data, combinations, firstClickCoord, secondClickCoord);
+  }
+  return newGridData;
+}
+//TODO нету свапа, и (НЕ ТОЧНО) не взрывается 4 по горизонтали
+// и нужна нормальная рекурсия с подсчетом очков возможно
 
 const GameGrid: React.FC = () => {
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
   const [firstRendered, setFirstRender] = useState<boolean>(false);
   const [firstClickCoord, setFirstClickCoord] = useState<Coordinates | null>(null);
   const [combinations, setCombinations] = useState<CombinationListWithItemsForRemove | null>(null);
+  const [points, setPoints] = useState<number>(0);
 
   function handleClick(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
-    const currentItemCoord = getItemByCoord(getCursorPosition(event));
+    const currentItemCoord = getItemCoordsByClickCoords(getCursorPosition(event));
     if (!firstClickCoord) {
       setFirstClickCoord(currentItemCoord);
       return;
     }
-    if (!checkItemsSiblings(firstClickCoord, currentItemCoord)) {
+    if (!itemsSiblings(firstClickCoord, currentItemCoord)) {
       setFirstClickCoord(currentItemCoord);
       return;
     }
-    function coordArrIncludesNeededCoord(coordArr:Coordinates[], coord:Coordinates):boolean {
-      return coordArr.some((coordinate) => coordinate[0] === coord[0] && coordinate[1] === coord[1]);
-    }
 
-    if (!checkItemsCoordsEquals(firstClickCoord, currentItemCoord)) {
-      const hasSuccessCombination = checkCombinationsIncludesCoords(combinations as CombinationListWithItemsForRemove,
+    if (!itemsCoordsEquals(firstClickCoord, currentItemCoord)) {
+      const hasSuccessCombination = combinationsIncludesCoords(combinations as CombinationListWithItemsForRemove,
         [firstClickCoord, currentItemCoord]);
-
       if (hasSuccessCombination) {
-        const itemsForRemove:ItemsForRemove = ((combinations as CombinationListWithItemsForRemove)
-          .find((combination) => checkCombinationsEquals(combination, [firstClickCoord,
-            currentItemCoord])) as CombinationWithItemsForRemove)[2];
-
-        const newGridData = gridData.map((column, i) => {
-          const currentColumnItemsForRemove = itemsForRemove
-            .filter((coords) => coords[0] === column[i].x);
-          if (!currentColumnItemsForRemove.length) return column;
-          const beginRemovingIndex = Math.min(...currentColumnItemsForRemove.map((coords) => coords[1])) / 100;
-          const deletedQuantity = currentColumnItemsForRemove.length;
-          console.log(itemsForRemove, currentColumnItemsForRemove, beginRemovingIndex, deletedQuantity);
-          const columnCopy = [...column]
-            .filter((item) => !coordArrIncludesNeededCoord(currentColumnItemsForRemove, [item.x, item.y]))
-            .map((item, i) => {
-              if (i < beginRemovingIndex) {
-                return {
-                  ...item,
-                  x: item.x + deletedQuantity * 100,
-                  y: item.y + deletedQuantity * 100,
-                };
-              }
-              return item;
-            });
-
-          while (columnCopy.length !== 8) {
-            columnCopy.unshift({
-              x: columnCopy[0].x - 100,
-              y: columnCopy[0].y - 100,
-              color: getRandomColor(),
-            });
-          }
-          return columnCopy;
-        });
-        setGridData(newGridData);
+        const updatedDataGrid = getUpdatedDataGrid(gridData, combinations as CombinationListWithItemsForRemove, firstClickCoord, currentItemCoord);
+        const updatedCombinations = findCombinations(updatedDataGrid);
+        setPoints((points) => points + 1);
+        setGridData(updatedDataGrid);
+        setCombinations(updatedCombinations);
       }
       setFirstClickCoord(null);
     }
@@ -363,17 +387,17 @@ const GameGrid: React.FC = () => {
   const draw = useCallback((ctx: CanvasRenderingContext2D): void => {
     let gridDataCopy: GridData = [...gridData];
 
-    let gridHasCombination = checkGridHasCombination(gridDataCopy);
+    let gridHasCombination = gridHasTIR(gridDataCopy);
 
     function firstRender(): void {
       if (gridHasCombination) {
         gridDataCopy = replaceCombinations(gridDataCopy);
-        gridHasCombination = checkGridHasCombination(gridDataCopy);
+        gridHasCombination = gridHasTIR(gridDataCopy);
         firstRender();
       } else {
         setFirstRender(true);
         setGridData(gridDataCopy);
-        setCombinations(findCombination(gridDataCopy));
+        setCombinations(findCombinations(gridDataCopy));
       }
     }
 
@@ -387,7 +411,9 @@ const GameGrid: React.FC = () => {
 
   return (
     <div>
-      <Canvas onClick={memoHandleClick} width={1000} height={1000} draw={draw} />
+      <h1>Комбинаций осталось: {combinations?.length}</h1>
+      <h1>Очков набрано {points * 100}</h1>
+      <Canvas onClick={memoHandleClick} width={gridSize * 100} height={gridSize * 100} draw={draw} />
     </div>
 
   );
