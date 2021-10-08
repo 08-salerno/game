@@ -1,49 +1,64 @@
 /* eslint-disable no-console */
-import * as React from 'react';
-import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
+import { object, string } from 'yup';
 import FormFiled from '../../components/FormField';
 import AuthService from '../../modules/api/AuthService';
 import { ErrorReason } from '../../modules/api/types';
+import { FormikSubmit } from '../../modules/utils/formik.utils';
+import { useAppDispatch, useAppSelector } from '../../modules/redux/hooks';
+import { selectUser } from '../../modules/redux/slices/userSlice';
+import { fetchUserAction } from '../../modules/redux/sagas/user.saga';
+import useAppRouter from '../../modules/router/router';
 
 const authService = new AuthService();
 
- interface MyFormValues {
-   login: string;
-   password: string;
- }
+interface MyFormValues {
+  login: string;
+  password: string;
+}
 
-const SignInSchema = Yup.object().shape({
-  login: Yup.string()
+const SignInSchema = object().shape({
+  login: string()
     .min(2, 'Login is too short')
     .max(30, 'Login is too long')
     .required('Required'),
-  password: Yup.string()
+  password: string()
     .min(6, 'Password must contain at least 6 symbols')
     .required('Required'),
 });
 
 export const Auth: React.FC<{}> = () => {
-  const history = useHistory();
   const initialValues: MyFormValues = {
     login: '',
     password: '',
   };
 
-  const goRegister = (): void => {
-    history.push('/register');
+  const router = useAppRouter();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const dispatchFetchUser = (): void => {
+    dispatch(fetchUserAction);
   };
 
   useEffect(() => {
-    authService.getUser()
-      .then(() => {
-        history.push('/');
-      })
-      .catch((err: ErrorReason) => console.log(`Instant log in failed: ${err.reason}`));
-  });
+    if (user) {
+      router.goMain();
+    } else {
+      dispatchFetchUser();
+    }
+  }, [user]);
+
+  const handleSubmit: FormikSubmit<MyFormValues> = (values, actions): Promise<void> => authService
+    .signIn(values)
+    .then(() => {
+      dispatchFetchUser();
+      router.goMain();
+    })
+    .catch((err: ErrorReason) => {
+      actions.setErrors({ password: err.reason });
+    });
 
   const FormContainer = styled(Form)`
     display: flex;
@@ -82,13 +97,13 @@ export const Auth: React.FC<{}> = () => {
     padding: 0 8px;
     border-radius: 8px;
     color: black;
-    background-color: #D6EAF8;
+    background-color: #d6eaf8;
 
     &:hover {
-      background-color: #AED6F1;
+      background-color: #aed6f1;
     }
     &:disabled {
-      background-color: #EBF5FB;
+      background-color: #ebf5fb;
     }
   `;
   const RegisterButton = styled(Button)`
@@ -98,35 +113,33 @@ export const Auth: React.FC<{}> = () => {
     padding: 0 8px;
     border-radius: 8px;
     color: black;
-    background-color: #E8DAEF;
+    background-color: #e8daef;
 
     &:hover {
-      background-color: #D2B4DE;
+      background-color: #d2b4de;
     }
   `;
   return (
     <div>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values, actions): Promise<void> => authService.signIn(values)
-          .then(() => {
-            history.push('/');
-          })
-          .catch((err: ErrorReason) => {
-            actions.setFieldError('password', err.reason);
-          })}
+        onSubmit={handleSubmit}
         validationSchema={SignInSchema}
       >
-      {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-        <FormContainer>
-          <Title>Auth Page</Title>
-          <FormFiled name="login" label="Login" />
-          <FormFiled name="password" label="Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
-        </FormContainer>
-      )}
+        {({ dirty, isValid, isSubmitting }): React.ReactElement => (
+          <FormContainer>
+            <Title>Auth Page</Title>
+            <FormFiled name="login" label="Login" />
+            <FormFiled name="password" label="Password" type="password" />
+            <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>
+              Submit
+            </SubmitButton>
+          </FormContainer>
+        )}
       </Formik>
-      <RegisterButton type="button" onClick={goRegister}>Don&apos;t have an account?</RegisterButton>
+      <RegisterButton type="button" onClick={router.goRegister}>
+        Don&apos;t have an account?
+      </RegisterButton>
     </div>
   );
 };
