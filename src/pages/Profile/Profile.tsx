@@ -1,17 +1,18 @@
 /* eslint-disable no-console */
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
+import { object, string } from 'yup';
 import FormFiled from '../../components/FormField';
 import UserService from '../../modules/api/UserService';
-import AuthService from '../../modules/api/AuthService';
 import { ErrorReason } from '../../modules/api/types';
+import { selectUser } from '../../modules/redux/slices/userSlice';
+import { useAppDispatch, useAppSelector } from '../../modules/redux/hooks';
+import { logoutUserAction } from '../../modules/redux/sagas/user.saga';
+import useAppRouter from '../../modules/router/router';
 
 const userService = new UserService();
-const authService = new AuthService();
 
 interface UserDataFormValues {
   firstName: string;
@@ -26,34 +27,34 @@ interface UserPasswordFormValues {
   newPassword: string;
 }
 
-const userDataSchema = Yup.object().shape({
-  firstName: Yup.string()
+const userDataSchema = object().shape({
+  firstName: string()
     .min(2, 'Name is too short')
     .max(30, 'Name is too long')
     .required('Required'),
-  secondName: Yup.string()
+  secondName: string()
     .min(2, 'Surname is too short')
     .max(30, 'Surname is too long')
     .required('Required'),
-  displayName: Yup.string()
+  displayName: string()
     .min(2, 'Display name is too short')
     .max(30, 'Display name is too long'),
-  email: Yup.string()
+  email: string()
     .email('Email is invalid')
     .required('Required'),
-  login: Yup.string()
+  login: string()
     .min(2, 'Login is too short')
     .max(30, 'Login is too long')
     .required('Required'),
-  phone: Yup.string()
+  phone: string()
     .matches(/^(\+7|8)[0-9]{10}$/, 'This is not correct format')
     .required('Required'),
 });
-const userPasswordSchema = Yup.object().shape({
-  oldPassword: Yup.string()
+const userPasswordSchema = object().shape({
+  oldPassword: string()
     .min(6, 'Password must contain at least 6 symbols')
     .required('Required'),
-  newPassword: Yup.string()
+  newPassword: string()
     .min(6, 'Password must contain at least 6 symbols')
     .required('Required'),
 });
@@ -67,44 +68,35 @@ export const Profile: React.FC<{}> = () => {
     login: '',
     phone: '',
   };
-  const [formValues, setformValues] = useState(userInitialValues);
+  const [formValues, setFormValues] = useState(userInitialValues);
   const userPasswordsInitialValues: UserPasswordFormValues = {
     oldPassword: '',
     newPassword: '',
   };
 
-  const goBack = (): void => {
-    history.push('/');
-  };
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const router = useAppRouter();
+
   const logOut = (): void => {
-    authService.logOut()
-      .then(() => {
-        history.push('/auth');
-      })
-      .catch((err) => {
-        console.log(err);
-        history.push('/auth');
-      });
+    dispatch(logoutUserAction);
   };
 
   useEffect(() => {
-    authService.getUser()
-      .then((res) => {
-        console.log(res);
-        setformValues((formValues) => ({
-          ...formValues,
-          firstName: res.first_name || '',
-          secondName: res.second_name || '',
-          displayName: res.display_name || '',
-          email: res.email || '',
-          login: res.login || '',
-          phone: res.phone || '',
-        }));
-      })
-      .catch(() => {
-        history.push('/');
-      });
-  }, []);
+    if (user) {
+      setFormValues((formValues) => ({
+        ...formValues,
+        firstName: user.first_name || '',
+        secondName: user.second_name || '',
+        displayName: user.display_name || '',
+        email: user.email || '',
+        login: user.login || '',
+        phone: user.phone || '',
+      }));
+    } else {
+      router.goAuth();
+    }
+  }, [user]);
 
   const FormContainer = styled(Form)`
     display: flex;
@@ -225,7 +217,7 @@ export const Profile: React.FC<{}> = () => {
         </FormContainer>
       )}
       </Formik>
-      <GoBackButton type="button" onClick={goBack}>Go back</GoBackButton>
+      <GoBackButton type="button" onClick={router.goBack}>Go back</GoBackButton>
       <LogOutButton type="button" onClick={logOut}>Log out</LogOutButton>
     </div>
   );

@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { getLeaderBord } from './api';
 import { Leader } from './types/leader';
 import usePrevious from '../../modules/utils/use-previous';
+import { selectUser, UserStateValue } from '../../modules/redux/slices/userSlice';
+import { useAppSelector } from '../../modules/redux/hooks';
 
 const LeaderBord: React.VFC = () => {
   const [leaders, setLeaders] = useState<Leader[]>([]);
   const [leadersOffset, setLeadersOffset] = useState(0);
   const [loading, setLoading] = useState(true);
   const previousLeadersOffset = usePrevious(leadersOffset);
+
+  const authorizedUser: UserStateValue = useAppSelector(selectUser);
 
   useEffect(() => {
     if (!previousLeadersOffset || (leadersOffset > previousLeadersOffset)) {
@@ -32,6 +36,17 @@ const LeaderBord: React.VFC = () => {
     setLeadersOffset(leadersOffset + leaders.length);
   };
 
+  const leaderItemMapper = (leader: Leader): React.ReactElement => {
+    const isAuthorizedUserScore = authorizedUser && authorizedUser.login === leader.login;
+    return (
+          <div key={leader.login} style={isAuthorizedUserScore ? { color: 'red' } : {}}>
+              <span>{isAuthorizedUserScore ? 'Вы' : leader.login }</span>
+              <span>&nbsp;-&nbsp;</span>
+              <span>{leader.score}</span>
+          </div>
+    );
+  };
+
   return (
         <div>
             {leaders.length === 0
@@ -42,14 +57,8 @@ const LeaderBord: React.VFC = () => {
               )
               : (
                   <>
-                      {/*todo Добавить выделение текущего пользователя,
-                          когда будет добавлен пользовательский контекст*/}
                       {leaders.map((leader) => (
-                          <div key={leader.login}>
-                              <span>{leader.login}</span>
-                              <span>&nbsp;-&nbsp;</span>
-                              <span>{leader.score}</span>
-                          </div>
+                        leaderItemMapper(leader)
                       ))}
                       {loading ? 'Загрузка...' : (
                           <div>

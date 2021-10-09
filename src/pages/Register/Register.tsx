@@ -1,17 +1,19 @@
 /* eslint-disable no-console */
-import * as React from 'react';
-import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
+import { object, string, ref } from 'yup';
 import FormFiled from '../../components/FormField';
 import AuthService from '../../modules/api/AuthService';
 import { ErrorReason } from '../../modules/api/types';
+import useAppRouter from '../../modules/router/router';
+import { useAppSelector } from '../../modules/redux/hooks';
+import { selectUser } from '../../modules/redux/slices/userSlice';
+import { FormikSubmit } from '../../modules/utils/formik.utils';
 
 const authService = new AuthService();
 
- interface MyFormValues {
+ interface SignUpFormValue {
    firstName: string;
    secondName: string;
    email: string;
@@ -21,36 +23,35 @@ const authService = new AuthService();
    checkPassword: string;
  }
 
-const SignUpSchema = Yup.object().shape({
-  firstName: Yup.string()
+const SignUpSchema = object().shape({
+  firstName: string()
     .min(2, 'Name is too short')
     .max(30, 'Name is too long')
     .required('Required'),
-  secondName: Yup.string()
+  secondName: string()
     .min(2, 'Surname is too short')
     .max(30, 'Surname is too long')
     .required('Required'),
-  email: Yup.string()
+  email: string()
     .email('Email is invalid')
     .required('Required'),
-  login: Yup.string()
+  login: string()
     .min(2, 'Login is too short')
     .max(30, 'Login is too long')
     .required('Required'),
-  phone: Yup.string()
+  phone: string()
     .matches(/^(\+7|8)[0-9]{10}$/, 'This is not correct format')
     .required('Required'),
-  password: Yup.string()
+  password: string()
     .min(6, 'Password must contain at least 6 symbols')
     .required('Required'),
-  checkPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords should match')
+  checkPassword: string()
+    .oneOf([ref('password'), null], 'Passwords should match')
     .required('Required'),
 });
 
 export const Register: React.FC<{}> = () => {
-  const history = useHistory();
-  const initialValues: MyFormValues = {
+  const initialValues: SignUpFormValue = {
     firstName: '',
     secondName: '',
     email: '',
@@ -59,17 +60,26 @@ export const Register: React.FC<{}> = () => {
     password: '',
     checkPassword: '',
   };
-  const goAuth = (): void => {
-    history.push('/auth');
-  };
+
+  const router = useAppRouter();
+  const user = useAppSelector(selectUser);
 
   useEffect(() => {
-    authService.getUser()
-      .then(() => {
-        history.push('/');
-      })
-      .catch((err: ErrorReason) => console.log(`Instant log in failed: ${err.reason}`));
+    if (user) {
+      router.goProfile();
+    }
   });
+
+  const handleSignUp: FormikSubmit<SignUpFormValue> = (value, actions): Promise<void> => authService
+    .signUp(value)
+    .then(() => {
+      router.goMain();
+    })
+    .catch((err: ErrorReason) => {
+      actions.setErrors({
+        checkPassword: err.reason,
+      });
+    });
 
   const FormContainer = styled(Form)`
     display: flex;
@@ -135,13 +145,7 @@ export const Register: React.FC<{}> = () => {
     <div>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values, actions): Promise<void> => authService.signUp(values)
-          .then(() => {
-            history.push('/');
-          })
-          .catch((err: ErrorReason) => {
-            actions.setFieldError('checkPassword', err.reason);
-          })}
+        onSubmit={handleSignUp}
         validationSchema={SignUpSchema}
       >
       {({ dirty, isValid, isSubmitting }): React.ReactElement => (
@@ -158,7 +162,7 @@ export const Register: React.FC<{}> = () => {
         </FormContainer>
       )}
       </Formik>
-      <AuthorizeButton type="button" onClick={goAuth}>Already have an account?</AuthorizeButton>
+      <AuthorizeButton type="button" onClick={router.goAuth}>Already have an account?</AuthorizeButton>
     </div>
   );
 };
