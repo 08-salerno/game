@@ -4,10 +4,17 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import Canvas from '../Canvas/Canvas';
+import acorn from './images/acorn.png';
+import bee from './images/bee.png';
+import cactus from './images/cactus.png';
+import fish from './images/fish.png';
+import mushroom from './images/mushroom.png';
+import ladybug from './images/ladybug.png';
+import snow from './images/snow.png';
 
 // TIR = Three in row
 
-type Color = 'red' | 'green' | 'blue' | 'yellow' | 'white' | 'pink' | 'purple';
+type Color = 'Sienna' | 'MediumAquamarine' | 'LightSalmon' | 'Gold' | 'white' | 'pink' | 'MediumPurple';
 type Coordinates = [number, number]
 type Item = { color: Color, x: number, y: number };
 type Combination = [Coordinates, Coordinates]
@@ -15,7 +22,7 @@ type ItemsForRemove = Coordinates[]
 type CombinationWithItemsForRemove = [Coordinates, Coordinates, ItemsForRemove]
 type CombinationListWithItemsForRemove = [Coordinates, Coordinates, Coordinates[]][];
 
-const colors: Color[] = ['red', 'green', 'blue', 'yellow', 'white', 'pink', 'purple'];
+const colors: Color[] = ['Sienna', 'MediumAquamarine', 'LightSalmon', 'Gold', 'white', 'pink', 'MediumPurple'];
 
 type GridData = Item[][];
 
@@ -28,6 +35,33 @@ const squareSize = 100;
 function drawSquare(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color: string): void {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, size, size);
+  const img = new Image();
+  switch (color) {
+    case 'Sienna':
+      img.src = acorn;
+      break;
+    case 'MediumAquamarine':
+      img.src = cactus;
+      break;
+    case 'LightSalmon':
+      img.src = fish;
+      break;
+    case 'Gold':
+      img.src = bee;
+      break;
+    case 'white':
+      img.src = snow;
+      break;
+    case 'pink':
+      img.src = mushroom;
+      break;
+    case 'MediumPurple':
+      img.src = ladybug;
+      break;
+    default:
+      break;
+  }
+  ctx.drawImage(img, x, y, size, size);
 }
 
 function getRandomColor(excludes?: Color[]): Color {
@@ -55,9 +89,9 @@ function drawGrid(ctx: CanvasRenderingContext2D, data: GridData): void {
     column.forEach((row, rowIndex) => {
       const cellX = columnIndex * squareSize;
       const cellY = rowIndex * squareSize;
-      ctx.fillStyle = (rowIndex + columnIndex) % 2 === 0 ? squareColors[0] : squareColors[1];
-      ctx.fillRect(cellX, cellY, squareSize, squareSize);
-      drawSquare(ctx, cellX + 10, cellY + 10, 80, row.color);
+      //ctx.fillStyle = (rowIndex + columnIndex) % 2 === 0 ? squareColors[0] : squareColors[1];
+      //ctx.fillRect(cellX, cellY, squareSize, squareSize);
+      drawSquare(ctx, cellX, cellY, 100, row.color);
     });
   });
 }
@@ -310,6 +344,12 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
 
   const itemsForRemove:ItemsForRemove = currentCombination[2];
 
+  const a = data[firstClickCoord[0] / 100][firstClickCoord[1] / 100].color;
+  const b = data[secondClickCoord[0] / 100][secondClickCoord[1] / 100].color;
+  data[firstClickCoord[0] / 100][firstClickCoord[1] / 100].color = b;
+  data[secondClickCoord[0] / 100][secondClickCoord[1] / 100].color = a;
+
+  const movingDownTiles: GridData = [];
   let newGridData = data.map((column, i) => {
     const currentColumnItemsForRemove = itemsForRemove
       .filter((coords) => coords[0] === column[i].x);
@@ -317,29 +357,37 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
       : Math.min(...currentColumnItemsForRemove.map((coords) => coords[1])) / 100;
 
     const deletedQuantity = currentColumnItemsForRemove.length;
-    const columnCopy = [...column]
-      .filter((item) => !coordsArrIncludesNeededCoords(currentColumnItemsForRemove, [item.x, item.y]))
-      .map((item, i) => {
-        if (!deletedQuantity) return item;
-        if (i < beginRemovingIndex) {
-          return {
-            ...item,
-            x: item.x,
-            y: item.y + deletedQuantity * 100,
-          };
-        }
-        return item;
-      });
+    let columnCopy = [...column]
+      .filter((item) => !coordsArrIncludesNeededCoords(currentColumnItemsForRemove, [item.x, item.y]));
+    if (deletedQuantity) {
+      console.log(column, columnCopy);
+    }
+    movingDownTiles[i] = [];
+    columnCopy = columnCopy.map((item, j) => {
+      if (!deletedQuantity) return item;
+      if (j < beginRemovingIndex) {
+        movingDownTiles[i].push(item);
+        return {
+          ...item,
+          x: item.x,
+          y: item.y + deletedQuantity * 100,
+        };
+      }
+      return item;
+    });
     for (let k = columnCopy.length; k !== gridSize; k++) {
-      columnCopy.unshift({
+      const newItem = {
         x: column[i].x,
         y: (gridSize - k - 1) * 100,
         color: getRandomColor(),
-      });
+      };
+      movingDownTiles[i].unshift({ ...newItem, y: newItem.y - 100 * deletedQuantity });
+      columnCopy.unshift(newItem);
     }
 
     return columnCopy;
   });
+  console.log(movingDownTiles);
   if (gridHasTIR(newGridData)) {
     //TODO нету свапа и нужна нормальная рекурсия с подсчетом очков возможно
     // Рекурсивный вызов, чтобы при взрыве НЕ появилось новых TIR,
@@ -348,6 +396,12 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
     newGridData = getUpdatedDataGrid(data, combinations, firstClickCoord, secondClickCoord);
   }
   return newGridData;
+}
+
+function switchTwoSquaresOnCanvas(ctx: CanvasRenderingContext2D, firstSquare: Item, secondSqare: Item): void {
+  console.log(firstSquare, secondSqare);
+  drawSquare(ctx, secondSqare.x, secondSqare.y, 100, firstSquare.color);
+  drawSquare(ctx, firstSquare.x, firstSquare.y, 100, secondSqare.color);
 }
 
 const Button = styled.button`
@@ -444,6 +498,11 @@ const GameGrid: React.FC = () => {
     <div>
       <h1>Комбинаций осталось: {combinations?.length}</h1>
       <h1>Очков набрано {points * 100}</h1>
+      <Button onClick={():void => {
+        switchTwoSquaresOnCanvas(ctx, { color: 'blue', x: 100, y: 100 }, { color: 'red', x: 200, y: 100 });
+      }}
+      >switch sqares
+      </Button>
       <Button onClick={():void => {
         setGridData(getInitialGrid());
         setFirstRender(false);
