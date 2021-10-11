@@ -3,7 +3,7 @@ import {
 } from 'redux-saga/effects';
 import { Action } from '@reduxjs/toolkit';
 import AuthService from '../../api/AuthService';
-import { putUser } from '../slices/userSlice';
+import { putUser, setAuthChecked } from '../slices/userSlice';
 import { User } from '../../api/types';
 
 export const fetchUserAction: Action = { type: 'user/saga/fetch' };
@@ -16,6 +16,7 @@ function* fetchUser(): Generator<CallEffect | PutEffect, void, void> {
     const user = yield call(authService.getUser);
     yield put(putUser(user as unknown as User));
   } catch (e) {
+    yield put(setAuthChecked(true));
     // nothing
   }
 }

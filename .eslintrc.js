@@ -7,6 +7,18 @@ module.exports = {
     'plugin:react/recommended',
     'airbnb',
   ],
+  globals: {
+    React: true,
+    google: true,
+    mount: true,
+    mountWithRouter: true,
+    shallow: true,
+    shallowWithRouter: true,
+    context: true,
+    expect: true,
+    jsdom: true,
+    JSX: true,
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
@@ -48,6 +60,7 @@ module.exports = {
         'import/no-extraneous-dependencies': 'off',
         'import/no-named-as-default': 'warn',
         'import/no-cycle': 'off',
+        'no-nested-ternary': 'warn',
         'no-param-reassign': [
           2,
           {
@@ -56,7 +69,7 @@ module.exports = {
         ],
         '@typescript-eslint/no-explicit-any': 'error',
         '@typescript-eslint/ban-ts-comment': 'warn',
-        '@typescript-eslint/no-unused-vars': 'warn',
+        '@typescript-eslint/no-unused-vars': 'off',
         '@typescript-eslint/no-unsafe-return': 'warn',
         '@typescript-eslint/explicit-module-boundary-types': 'error',
         '@typescript-eslint/no-unsafe-assignment': 'off',

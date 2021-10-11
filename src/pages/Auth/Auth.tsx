@@ -3,14 +3,17 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Formik, Form } from 'formik';
 import { object, string } from 'yup';
+import { Location } from 'history';
+import { StaticContext } from 'react-router';
+import { RouteComponentProps } from 'react-router-dom';
 import FormFiled from '../../components/FormField';
 import AuthService from '../../modules/api/AuthService';
 import { ErrorReason } from '../../modules/api/types';
 import { FormikSubmit } from '../../modules/utils/formik.utils';
 import { useAppDispatch, useAppSelector } from '../../modules/redux/hooks';
-import { selectUser } from '../../modules/redux/slices/userSlice';
 import { fetchUserAction } from '../../modules/redux/sagas/user.saga';
 import useAppRouter from '../../modules/router/router';
+import { selectUser } from '../../modules/redux/slices/userSlice';
 
 const authService = new AuthService();
 
@@ -19,6 +22,9 @@ interface MyFormValues {
   password: string;
 }
 
+type LocationState = {
+  from: Location;
+};
 const SignInSchema = object().shape({
   login: string()
     .min(2, 'Login is too short')
@@ -29,7 +35,7 @@ const SignInSchema = object().shape({
     .required('Required'),
 });
 
-export const Auth: React.FC<{}> = () => {
+export const Auth: React.FC<RouteComponentProps<{}, StaticContext, LocationState>> = (props) => {
   const initialValues: MyFormValues = {
     login: '',
     password: '',
@@ -44,7 +50,8 @@ export const Auth: React.FC<{}> = () => {
 
   useEffect(() => {
     if (user) {
-      router.goMain();
+      const to = props.location?.state?.from?.pathname ?? '/';
+      router.go(to);
     } else {
       dispatchFetchUser();
     }
@@ -54,7 +61,8 @@ export const Auth: React.FC<{}> = () => {
     .signIn(values)
     .then(() => {
       dispatchFetchUser();
-      router.goMain();
+      console.log('props.location.state.from.pathname', props.location.state.from.pathname);
+      router.go(props.location.state.from.pathname);
     })
     .catch((err: ErrorReason) => {
       actions.setErrors({ password: err.reason });
