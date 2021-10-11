@@ -127,4 +127,7 @@ module.exports = {
       },
     ],
   },
+  globals: {
+    PRODUCTION: true,
+  },
 };

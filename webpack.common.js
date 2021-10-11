@@ -5,11 +5,13 @@ module.exports = {
   mode: 'development',
   entry: {
     app: './src/index.tsx',
+    'service-worker': './src/modules/service-worker/service-worker.ts',
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/static/index.html',
       title: '08-salerno',
+      excludeChunks: ['service-worker'],
     }),
   ],
   module: {

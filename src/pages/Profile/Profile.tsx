@@ -90,7 +90,6 @@ export const Profile: React.FC<{}> = () => {
   useEffect(() => {
     authService.getUser()
       .then((res) => {
-        console.log(res);
         setformValues((formValues) => ({
           ...formValues,
           firstName: res.first_name || '',
