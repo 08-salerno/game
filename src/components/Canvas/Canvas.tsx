@@ -2,18 +2,17 @@ import React from 'react';
 import useCanvas from '../../utils/hooks';
 
 type drawHandlers = {
-  draw: (ctx: CanvasRenderingContext2D, frameCount: number) => void,
-  predraw?: (ctx: CanvasRenderingContext2D, frameCount: number) => void,
-  postdraw?: (ctx: CanvasRenderingContext2D, frameCount: number) => void,
-  //predrawanimation?: (ctx: CanvasRenderingContext2D, frameCount: number) => void,
+  draw: (ctx: CanvasRenderingContext2D) => void,
+  predraw?: (ctx: CanvasRenderingContext2D, relativeDuration: number) => void,
+  postdraw?: (ctx: CanvasRenderingContext2D) => void,
 }
 
 type Props = drawHandlers & React.CanvasHTMLAttributes<HTMLCanvasElement>
 
 const Canvas: React.FC<Props> = ({
-  draw, predraw, postdraw, /* predrawanimation, */ ...rest
+  draw, predraw, postdraw, ...rest
 }) => {
-  const canvasRef = useCanvas(draw, { predraw, postdraw/* , predrawanimation */ });
+  const canvasRef = useCanvas(draw, { predraw, postdraw });
   return <canvas ref={canvasRef} {...rest} />;
 };
 export default Canvas;

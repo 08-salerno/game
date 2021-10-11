@@ -534,31 +534,14 @@ const GameGrid: React.FC = () => {
     }
   }
 
-  const preDraw = (ctx: CanvasRenderingContext2D, frameCount: number): void => {
-    let startTime: number;
-    const animationTime: number = 500;
-
+  const preDraw = (ctx: CanvasRenderingContext2D, relativeDuration: number): void => {
     if (firstTileToSwap && secondTileToSwap) {
-      startTime = performance.now();
-      animate();
-    }
-
-    function animate(): void {
-      if (firstTileToSwap && secondTileToSwap) {
-        const time: number = performance.now();
-        const shiftTime = time - startTime;
-        const multiply = shiftTime / animationTime;
-        if (swapDirection === 'x') {
-          drawSquare(ctx, firstTileToSwap.x + 100 * multiply, firstTileToSwap.y, 100, secondTileToSwap.color);
-          drawSquare(ctx, secondTileToSwap.x - 100 * multiply, secondTileToSwap.y, 100, firstTileToSwap.color);
-        } else if (swapDirection === 'y') {
-          drawSquare(ctx, firstTileToSwap.x, firstTileToSwap.y + 100 * multiply, 100, secondTileToSwap.color);
-          drawSquare(ctx, secondTileToSwap.x, secondTileToSwap.y - 100 * multiply, 100, firstTileToSwap.color);
-        }
-
-        if (multiply < 1) {
-          requestAnimationFrame(animate);
-        }
+      if (swapDirection === 'x') {
+        drawSquare(ctx, firstTileToSwap.x + 100 * relativeDuration, firstTileToSwap.y, 100, secondTileToSwap.color);
+        drawSquare(ctx, secondTileToSwap.x - 100 * relativeDuration, secondTileToSwap.y, 100, firstTileToSwap.color);
+      } else if (swapDirection === 'y') {
+        drawSquare(ctx, firstTileToSwap.x, firstTileToSwap.y + 100 * relativeDuration, 100, secondTileToSwap.color);
+        drawSquare(ctx, secondTileToSwap.x, secondTileToSwap.y - 100 * relativeDuration, 100, firstTileToSwap.color);
       }
     }
   };
