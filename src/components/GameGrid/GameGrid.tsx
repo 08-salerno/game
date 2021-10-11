@@ -32,36 +32,53 @@ const gridSize = 9;
 
 const squareSize = 100;
 
+const acornImg = new Image();
+acornImg.src = acorn;
+const cactusImg = new Image();
+cactusImg.src = cactus;
+const fishImg = new Image();
+fishImg.src = fish;
+const beeImg = new Image();
+beeImg.src = bee;
+const snowImg = new Image();
+snowImg.src = snow;
+const mushroomImg = new Image();
+mushroomImg.src = mushroom;
+const ladybugImg = new Image();
+ladybugImg.src = ladybug;
+
 function drawSquare(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color: string): void {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, size, size);
-  const img = new Image();
+  let img: HTMLImageElement | null = null;
   switch (color) {
     case 'Sienna':
-      img.src = acorn;
+      img = acornImg;
       break;
     case 'MediumAquamarine':
-      img.src = cactus;
+      img = cactusImg;
       break;
     case 'LightSalmon':
-      img.src = fish;
+      img = fishImg;
       break;
     case 'Gold':
-      img.src = bee;
+      img = beeImg;
       break;
     case 'white':
-      img.src = snow;
+      img = snowImg;
       break;
     case 'pink':
-      img.src = mushroom;
+      img = mushroomImg;
       break;
     case 'MediumPurple':
-      img.src = ladybug;
+      img = ladybugImg;
       break;
     default:
       break;
   }
-  ctx.drawImage(img, x, y, size, size);
+  if (img) {
+    ctx.drawImage(img, x, y, size, size);
+  }
 }
 
 function getRandomColor(excludes?: Color[]): Color {
@@ -398,12 +415,6 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
   return newGridData;
 }
 
-function switchTwoSquaresOnCanvas(ctx: CanvasRenderingContext2D, firstSquare: Item, secondSqare: Item): void {
-  console.log(firstSquare, secondSqare);
-  drawSquare(ctx, secondSqare.x, secondSqare.y, 100, firstSquare.color);
-  drawSquare(ctx, firstSquare.x, firstSquare.y, 100, secondSqare.color);
-}
-
 const Button = styled.button`
   display: inline-block;
   -webkit-appearance: none;
@@ -436,6 +447,9 @@ const GameGrid: React.FC = () => {
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
   const [firstRendered, setFirstRender] = useState<boolean>(false);
   const [firstClickCoord, setFirstClickCoord] = useState<Coordinates | null>(null);
+  const [firstTileToSwap, setFirstTileToSwap] = useState<Item | null>(null);
+  const [secondTileToSwap, setSecondTileToSwap] = useState<Item | null>(null);
+  const [swapDirection, setSwapDirection] = useState<string | null>(null);
   const [combinations, setCombinations] = useState<CombinationListWithItemsForRemove | null>(null);
   const [points, setPoints] = useState<number>(0);
 
@@ -449,15 +463,16 @@ const GameGrid: React.FC = () => {
       setFirstClickCoord(currentItemCoord);
       return;
     }
-
     if (!itemsCoordsEquals(firstClickCoord, currentItemCoord)) {
       const hasSuccessCombination = combinationsIncludesCoords(combinations as CombinationListWithItemsForRemove,
         [firstClickCoord, currentItemCoord]);
       if (hasSuccessCombination) {
+        setTilesForSwap(firstClickCoord, currentItemCoord);
         const updatedDataGrid = getUpdatedDataGrid(
           gridData, combinations as CombinationListWithItemsForRemove, firstClickCoord, currentItemCoord,
         );
         const updatedCombinations = findCombinations(updatedDataGrid);
+
         setPoints((points) => points + 1);
         setGridData(updatedDataGrid);
         setCombinations(updatedCombinations);
@@ -494,15 +509,64 @@ const GameGrid: React.FC = () => {
   },
   [gridData]);
 
+  function setTilesForSwap(firstClickCoord: Coordinates, secondClickCoord: Coordinates): void {
+    console.log(firstClickCoord, secondClickCoord);
+    if (firstClickCoord && secondClickCoord) {
+      if (firstClickCoord[0] === secondClickCoord[0]) {
+        setSwapDirection('y');
+        if (firstClickCoord[1] < secondClickCoord[1]) {
+          setFirstTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+          setSecondTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+        } else if (firstClickCoord[1] > secondClickCoord[1]) {
+          setFirstTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+          setSecondTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+        }
+      } else if (firstClickCoord[1] === secondClickCoord[1]) {
+        setSwapDirection('x');
+        if (firstClickCoord[0] < secondClickCoord[0]) {
+          setFirstTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+          setSecondTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+        } else if (firstClickCoord[0] > secondClickCoord[0]) {
+          setFirstTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+          setSecondTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+        }
+      }
+    }
+  }
+
+  const preDraw = (ctx: CanvasRenderingContext2D, frameCount: number): void => {
+    let startTime: number;
+    const animationTime: number = 500;
+
+    if (firstTileToSwap && secondTileToSwap) {
+      startTime = performance.now();
+      animate();
+    }
+
+    function animate(): void {
+      if (firstTileToSwap && secondTileToSwap) {
+        const time: number = performance.now();
+        const shiftTime = time - startTime;
+        const multiply = shiftTime / animationTime;
+        if (swapDirection === 'x') {
+          drawSquare(ctx, firstTileToSwap.x + 100 * multiply, firstTileToSwap.y, 100, secondTileToSwap.color);
+          drawSquare(ctx, secondTileToSwap.x - 100 * multiply, secondTileToSwap.y, 100, firstTileToSwap.color);
+        } else if (swapDirection === 'y') {
+          drawSquare(ctx, firstTileToSwap.x, firstTileToSwap.y + 100 * multiply, 100, secondTileToSwap.color);
+          drawSquare(ctx, secondTileToSwap.x, secondTileToSwap.y - 100 * multiply, 100, firstTileToSwap.color);
+        }
+
+        if (multiply < 1) {
+          requestAnimationFrame(animate);
+        }
+      }
+    }
+  };
+
   return (
     <div>
       <h1>Комбинаций осталось: {combinations?.length}</h1>
       <h1>Очков набрано {points * 100}</h1>
-      <Button onClick={():void => {
-        switchTwoSquaresOnCanvas(ctx, { color: 'blue', x: 100, y: 100 }, { color: 'red', x: 200, y: 100 });
-      }}
-      >switch sqares
-      </Button>
       <Button onClick={():void => {
         setGridData(getInitialGrid());
         setFirstRender(false);
@@ -515,7 +579,7 @@ const GameGrid: React.FC = () => {
         </div>
       )}
       <div>
-      <Canvas onClick={memoHandleClick} width={gridSize * 100} height={gridSize * 100} draw={draw} />
+      <Canvas onClick={memoHandleClick} width={gridSize * 100} height={gridSize * 100} draw={draw} predraw={preDraw} />
       </div>
     </div>
 
