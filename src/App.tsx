@@ -16,6 +16,7 @@ import { LeaderBordRoutes } from './pages/leader-bord/routes';
 import LeaderBord from './pages/leader-bord/LeaderBord';
 import GameGrid from './components/GameGrid/GameGrid';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import withFullscreen from './components/withFullscreen';
 
 type AppRoute = {
   title: string;
@@ -35,7 +36,7 @@ const routes: AppRoute[] = [
   {
     title: 'game',
     link: '/game',
-    component: GameGrid,
+    component: withFullscreen(GameGrid),
   },
   {
     title: 'Авторизация',
