@@ -35,7 +35,7 @@ const SignInSchema = object().shape({
     .required('Required'),
 });
 
-export const Auth: React.FC<RouteComponentProps<{}, StaticContext, LocationState>> = (props) => {
+export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, LocationState>>> = (props) => {
   const initialValues: MyFormValues = {
     login: '',
     password: '',
@@ -61,8 +61,7 @@ export const Auth: React.FC<RouteComponentProps<{}, StaticContext, LocationState
     .signIn(values)
     .then(() => {
       dispatchFetchUser();
-      console.log('props.location.state.from.pathname', props.location.state.from.pathname);
-      router.go(props.location.state.from.pathname);
+      router.go((props.location as Location<LocationState>).state.from.pathname);
     })
     .catch((err: ErrorReason) => {
       actions.setErrors({ password: err.reason });

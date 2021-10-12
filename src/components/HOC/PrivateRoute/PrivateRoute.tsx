@@ -7,7 +7,6 @@ export type ProtectedRouteProps = RouteProps;
 
 const PrivateRoute = (props : RouteProps):JSX.Element => {
   const isUserAuthorized: boolean = useSelector(selectIsAuthorized);
-  console.log(isUserAuthorized, 'isUserAuthorized');
   if (isUserAuthorized) {
     return <Route {...props} />;
   }
