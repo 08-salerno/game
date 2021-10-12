@@ -12,7 +12,7 @@
         "target": "esnext",
         "sourceMap": true,
         "moduleResolution": "node",
-        "noImplicitReturns": true,
+        "noImplicitReturns": false,
         "noImplicitThis": true,
         "noImplicitAny": true,
         "strictNullChecks": true,
@@ -33,6 +33,6 @@
             "dom"
         ],
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
     }
 }

@@ -1,9 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Normalize } from 'styled-normalize';
+import App from './App';
 
-
-
-ReactDOM.render(
-    <><h1>Hello, world!</h1><Test/></>,
-    document.getElementById('root')
+const Root: React.VFC = () => (
+    <>
+        <Normalize />
+        <App />
+    </>
 );
+
+ReactDOM.render(<Root />, document.querySelector('#root'));
