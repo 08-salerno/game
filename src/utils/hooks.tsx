@@ -1,4 +1,3 @@
-import { reject } from 'lodash';
 import React, { useRef, useEffect, useState } from 'react';
 
 type Options = {
@@ -19,7 +18,7 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void,
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
     function animationInPromise(duration: number, stage: string): Promise<string> {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         if (options.predraw) {
           const startTime: number = performance.now();
           const predrawanimation = (): void => {
@@ -37,7 +36,7 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void,
           };
           predrawanimation();
         }
-        reject('no predraw');
+        reject(new Error('no predraw'));
       });
     }
     function resetAnimationsTime(): void {
@@ -56,22 +55,6 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void,
         resetAnimationsTime();
       })
       .catch(console.log);
-    //draw(context);
-
-    /*     let frameCount = 30;
-    let animationFrameId: number;
-    const render = (): void => {
-      frameCount++;
-      draw(context, frameCount);
-      if (options.postdraw) {
-        options.postdraw(context, frameCount);
-      }
-      //animationFrameId = window.requestAnimationFrame(render);
-    };
-    render();
-    return (): void => {
-      window.cancelAnimationFrame(animationFrameId);
-    }; */
   }, [draw]);
   return canvasRef;
 };
