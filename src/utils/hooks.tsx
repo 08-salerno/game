@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import { reject } from 'lodash';
+import React, { useRef, useEffect, useState } from 'react';
 
 type Options = {
-  predraw?: (ctx: CanvasRenderingContext2D, relativeDuration: number) => void
+  predraw?: (ctx: CanvasRenderingContext2D, stage: string, relativeDuration: number) => void
   postdraw?: (ctx: CanvasRenderingContext2D) => void
 }
 
@@ -9,31 +10,52 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void,
   options: Options): React.RefObject<HTMLCanvasElement> => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const [firstAnimationTime, setFirstAnimationTime] = useState<number>(0);
+  const [secondAnimationTime, setSecondAnimationTime] = useState<number>(0);
+  const [thirdAnimationTime, setThirdAnimationTime] = useState<number>(0);
+
   useEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-    const promise = new Promise((resolve) => {
-      if (options.predraw) {
-        const startTime: number = performance.now();
-        const animationTime: number = 500;
-        const predrawanimation = (): void => {
-          const time: number = performance.now();
-          const shiftTime = time - startTime;
-          const relativeDuration = shiftTime / animationTime;
-          if (options.predraw) {
-            options.predraw(context, relativeDuration);
-          }
-          if (relativeDuration < 1) {
-            requestAnimationFrame(predrawanimation);
-          } else {
-            resolve('success');
-          }
-        };
-        predrawanimation();
-      }
-    });
-    promise.then(() => draw(context));
+    function animationInPromise(duration: number, stage: string): Promise<string> {
+      return new Promise((resolve) => {
+        if (options.predraw) {
+          const startTime: number = performance.now();
+          const predrawanimation = (): void => {
+            const time: number = performance.now();
+            const shiftTime = time - startTime;
+            const relativeDuration = shiftTime / duration;
+            if (options.predraw) {
+              options.predraw(context, stage, relativeDuration);
+            }
+            if (relativeDuration < 1) {
+              requestAnimationFrame(predrawanimation);
+            } else {
+              resolve('success');
+            }
+          };
+          predrawanimation();
+        }
+        reject('no predraw');
+      });
+    }
+    function resetAnimationsTime(): void {
+      setFirstAnimationTime(500);
+      setSecondAnimationTime(300);
+      setThirdAnimationTime(700);
+    }
+
+    animationInPromise(firstAnimationTime, 'swap')
+      .then(() => animationInPromise(secondAnimationTime, 'delete'))
+      .catch(console.log)
+      .then(() => animationInPromise(thirdAnimationTime, 'fill'))
+      .catch(console.log)
+      .then(() => {
+        draw(context);
+        resetAnimationsTime();
+      })
+      .catch(console.log);
     //draw(context);
 
     /*     let frameCount = 30;
