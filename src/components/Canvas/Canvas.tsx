@@ -2,9 +2,9 @@ import React from 'react';
 import useCanvas from '../../utils/hooks';
 
 type drawHandlers = {
-  draw: (ctx: CanvasRenderingContext2D, frameCount: number) => void,
-  predraw?: () => void,
-  postdraw?: () => void,
+  draw: (ctx: CanvasRenderingContext2D) => void,
+  predraw?: (ctx: CanvasRenderingContext2D, stage: string, relativeDuration: number) => void,
+  postdraw?: (ctx: CanvasRenderingContext2D) => void,
 }
 
 type Props = drawHandlers & React.CanvasHTMLAttributes<HTMLCanvasElement>

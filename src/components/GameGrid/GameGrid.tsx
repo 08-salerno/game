@@ -4,10 +4,17 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import Canvas from '../Canvas/Canvas';
+import acorn from './images/acorn.png';
+import bee from './images/bee.png';
+import cactus from './images/cactus.png';
+import fish from './images/fish.png';
+import mushroom from './images/mushroom.png';
+import ladybug from './images/ladybug.png';
+import snow from './images/snow.png';
 
 // TIR = Three in row
 
-type Color = 'red' | 'green' | 'blue' | 'yellow' | 'white' | 'pink' | 'purple';
+type Color = 'Sienna' | 'MediumAquamarine' | 'LightSalmon' | 'Gold' | 'white' | 'pink' | 'MediumPurple';
 type Coordinates = [number, number]
 type Item = { color: Color, x: number, y: number };
 type Combination = [Coordinates, Coordinates]
@@ -15,19 +22,61 @@ type ItemsForRemove = Coordinates[]
 type CombinationWithItemsForRemove = [Coordinates, Coordinates, ItemsForRemove]
 type CombinationListWithItemsForRemove = [Coordinates, Coordinates, Coordinates[]][];
 
-const colors: Color[] = ['red', 'green', 'blue', 'yellow', 'white', 'pink', 'purple'];
+const colors: Color[] = ['Sienna', 'MediumAquamarine', 'LightSalmon', 'Gold', 'white', 'pink', 'MediumPurple'];
 
 type GridData = Item[][];
-
-const squareColors = ['rgba(56, 66, 75, 1)', 'rgba(69, 79, 87, 1)'];
 
 const gridSize = 9;
 
 const squareSize = 100;
 
+const acornImg = new Image();
+acornImg.src = acorn;
+const cactusImg = new Image();
+cactusImg.src = cactus;
+const fishImg = new Image();
+fishImg.src = fish;
+const beeImg = new Image();
+beeImg.src = bee;
+const snowImg = new Image();
+snowImg.src = snow;
+const mushroomImg = new Image();
+mushroomImg.src = mushroom;
+const ladybugImg = new Image();
+ladybugImg.src = ladybug;
+
 function drawSquare(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color: string): void {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, size, size);
+  let img: HTMLImageElement | null = null;
+  switch (color) {
+    case 'Sienna':
+      img = acornImg;
+      break;
+    case 'MediumAquamarine':
+      img = cactusImg;
+      break;
+    case 'LightSalmon':
+      img = fishImg;
+      break;
+    case 'Gold':
+      img = beeImg;
+      break;
+    case 'white':
+      img = snowImg;
+      break;
+    case 'pink':
+      img = mushroomImg;
+      break;
+    case 'MediumPurple':
+      img = ladybugImg;
+      break;
+    default:
+      break;
+  }
+  if (img) {
+    ctx.drawImage(img, x, y, size, size);
+  }
 }
 
 function getRandomColor(excludes?: Color[]): Color {
@@ -55,9 +104,9 @@ function drawGrid(ctx: CanvasRenderingContext2D, data: GridData): void {
     column.forEach((row, rowIndex) => {
       const cellX = columnIndex * squareSize;
       const cellY = rowIndex * squareSize;
-      ctx.fillStyle = (rowIndex + columnIndex) % 2 === 0 ? squareColors[0] : squareColors[1];
-      ctx.fillRect(cellX, cellY, squareSize, squareSize);
-      drawSquare(ctx, cellX + 10, cellY + 10, 80, row.color);
+      //ctx.fillStyle = (rowIndex + columnIndex) % 2 === 0 ? squareColors[0] : squareColors[1];
+      //ctx.fillRect(cellX, cellY, squareSize, squareSize);
+      drawSquare(ctx, cellX, cellY, 100, row.color);
     });
   });
 }
@@ -303,13 +352,23 @@ function coordsArrIncludesNeededCoords(coordArr:Coordinates[], coord:Coordinates
   return coordArr.some((coordinate) => coordinate[0] === coord[0] && coordinate[1] === coord[1]);
 }
 function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItemsForRemove,
-  firstClickCoord:Coordinates, secondClickCoord:Coordinates):GridData {
+  firstClickCoord:Coordinates, secondClickCoord:Coordinates): {
+    movingDownTiles: GridData,
+    itemsForRemove: ItemsForRemove,
+    newGridData: GridData
+  } {
   const currentCombination = ((combinations as CombinationListWithItemsForRemove)
     .find((combination) => combinationsEquals(combination, [firstClickCoord as Coordinates,
       secondClickCoord])) as CombinationWithItemsForRemove);
 
   const itemsForRemove:ItemsForRemove = currentCombination[2];
 
+  const a = data[firstClickCoord[0] / 100][firstClickCoord[1] / 100].color;
+  const b = data[secondClickCoord[0] / 100][secondClickCoord[1] / 100].color;
+  data[firstClickCoord[0] / 100][firstClickCoord[1] / 100].color = b;
+  data[secondClickCoord[0] / 100][secondClickCoord[1] / 100].color = a;
+
+  const movingDownTiles: GridData = [];
   let newGridData = data.map((column, i) => {
     const currentColumnItemsForRemove = itemsForRemove
       .filter((coords) => coords[0] === column[i].x);
@@ -317,25 +376,29 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
       : Math.min(...currentColumnItemsForRemove.map((coords) => coords[1])) / 100;
 
     const deletedQuantity = currentColumnItemsForRemove.length;
-    const columnCopy = [...column]
-      .filter((item) => !coordsArrIncludesNeededCoords(currentColumnItemsForRemove, [item.x, item.y]))
-      .map((item, i) => {
-        if (!deletedQuantity) return item;
-        if (i < beginRemovingIndex) {
-          return {
-            ...item,
-            x: item.x,
-            y: item.y + deletedQuantity * 100,
-          };
-        }
-        return item;
-      });
+    let columnCopy = [...column]
+      .filter((item) => !coordsArrIncludesNeededCoords(currentColumnItemsForRemove, [item.x, item.y]));
+    movingDownTiles[i] = [];
+    columnCopy = columnCopy.map((item, j) => {
+      if (!deletedQuantity) return item;
+      if (j < beginRemovingIndex) {
+        movingDownTiles[i].push(item);
+        return {
+          ...item,
+          x: item.x,
+          y: item.y + deletedQuantity * 100,
+        };
+      }
+      return item;
+    });
     for (let k = columnCopy.length; k !== gridSize; k++) {
-      columnCopy.unshift({
+      const newItem = {
         x: column[i].x,
         y: (gridSize - k - 1) * 100,
         color: getRandomColor(),
-      });
+      };
+      movingDownTiles[i].unshift({ ...newItem, y: newItem.y - 100 * deletedQuantity });
+      columnCopy.unshift(newItem);
     }
 
     return columnCopy;
@@ -345,9 +408,9 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
     // Рекурсивный вызов, чтобы при взрыве НЕ появилось новых TIR,
     // Можно переписать на появление и взрыв новых с использованием findCombination и подсчитать очки
     //Бывает ошибка с слишком большим кол-во вызовов
-    newGridData = getUpdatedDataGrid(data, combinations, firstClickCoord, secondClickCoord);
+    newGridData = getUpdatedDataGrid(data, combinations, firstClickCoord, secondClickCoord).newGridData;
   }
-  return newGridData;
+  return { movingDownTiles, itemsForRemove, newGridData };
 }
 
 const Button = styled.button`
@@ -382,6 +445,11 @@ const GameGrid: React.FC = () => {
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
   const [firstRendered, setFirstRender] = useState<boolean>(false);
   const [firstClickCoord, setFirstClickCoord] = useState<Coordinates | null>(null);
+  const [firstTileToSwap, setFirstTileToSwap] = useState<Item | null>(null);
+  const [secondTileToSwap, setSecondTileToSwap] = useState<Item | null>(null);
+  const [movingDownTiles, setMovingDownTiles] = useState<GridData>([[]]);
+  const [tilesForRemove, setTilesForRemove] = useState<ItemsForRemove>([]);
+  const [swapDirection, setSwapDirection] = useState<string | null>(null);
   const [combinations, setCombinations] = useState<CombinationListWithItemsForRemove | null>(null);
   const [points, setPoints] = useState<number>(0);
 
@@ -395,15 +463,18 @@ const GameGrid: React.FC = () => {
       setFirstClickCoord(currentItemCoord);
       return;
     }
-
     if (!itemsCoordsEquals(firstClickCoord, currentItemCoord)) {
       const hasSuccessCombination = combinationsIncludesCoords(combinations as CombinationListWithItemsForRemove,
         [firstClickCoord, currentItemCoord]);
       if (hasSuccessCombination) {
-        const updatedDataGrid = getUpdatedDataGrid(
+        setTilesForSwap(firstClickCoord, currentItemCoord);
+        const { movingDownTiles, itemsForRemove, newGridData: updatedDataGrid } = getUpdatedDataGrid(
           gridData, combinations as CombinationListWithItemsForRemove, firstClickCoord, currentItemCoord,
         );
+        setMovingDownTiles(movingDownTiles);
+        setTilesForRemove(itemsForRemove);
         const updatedCombinations = findCombinations(updatedDataGrid);
+
         setPoints((points) => points + 1);
         setGridData(updatedDataGrid);
         setCombinations(updatedCombinations);
@@ -440,13 +511,88 @@ const GameGrid: React.FC = () => {
   },
   [gridData]);
 
+  function setTilesForSwap(firstClickCoord: Coordinates, secondClickCoord: Coordinates): void {
+    if (firstClickCoord && secondClickCoord) {
+      if (firstClickCoord[0] === secondClickCoord[0]) {
+        setSwapDirection('y');
+        if (firstClickCoord[1] < secondClickCoord[1]) {
+          setFirstTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+          setSecondTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+        } else if (firstClickCoord[1] > secondClickCoord[1]) {
+          setFirstTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+          setSecondTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+        }
+      } else if (firstClickCoord[1] === secondClickCoord[1]) {
+        setSwapDirection('x');
+        if (firstClickCoord[0] < secondClickCoord[0]) {
+          setFirstTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+          setSecondTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+        } else if (firstClickCoord[0] > secondClickCoord[0]) {
+          setFirstTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+          setSecondTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+        }
+      }
+    }
+  }
+  function swapTilesAnimation(ctx: CanvasRenderingContext2D, multiplier: number): void {
+    if (firstTileToSwap && secondTileToSwap) {
+      if (swapDirection === 'x') {
+        drawSquare(ctx, firstTileToSwap.x + 100 * multiplier, firstTileToSwap.y, 100, secondTileToSwap.color);
+        drawSquare(ctx, secondTileToSwap.x - 100 * multiplier, secondTileToSwap.y, 100, firstTileToSwap.color);
+      } else if (swapDirection === 'y') {
+        drawSquare(ctx, firstTileToSwap.x, firstTileToSwap.y + 100 * multiplier, 100, secondTileToSwap.color);
+        drawSquare(ctx, secondTileToSwap.x, secondTileToSwap.y - 100 * multiplier, 100, firstTileToSwap.color);
+      }
+    }
+  }
+  function deleteTilesAnimation(ctx: CanvasRenderingContext2D, multiplier: number): void {
+    if (tilesForRemove) {
+      //ctx.fillStyle = 'black';
+      ctx.fillStyle = `rgba(255, 255, 255, ${multiplier / 5})`;
+
+      tilesForRemove.forEach((item) => {
+        ctx.fillRect(item[0], item[1], 100, 100);
+        /* ctx.fillRect(
+          item[0] + 50 * (1 - relativeDuration), item[1] + 50 * (1 - relativeDuration),
+          100 * relativeDuration, 100 * relativeDuration,
+        ); */
+      });
+    }
+  }
+  function fillTilesAnimation(ctx: CanvasRenderingContext2D, multiplier: number): void {
+    if (movingDownTiles) {
+      movingDownTiles.forEach((column) => {
+        const length = column.reduce((prev, { y }) => (y < 0 ? prev + 1 : prev), 0);
+        column.forEach((tile) => {
+          drawSquare(ctx, tile.x, tile.y + length * 100 * multiplier, 100, tile.color);
+        });
+      });
+    }
+  }
+  const preDraw = (ctx: CanvasRenderingContext2D, stage: string, relativeDuration: number): void => {
+    if (stage === 'swap') {
+      swapTilesAnimation(ctx, relativeDuration);
+    } else if (stage === 'delete') {
+      deleteTilesAnimation(ctx, relativeDuration);
+    } else if (stage === 'fill') {
+      fillTilesAnimation(ctx, relativeDuration);
+    }
+  };
+
   return (
     <div>
       <h1>Комбинаций осталось: {combinations?.length}</h1>
       <h1>Очков набрано {points * 100}</h1>
       <Button onClick={():void => {
+        setFirstClickCoord(null);
+        setFirstTileToSwap(null);
+        setSecondTileToSwap(null);
+        setMovingDownTiles([[]]);
+        setTilesForRemove([]);
+        setSwapDirection(null);
         setGridData(getInitialGrid());
         setFirstRender(false);
+        setPoints(0);
       }}
       >Начать заново
       </Button>
@@ -456,7 +602,7 @@ const GameGrid: React.FC = () => {
         </div>
       )}
       <div>
-      <Canvas onClick={memoHandleClick} width={gridSize * 100} height={gridSize * 100} draw={draw} />
+      <Canvas onClick={memoHandleClick} width={gridSize * 100} height={gridSize * 100} draw={draw} predraw={preDraw} />
       </div>
     </div>
 
