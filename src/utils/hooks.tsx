@@ -35,8 +35,9 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void,
             }
           };
           predrawanimation();
+        } else {
+          reject(new Error('no predraw'));
         }
-        reject(new Error('no predraw'));
       });
     }
     function resetAnimationsTime(): void {
