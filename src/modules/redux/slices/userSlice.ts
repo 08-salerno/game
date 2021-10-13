@@ -5,19 +5,25 @@ import { RootState } from '../store';
 export type UserStateValue = User | null
 
 export interface UserState {
-    value: UserStateValue
+    value: UserStateValue,
+  authChecked: boolean,
 }
 
 const initialState: UserState = {
   value: null,
+  authChecked: false,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setAuthChecked: (state, action: PayloadAction<boolean>) => {
+      state.authChecked = action.payload;
+    },
     putUser: (state, action: PayloadAction<UserStateValue>) => {
       state.value = action.payload;
+      state.authChecked = true;
     },
     putUserAvatar: (state, action: PayloadAction<string>) => {
       if (state.value) {
@@ -28,7 +34,7 @@ const userSlice = createSlice({
   },
 });
 
-export const { putUser, putUserAvatar } = userSlice.actions;
+export const { putUser, putUserAvatar, setAuthChecked } = userSlice.actions;
 
 export default userSlice.reducer;
 
