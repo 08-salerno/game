@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { defaultQueryOffset, getTopicPreviews } from '../../api';
 import { TopicPreview } from '../../types/topic-preview';
 import TopicPreviewer from '../../components/topic-previewer/TopicPreviewer';
 import ForumRoutes from '../../routes';
+import { selectIsAuthorized } from '../../../../modules/redux/slices/userSlice';
 
 const TopicListPage: React.VFC = () => {
   const [topics, setTopics] = useState<TopicPreview[]>([]);
   const [loading, setLoading] = useState(true);
   const [topicsOffset, setTopicsOffset] = useState(0);
+
+  const isUserAuthorized: boolean = useSelector(selectIsAuthorized);
 
   useEffect(() => {
     setLoading(true);
@@ -45,10 +49,11 @@ const TopicListPage: React.VFC = () => {
             <span>
                 <input placeholder="Поиск" />
             </span>
-            <span>
-                {/*todo только для авторизированного пользователя*/}
-                <button type="button" onClick={handleCreateTopicButtonClick}>Создать тему</button>
-            </span>
+            {isUserAuthorized && (
+                <span>
+                    <button type="button" onClick={handleCreateTopicButtonClick}>Создать тему</button>
+                </span>
+            )}
         </div>
         <div>
             {
