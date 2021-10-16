@@ -1,5 +1,5 @@
 import React, {
-  useCallback,
+  useCallback, useEffect,
   useState,
 } from 'react';
 import styled from 'styled-components';
@@ -11,6 +11,7 @@ import fish from './images/fish.png';
 import mushroom from './images/mushroom.png';
 import ladybug from './images/ladybug.png';
 import snow from './images/snow.png';
+import { GameProps } from '../../pages/game/Game';
 
 // TIR = Three in row
 
@@ -426,7 +427,6 @@ const Button = styled.button`
   cursor: pointer;
   width: auto;
   height: 37px;
-  margin: 5px auto;
   padding: 0 8px;
   border-radius: 8px;
   color: black;
@@ -441,7 +441,11 @@ const Button = styled.button`
   }
 `;
 
-const GameGrid: React.FC = () => {
+const MaxGameTurns = 10;
+
+type GameGridProps = GameProps
+
+const GameGrid: React.VFC<GameGridProps> = (props) => {
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
   const [firstRendered, setFirstRender] = useState<boolean>(false);
   const [firstClickCoord, setFirstClickCoord] = useState<Coordinates | null>(null);
@@ -452,6 +456,31 @@ const GameGrid: React.FC = () => {
   const [swapDirection, setSwapDirection] = useState<string | null>(null);
   const [combinations, setCombinations] = useState<CombinationListWithItemsForRemove | null>(null);
   const [points, setPoints] = useState<number>(0);
+  const [turns, setTurns] = useState<number>(MaxGameTurns);
+
+  const onNewGame = ():void => {
+    setFirstClickCoord(null);
+    setFirstTileToSwap(null);
+    setSecondTileToSwap(null);
+    setMovingDownTiles([[]]);
+    setTilesForRemove([]);
+    setSwapDirection(null);
+    setGridData(getInitialGrid());
+    setFirstRender(false);
+    setPoints(0);
+    setTurns(MaxGameTurns);
+  };
+
+  useEffect(() => {
+    if (turns === 0) {
+      props.onGameOver(points);
+      onNewGame();
+    }
+  }, [turns]);
+
+  const decreaseTurns = (): void => {
+    setTurns(turns - 1);
+  };
 
   function handleClick(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
     const currentItemCoord = getItemCoordsByClickCoords(getCursorPosition(event));
@@ -475,7 +504,8 @@ const GameGrid: React.FC = () => {
         setTilesForRemove(itemsForRemove);
         const updatedCombinations = findCombinations(updatedDataGrid);
 
-        setPoints((points) => points + 1);
+        setPoints((points) => points + 100);
+        decreaseTurns();
         setGridData(updatedDataGrid);
         setCombinations(updatedCombinations);
       }
@@ -581,28 +611,22 @@ const GameGrid: React.FC = () => {
 
   return (
     <div>
-      <h1>Комбинаций осталось: {combinations?.length}</h1>
-      <h1>Очков набрано {points * 100}</h1>
-      <Button onClick={():void => {
-        setFirstClickCoord(null);
-        setFirstTileToSwap(null);
-        setSecondTileToSwap(null);
-        setMovingDownTiles([[]]);
-        setTilesForRemove([]);
-        setSwapDirection(null);
-        setGridData(getInitialGrid());
-        setFirstRender(false);
-        setPoints(0);
-      }}
-      >Начать заново
-      </Button>
-      {combinations?.length === 0 && (
-        <div>
-          <h1>Поздравляем! Игра завершена.</h1>
-        </div>
-      )}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <h1>Комбинаций осталось: {combinations?.length}</h1>
+          <h1>Ходов осталось: {turns}</h1>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h1>Очков набрано {points}</h1>
+          <Button onClick={onNewGame}>Начать заново</Button>
+      </div>
       <div>
-      <Canvas onClick={memoHandleClick} width={gridSize * 100} height={gridSize * 100} draw={draw} predraw={preDraw} />
+          <Canvas
+            onClick={memoHandleClick}
+            width={gridSize * 100}
+            height={gridSize * 100}
+            draw={draw}
+            predraw={preDraw}
+          />
       </div>
     </div>
 

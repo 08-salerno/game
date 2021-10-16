@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,16 +14,14 @@ import Forum from './pages/forum/Forum';
 import ForumRoutes from './pages/forum/routes';
 import { LeaderBordRoutes } from './pages/leader-bord/routes';
 import LeaderBord from './pages/leader-bord/LeaderBord';
-import GameGrid from './components/GameGrid/GameGrid';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import withFullscreen from './components/withFullscreen';
 import PrivateRoute from './components/HOC/PrivateRoute/PrivateRoute';
 import { selectUser } from './modules/redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from './modules/redux/hooks';
 import {
   fetchUserAction,
 } from './modules/redux/sagas/user.saga';
-import useAppRouter from './modules/router/router';
+import Game from './pages/game/Game';
 
 type AppRoute = {
   title: string;
@@ -44,7 +42,7 @@ const routes: AppRoute[] = [
   {
     title: 'game',
     link: '/game',
-    component: withFullscreen(GameGrid),
+    component: Game,
   },
   {
     title: 'Авторизация',

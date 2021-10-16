@@ -5,12 +5,13 @@ import { selectIsAuthorized } from '../../../modules/redux/slices/userSlice';
 
 export type ProtectedRouteProps = RouteProps;
 
-const PrivateRoute = (props : RouteProps):JSX.Element => {
+const PrivateRoute = (props : ProtectedRouteProps): React.ReactElement => {
   const isUserAuthorized: boolean = useSelector(selectIsAuthorized);
   if (isUserAuthorized) {
     return <Route {...props} />;
   }
-  return <Redirect to={{ pathname: '/auth', state: { from: props.location } }} />;
+  const { location } = props;
+  return <Redirect to={{ pathname: '/auth', state: { from: location } }} />;
 };
 
 export default PrivateRoute;
