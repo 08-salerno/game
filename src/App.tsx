@@ -23,6 +23,7 @@ import { useAppDispatch, useAppSelector } from './modules/redux/hooks';
 import {
   fetchUserAction,
 } from './modules/redux/sagas/user.saga';
+import gitUrl from './modules/constants/repo-url';
 
 type AppRoute = {
   title: string;
@@ -162,7 +163,7 @@ const App: React.FC = () => {
               </DropDownContent>
             </DropDown>
             <NavBarLink
-              href="https://github.com/08-salerno/game"
+              href={gitUrl}
               target="_blank"
               rel="noreferrer"
             >
