@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -23,7 +23,6 @@ import { useAppDispatch, useAppSelector } from './modules/redux/hooks';
 import {
   fetchUserAction,
 } from './modules/redux/sagas/user.saga';
-import useAppRouter from './modules/router/router';
 
 type AppRoute = {
   title: string;
@@ -155,8 +154,8 @@ const App: React.FC = () => {
               <DropDownButton type="button">Routes DD</DropDownButton>
               <DropDownContent>
                 <DropDownLink to="/">Главная</DropDownLink>
-                {routes.map((route: AppRoute, i) => (
-                  <DropDownLink key={i} to={route.link}>
+                {routes.map((route: AppRoute) => (
+                  <DropDownLink key={route.link} to={route.link}>
                     {route.title}
                   </DropDownLink>
                 ))}
