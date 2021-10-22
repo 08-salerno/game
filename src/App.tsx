@@ -172,24 +172,25 @@ const App: React.FC = () => {
           </NavBar>
           <Layout>
             <Switch>
-              {routes.map((route: AppRoute, i) => (!route.private ? (
+              {routes.map((route: AppRoute) => (!route.private ? (
                 /**
                  * Добавь недостающий пропс
                  */
                 <Route
-                  key={i}
+                  key={route.link}
                   path={route.path ? route.path : route.link}
                   component={route.component}
                 />
               ) : (
-                authChecked
-                  ? (
-                  <PrivateRoute
-                    key={i}
-                    component={route.component}
-                    path={route.path ? route.path : route.link}
-                  />
-                  ) : null
+                <React.Fragment key={route.link}>
+                    {authChecked && (
+                        <PrivateRoute
+                          key={route.link}
+                          component={route.component}
+                          path={route.path ? route.path : route.link}
+                        />
+                    )}
+                </React.Fragment>
               )))}
               <Route path="/" exact>
                 <h1>Отсюда всё начинается :)</h1>

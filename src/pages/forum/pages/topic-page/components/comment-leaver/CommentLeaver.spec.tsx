@@ -6,6 +6,6 @@ import store from '../../../../../../modules/redux/store';
 
 it('CommentLeaver', () => {
   expect(render(<Provider store={store}>
-                    <CommentLeaver handleLeaveComment={(text: string) => Promise.resolve()} />
+                    <CommentLeaver handleLeaveComment={() => Promise.resolve()} />
                 </Provider>)).toMatchSnapshot();
 });

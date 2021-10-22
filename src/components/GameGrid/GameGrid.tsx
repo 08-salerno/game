@@ -300,20 +300,20 @@ function replaceHorizontalCombination(data: GridData): GridData {
 
 function replaceVerticalCombination(grid: GridData): GridData {
   return grid.map((column) => {
-    const duplicateCounter: { [key in Color]?: number } = {};
-    (column.map((item) => item.color) as Color[]).forEach((color) => {
-      if (duplicateCounter[color] !== undefined) {
-        (duplicateCounter[color] as number) += 1;
+    const duplicateCounter: Partial<Record<Color, number>> = {};
+    column.map((item) => item.color).forEach((color) => {
+      const currentDuplicateCounter = duplicateCounter[color];
+      if (currentDuplicateCounter !== undefined) {
+        duplicateCounter[color] = currentDuplicateCounter + 1;
       } else {
         duplicateCounter[color] = 1;
       }
     });
 
-    const duplicatesColors: Color[] = (Object.keys(duplicateCounter) as Color[])
-      .filter((color) => (duplicateCounter[color] as number) >= 3);
-
     return column.map((item) => {
-      if (duplicatesColors.includes(item.color as Color)) {
+      const colorDuplication = duplicateCounter[item.color];
+      const isColorDuplicated = colorDuplication && colorDuplication >= 3;
+      if (isColorDuplicated) {
         return {
           ...item,
           color: getRandomColor([item.color]),

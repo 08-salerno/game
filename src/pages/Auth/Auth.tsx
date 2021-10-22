@@ -25,6 +25,67 @@ interface MyFormValues {
 type LocationState = {
   from: Location;
 };
+
+const FormContainer = styled(Form)`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  `;
+const Title = styled.h1`
+    font-family: Arial;
+    margin: 20px;
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 500;
+  `;
+const Button = styled.button`
+    display: inline-block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-family: Arial;
+    font-weight: normal;
+    font-size: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    &:disabled {
+      cursor: not-allowed;
+    }
+  `;
+const SubmitButton = styled(Button)`
+    width: auto;
+    height: 37px;
+    margin: 5px auto;
+    padding: 0 8px;
+    border-radius: 8px;
+    color: black;
+    background-color: #d6eaf8;
+
+    &:hover {
+      background-color: #aed6f1;
+    }
+    &:disabled {
+      background-color: #ebf5fb;
+    }
+  `;
+const RegisterButton = styled(Button)`
+    width: auto;
+    height: 37px;
+    margin: 5px auto;
+    padding: 0 8px;
+    border-radius: 8px;
+    color: black;
+    background-color: #e8daef;
+
+    &:hover {
+      background-color: #d2b4de;
+    }
+  `;
+
 const SignInSchema = object().shape({
   login: string()
     .min(2, 'Login is too short')
@@ -67,65 +128,6 @@ export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, Locat
       actions.setErrors({ password: err.reason });
     });
 
-  const FormContainer = styled(Form)`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  `;
-  const Title = styled.h1`
-    font-family: Arial;
-    margin: 20px;
-    font-size: 20px;
-    line-height: 20px;
-    font-weight: 500;
-  `;
-  const Button = styled.button`
-    display: inline-block;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    margin: 0;
-    padding: 0;
-    border: none;
-    font-family: Arial;
-    font-weight: normal;
-    font-size: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    &:disabled {
-      cursor: not-allowed;
-    }
-  `;
-  const SubmitButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px auto;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #d6eaf8;
-
-    &:hover {
-      background-color: #aed6f1;
-    }
-    &:disabled {
-      background-color: #ebf5fb;
-    }
-  `;
-  const RegisterButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px auto;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #e8daef;
-
-    &:hover {
-      background-color: #d2b4de;
-    }
-  `;
   return (
     <div>
       <Formik
