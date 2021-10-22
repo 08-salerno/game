@@ -443,7 +443,7 @@ const Button = styled.button`
 
 const GameGrid: React.FC = () => {
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
-  const [firstRendered, setFirstRender] = useState<boolean>(false);
+  const [firstRendered, setFirstRender] = useState(false);
   const [firstClickCoord, setFirstClickCoord] = useState<Coordinates | null>(null);
   const [firstTileToSwap, setFirstTileToSwap] = useState<Item | null>(null);
   const [secondTileToSwap, setSecondTileToSwap] = useState<Item | null>(null);
@@ -451,7 +451,7 @@ const GameGrid: React.FC = () => {
   const [tilesForRemove, setTilesForRemove] = useState<ItemsForRemove>([]);
   const [swapDirection, setSwapDirection] = useState<string | null>(null);
   const [combinations, setCombinations] = useState<CombinationListWithItemsForRemove | null>(null);
-  const [points, setPoints] = useState<number>(0);
+  const [points, setPoints] = useState(0);
 
   function handleClick(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
     const currentItemCoord = getItemCoordsByClickCoords(getCursorPosition(event));

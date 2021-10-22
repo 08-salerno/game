@@ -42,7 +42,7 @@ module.exports = {
       rules: {
         'no-multiple-empty-lines': 'warn',
         'no-trailing-spaces': 'warn',
-        'no-console': 'off',
+        'no-console': 'warn',
         'react/require-default-props': 'off',
         'react/jsx-props-no-spreading': 'off',
         'react/jsx-one-expression-per-line': 'off',

@@ -7,7 +7,6 @@ import TopicListPage from './pages/topic-list-page/TopicListPage';
 
 const Forum: React.FC = () => {
   const { path } = useRouteMatch();
-  console.log(path);
 
   return (
     <div>

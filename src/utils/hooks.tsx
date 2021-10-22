@@ -9,9 +9,9 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void,
   options: Options): React.RefObject<HTMLCanvasElement> => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [firstAnimationTime, setFirstAnimationTime] = useState<number>(0);
-  const [secondAnimationTime, setSecondAnimationTime] = useState<number>(0);
-  const [thirdAnimationTime, setThirdAnimationTime] = useState<number>(0);
+  const [firstAnimationTime, setFirstAnimationTime] = useState(0);
+  const [secondAnimationTime, setSecondAnimationTime] = useState(0);
+  const [thirdAnimationTime, setThirdAnimationTime] = useState(0);
 
   useEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
