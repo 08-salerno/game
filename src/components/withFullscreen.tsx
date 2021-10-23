@@ -12,8 +12,12 @@ const FullscreenDiv = styled.div<{isFullscreen: boolean}>`
   ${({ isFullscreen }): string => `${isFullscreen ? 'color: white;' : 'color: black;'}`}
 `;
 
+export type WithFullscreenProps = {
+    forceExit?: boolean
+}
+
 // eslint-disable-next-line max-len
-const withFullscreen = <P extends Record<string, unknown>>(Component: React.ComponentType<P>): React.FC<P> => (props): ReactElement => {
+const withFullscreen = <P extends Record<string, unknown>>(Component: React.ComponentType<P>): React.FC<P & WithFullscreenProps> => (props): ReactElement => {
   const isFullscreenAvailable = document.fullscreenEnabled;
 
   if (isFullscreenAvailable) {
@@ -35,7 +39,24 @@ const withFullscreen = <P extends Record<string, unknown>>(Component: React.Comp
     };
     window.addEventListener('keypress', fKeyListener);
 
-    useEffect(() => ():void => window.removeEventListener('keypress', fKeyListener));
+    const onFullscreenChange = (): void => {
+      if (!document.fullscreenElement) {
+        setIsFullscreen(false);
+      }
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+
+    useEffect(() => ():void => {
+      window.removeEventListener('keypress', fKeyListener);
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+    });
+
+    const { fullscreenDefault } = props;
+    if (fullscreenDefault) {
+      setTimeout(() => {
+        fKeyListener(new KeyboardEvent('keypress', { key: 'f' }));
+      }, 1000);
+    }
 
     return (
           <FullscreenDiv ref={fullscreenElementRef} isFullscreen={isFullscreen}>

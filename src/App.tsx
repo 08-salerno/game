@@ -14,9 +14,7 @@ import Forum from './pages/forum/Forum';
 import ForumRoutes from './pages/forum/routes';
 import { LeaderBordRoutes } from './pages/leader-bord/routes';
 import LeaderBord from './pages/leader-bord/LeaderBord';
-import GameGrid from './components/GameGrid/GameGrid';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import withFullscreen from './components/withFullscreen';
 import PrivateRoute from './components/HOC/PrivateRoute/PrivateRoute';
 import { selectUser } from './modules/redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from './modules/redux/hooks';
@@ -24,6 +22,7 @@ import {
   fetchUserAction,
 } from './modules/redux/sagas/user.saga';
 import gitUrl from './modules/constants/repo-url';
+import Game from './pages/game/Game';
 
 type AppRoute = {
   title: string;
@@ -44,7 +43,7 @@ const routes: AppRoute[] = [
   {
     title: 'game',
     link: '/game',
-    component: withFullscreen(GameGrid),
+    component: Game,
   },
   {
     title: 'Авторизация',
