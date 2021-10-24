@@ -5,58 +5,64 @@ type Options = {
   postdraw?: (ctx: CanvasRenderingContext2D) => void
 }
 
+const swapAnimationTime = 500;
+const deleteAnimationTime = 300;
+const fillAnimationTime = 700;
+
+// todo [sitnik] механизм анимации необходимо разделить, т.к. delete и fill могут возникнуть и без swap
+
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void,
   options: Options): React.RefObject<HTMLCanvasElement> => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [firstAnimationTime, setFirstAnimationTime] = useState(0);
-  const [secondAnimationTime, setSecondAnimationTime] = useState(0);
-  const [thirdAnimationTime, setThirdAnimationTime] = useState(0);
+  const [init, setInit] = useState(true);
+
+  function animationInPromise(ctx: CanvasRenderingContext2D, duration: number, stage: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (options.predraw) {
+        const startTime: number = performance.now();
+        const preDrawAnimation = (): void => {
+          const time: number = performance.now();
+          const shiftTime = time - startTime;
+          const relativeDuration = shiftTime / duration;
+          if (options.predraw) {
+            options.predraw(ctx, stage, relativeDuration);
+          }
+          if (relativeDuration < 1) {
+            requestAnimationFrame(preDrawAnimation);
+          } else {
+            resolve('success');
+          }
+        };
+        preDrawAnimation();
+      } else {
+        reject(new Error('no predraw'));
+      }
+    });
+  }
 
   useEffect(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-    function animationInPromise(duration: number, stage: string): Promise<string> {
-      return new Promise((resolve, reject) => {
-        if (options.predraw) {
-          const startTime: number = performance.now();
-          const predrawanimation = (): void => {
-            const time: number = performance.now();
-            const shiftTime = time - startTime;
-            const relativeDuration = shiftTime / duration;
-            if (options.predraw) {
-              options.predraw(context, stage, relativeDuration);
-            }
-            if (relativeDuration < 1) {
-              requestAnimationFrame(predrawanimation);
-            } else {
-              resolve('success');
-            }
-          };
-          predrawanimation();
-        } else {
-          reject(new Error('no predraw'));
-        }
-      });
-    }
-    function resetAnimationsTime(): void {
-      setFirstAnimationTime(500);
-      setSecondAnimationTime(300);
-      setThirdAnimationTime(700);
-    }
-
-    animationInPromise(firstAnimationTime, 'swap')
-      .then(() => animationInPromise(secondAnimationTime, 'delete'))
-      .catch(console.log)
-      .then(() => animationInPromise(thirdAnimationTime, 'fill'))
-      .catch(console.log)
-      .then(() => {
+      if (init) {
         draw(context);
-        resetAnimationsTime();
-      })
-      .catch(console.log);
+        setInit(false);
+      } else {
+        animationInPromise(context, swapAnimationTime, 'swap')
+          .then(() => animationInPromise(context, deleteAnimationTime, 'delete'))
+          .catch(console.log)
+          .then(() => animationInPromise(context, fillAnimationTime, 'fill'))
+          .catch(console.log)
+          .then(() => {
+            draw(context);
+          })
+          .catch(console.log);
+      }
+    }
   }, [draw]);
+
   return canvasRef;
 };
 export default useCanvas;

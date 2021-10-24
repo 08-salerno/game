@@ -4,123 +4,41 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import Canvas from '../Canvas/Canvas';
-import acorn from './images/acorn.png';
-import bee from './images/bee.png';
-import cactus from './images/cactus.png';
-import fish from './images/fish.png';
-import mushroom from './images/mushroom.png';
-import ladybug from './images/ladybug.png';
-import snow from './images/snow.png';
 import { GameProps } from '../../pages/game/Game';
+import { Color, getRandomColor } from './utils/colors';
+import {
+  Coordinates,
+  Item,
+  Combination,
+  ItemsForRemove,
+  CombinationWithItemsForRemove,
+  CombinationListWithItemsForRemove,
+  GridData,
+} from './utils/types';
+import { drawGrid, drawSquare } from './utils/drawer';
+import { canvasSquareSize, gridSize } from './utils/config';
+import countScore from './utils/score';
 
 // TIR = Three in row
-
-type Color = 'Sienna' | 'MediumAquamarine' | 'LightSalmon' | 'Gold' | 'white' | 'pink' | 'MediumPurple';
-type Coordinates = [number, number]
-type Item = { color: Color, x: number, y: number };
-type Combination = [Coordinates, Coordinates]
-type ItemsForRemove = Coordinates[]
-type CombinationWithItemsForRemove = [Coordinates, Coordinates, ItemsForRemove]
-type CombinationListWithItemsForRemove = [Coordinates, Coordinates, Coordinates[]][];
-
-const colors: Color[] = ['Sienna', 'MediumAquamarine', 'LightSalmon', 'Gold', 'white', 'pink', 'MediumPurple'];
-
-type GridData = Item[][];
-
-const gridSize = 9;
-
-const squareSize = 100;
-
-const acornImg = new Image();
-acornImg.src = acorn;
-const cactusImg = new Image();
-cactusImg.src = cactus;
-const fishImg = new Image();
-fishImg.src = fish;
-const beeImg = new Image();
-beeImg.src = bee;
-const snowImg = new Image();
-snowImg.src = snow;
-const mushroomImg = new Image();
-mushroomImg.src = mushroom;
-const ladybugImg = new Image();
-ladybugImg.src = ladybug;
-
-function drawSquare(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color: string): void {
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, size, size);
-  let img: HTMLImageElement | null = null;
-  switch (color) {
-    case 'Sienna':
-      img = acornImg;
-      break;
-    case 'MediumAquamarine':
-      img = cactusImg;
-      break;
-    case 'LightSalmon':
-      img = fishImg;
-      break;
-    case 'Gold':
-      img = beeImg;
-      break;
-    case 'white':
-      img = snowImg;
-      break;
-    case 'pink':
-      img = mushroomImg;
-      break;
-    case 'MediumPurple':
-      img = ladybugImg;
-      break;
-    default:
-      break;
-  }
-  if (img) {
-    ctx.drawImage(img, x, y, size, size);
-  }
-}
-
-function getRandomColor(excludes?: Color[]): Color {
-  let colorsCopy = [...colors];
-  if (excludes) {
-    colorsCopy = colorsCopy.filter((color) => !excludes.includes(color));
-  }
-
-  return colorsCopy[Math.floor(Math.random() * colorsCopy.length)];
-}
 
 function getItemCoordsByClickCoords([x, y]: Coordinates): Coordinates {
   const res: Coordinates = [0, 0];
   if (x !== 0) {
-    res[0] = Math.floor(x / 100) * 100;
+    res[0] = Math.floor(x / canvasSquareSize);
   }
   if (y !== 0) {
-    res[1] = Math.floor(y / 100) * 100;
+    res[1] = Math.floor(y / canvasSquareSize);
   }
   return res;
 }
 
-function drawGrid(ctx: CanvasRenderingContext2D, data: GridData): void {
-  data.forEach((column, columnIndex) => {
-    column.forEach((row, rowIndex) => {
-      const cellX = columnIndex * squareSize;
-      const cellY = rowIndex * squareSize;
-      //ctx.fillStyle = (rowIndex + columnIndex) % 2 === 0 ? squareColors[0] : squareColors[1];
-      //ctx.fillRect(cellX, cellY, squareSize, squareSize);
-      drawSquare(ctx, cellX, cellY, 100, row.color);
-    });
-  });
-}
-
-function getInitialGrid(): [Item][] {
+function getInitialGrid(): GridData {
   const gridObj: GridData = [];
   for (let column = 0; column < gridSize; column++) {
     for (let row = 0; row < gridSize; row++) {
-      const cellX = column * squareSize;
-      const cellY = row * squareSize;
-
-      const randColor = Math.floor(Math.random() * colors.length);
-      const color = colors[randColor];
+      const cellX = column;
+      const cellY = row;
+      const color = getRandomColor();
 
       if (!Array.isArray(gridObj[column])) {
         gridObj.push([]);
@@ -132,7 +50,7 @@ function getInitialGrid(): [Item][] {
       });
     }
   }
-  return gridObj as [Item][];
+  return gridObj;
 }
 
 function arrHasTIR(arr: (string | number)[]): boolean {
@@ -317,7 +235,7 @@ function replaceVerticalCombination(grid: GridData): GridData {
       if (isColorDuplicated) {
         return {
           ...item,
-          color: getRandomColor([item.color]),
+          color: getRandomColor({ except: [item.color] }),
         };
       }
       return item;
@@ -325,6 +243,8 @@ function replaceVerticalCombination(grid: GridData): GridData {
   });
 }
 
+// todo [sitnik] размер матрицы сильно зависит от работы с этим методом
+//  он упрощает жизнь, но мы можем реализовывать только квадратные сетки
 function turnDataGrid(data: GridData): GridData {
   const emptyGrid: GridData = data.map(() => []);
   data.forEach((column) => {
@@ -345,8 +265,8 @@ function itemsCoordsEquals(first: Coordinates, second: Coordinates): boolean {
 }
 
 function itemsSiblings(first: Coordinates, second: Coordinates): boolean {
-  return (Math.abs(first[0] - second[0]) === 100 && Math.abs(first[1] - second[1]) === 0)
-    || (Math.abs(first[1] - second[1]) === 100 && Math.abs(first[0] - second[0]) === 0);
+  return (Math.abs(first[0] - second[0]) === 1 && Math.abs(first[1] - second[1]) === 0)
+    || (Math.abs(first[1] - second[1]) === 1 && Math.abs(first[0] - second[0]) === 0);
 }
 
 function coordsArrIncludesNeededCoords(coordArr:Coordinates[], coord:Coordinates):boolean {
@@ -364,17 +284,17 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
 
   const itemsForRemove:ItemsForRemove = currentCombination[2];
 
-  const a = data[firstClickCoord[0] / 100][firstClickCoord[1] / 100].color;
-  const b = data[secondClickCoord[0] / 100][secondClickCoord[1] / 100].color;
-  data[firstClickCoord[0] / 100][firstClickCoord[1] / 100].color = b;
-  data[secondClickCoord[0] / 100][secondClickCoord[1] / 100].color = a;
+  const a = data[firstClickCoord[0]][firstClickCoord[1]].color;
+  const b = data[secondClickCoord[0]][secondClickCoord[1]].color;
+  data[firstClickCoord[0]][firstClickCoord[1]].color = b;
+  data[secondClickCoord[0]][secondClickCoord[1]].color = a;
 
   const movingDownTiles: GridData = [];
-  let newGridData = data.map((column, i) => {
+  const newGridData = data.map((column, i) => {
     const currentColumnItemsForRemove = itemsForRemove
       .filter((coords) => coords[0] === column[i].x);
     const beginRemovingIndex = currentColumnItemsForRemove.length === 0 ? 0
-      : Math.min(...currentColumnItemsForRemove.map((coords) => coords[1])) / 100;
+      : Math.min(...currentColumnItemsForRemove.map((coords) => coords[1]));
 
     const deletedQuantity = currentColumnItemsForRemove.length;
     let columnCopy = [...column]
@@ -387,7 +307,7 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
         return {
           ...item,
           x: item.x,
-          y: item.y + deletedQuantity * 100,
+          y: item.y + deletedQuantity,
         };
       }
       return item;
@@ -395,22 +315,23 @@ function getUpdatedDataGrid(data:GridData, combinations:CombinationListWithItems
     for (let k = columnCopy.length; k !== gridSize; k++) {
       const newItem = {
         x: column[i].x,
-        y: (gridSize - k - 1) * 100,
+        y: (gridSize - k - 1),
         color: getRandomColor(),
       };
-      movingDownTiles[i].unshift({ ...newItem, y: newItem.y - 100 * deletedQuantity });
+      movingDownTiles[i].unshift({ ...newItem, y: newItem.y - deletedQuantity });
       columnCopy.unshift(newItem);
     }
 
     return columnCopy;
   });
-  if (gridHasTIR(newGridData)) {
-    //TODO нету свапа и нужна нормальная рекурсия с подсчетом очков возможно
-    // Рекурсивный вызов, чтобы при взрыве НЕ появилось новых TIR,
-    // Можно переписать на появление и взрыв новых с использованием findCombination и подсчитать очки
-    //Бывает ошибка с слишком большим кол-во вызовов
-    newGridData = getUpdatedDataGrid(data, combinations, firstClickCoord, secondClickCoord).newGridData;
-  }
+  // todo [sitnik] эта проверка и анимация свапа должны выполнятся друг за другом пока gridHasTIR == true
+  // if (gridHasTIR(newGridData)) {
+  //   //TODO нету свапа и нужна нормальная рекурсия с подсчетом очков возможно
+  //   // Рекурсивный вызов, чтобы при взрыве НЕ появилось новых TIR,
+  //   // Можно переписать на появление и взрыв новых с использованием findCombination и подсчитать очки
+  //   //Бывает ошибка с слишком большим кол-во вызовов
+  //   newGridData = getUpdatedDataGrid(data, combinations, firstClickCoord, secondClickCoord).newGridData;
+  // }
   return { movingDownTiles, itemsForRemove, newGridData };
 }
 
@@ -446,6 +367,7 @@ const MaxGameTurns = 10;
 type GameGridProps = GameProps
 
 const GameGrid: React.VFC<GameGridProps> = (props) => {
+  console.log('GameGrid');
   const [gridData, setGridData] = useState<GridData>(getInitialGrid());
   const [firstRendered, setFirstRender] = useState(false);
   const [firstClickCoord, setFirstClickCoord] = useState<Coordinates | null>(null);
@@ -492,9 +414,8 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
       setFirstClickCoord(currentItemCoord);
       return;
     }
-    if (!itemsCoordsEquals(firstClickCoord, currentItemCoord)) {
-      const hasSuccessCombination = combinationsIncludesCoords(combinations as CombinationListWithItemsForRemove,
-        [firstClickCoord, currentItemCoord]);
+    if (!itemsCoordsEquals(firstClickCoord, currentItemCoord) && combinations) {
+      const hasSuccessCombination = combinationsIncludesCoords(combinations, [firstClickCoord, currentItemCoord]);
       if (hasSuccessCombination) {
         setTilesForSwap(firstClickCoord, currentItemCoord);
         const { movingDownTiles, itemsForRemove, newGridData: updatedDataGrid } = getUpdatedDataGrid(
@@ -504,7 +425,7 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
         setTilesForRemove(itemsForRemove);
         const updatedCombinations = findCombinations(updatedDataGrid);
 
-        setPoints((points) => points + 100);
+        setPoints((points) => points + countScore(itemsForRemove.length));
         decreaseTurns();
         setGridData(updatedDataGrid);
         setCombinations(updatedCombinations);
@@ -546,46 +467,64 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
       if (firstClickCoord[0] === secondClickCoord[0]) {
         setSwapDirection('y');
         if (firstClickCoord[1] < secondClickCoord[1]) {
-          setFirstTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
-          setSecondTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+          setFirstTileToSwap(gridData[firstClickCoord[0]][firstClickCoord[1]]);
+          setSecondTileToSwap(gridData[secondClickCoord[0]][secondClickCoord[1]]);
         } else if (firstClickCoord[1] > secondClickCoord[1]) {
-          setFirstTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
-          setSecondTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+          setFirstTileToSwap(gridData[secondClickCoord[0]][secondClickCoord[1]]);
+          setSecondTileToSwap(gridData[firstClickCoord[0]][firstClickCoord[1]]);
         }
       } else if (firstClickCoord[1] === secondClickCoord[1]) {
         setSwapDirection('x');
         if (firstClickCoord[0] < secondClickCoord[0]) {
-          setFirstTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
-          setSecondTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
+          setFirstTileToSwap(gridData[firstClickCoord[0]][firstClickCoord[1]]);
+          setSecondTileToSwap(gridData[secondClickCoord[0]][secondClickCoord[1]]);
         } else if (firstClickCoord[0] > secondClickCoord[0]) {
-          setFirstTileToSwap(gridData[secondClickCoord[0] / 100][secondClickCoord[1] / 100]);
-          setSecondTileToSwap(gridData[firstClickCoord[0] / 100][firstClickCoord[1] / 100]);
+          setFirstTileToSwap(gridData[secondClickCoord[0]][secondClickCoord[1]]);
+          setSecondTileToSwap(gridData[firstClickCoord[0]][firstClickCoord[1]]);
         }
       }
     }
   }
+
   function swapTilesAnimation(ctx: CanvasRenderingContext2D, multiplier: number): void {
     if (firstTileToSwap && secondTileToSwap) {
       if (swapDirection === 'x') {
-        drawSquare(ctx, firstTileToSwap.x + 100 * multiplier, firstTileToSwap.y, 100, secondTileToSwap.color);
-        drawSquare(ctx, secondTileToSwap.x - 100 * multiplier, secondTileToSwap.y, 100, firstTileToSwap.color);
+        let leftToRightSwapStep = firstTileToSwap.x + multiplier;
+        const leftToRightStepBound = firstTileToSwap.x + 1;
+        if (leftToRightSwapStep > leftToRightStepBound) {
+          leftToRightSwapStep = leftToRightStepBound;
+        }
+        drawSquare(ctx, leftToRightSwapStep, firstTileToSwap.y, secondTileToSwap.color);
+
+        let rightToLeftSwapStep = secondTileToSwap.x - multiplier;
+        const rightToLeftSwapStepBound = secondTileToSwap.x - 1;
+        if (rightToLeftSwapStep < rightToLeftSwapStepBound) {
+          rightToLeftSwapStep = rightToLeftSwapStepBound;
+        }
+        drawSquare(ctx, rightToLeftSwapStep, secondTileToSwap.y, firstTileToSwap.color);
       } else if (swapDirection === 'y') {
-        drawSquare(ctx, firstTileToSwap.x, firstTileToSwap.y + 100 * multiplier, 100, secondTileToSwap.color);
-        drawSquare(ctx, secondTileToSwap.x, secondTileToSwap.y - 100 * multiplier, 100, firstTileToSwap.color);
+        let topToBottomSwapStep = firstTileToSwap.y + multiplier;
+        const topToBottomSwapStepBound = firstTileToSwap.y + 1;
+        if (topToBottomSwapStep > topToBottomSwapStepBound) {
+          topToBottomSwapStep = topToBottomSwapStepBound;
+        }
+        drawSquare(ctx, firstTileToSwap.x, topToBottomSwapStep, secondTileToSwap.color);
+
+        let bottomToTopSwapStep = secondTileToSwap.y - multiplier;
+        const bottomToTopSwapStepBound = secondTileToSwap.y - 1;
+        if (bottomToTopSwapStep < bottomToTopSwapStepBound) {
+          bottomToTopSwapStep = bottomToTopSwapStepBound;
+        }
+        drawSquare(ctx, secondTileToSwap.x, bottomToTopSwapStep, firstTileToSwap.color);
       }
     }
   }
   function deleteTilesAnimation(ctx: CanvasRenderingContext2D, multiplier: number): void {
     if (tilesForRemove) {
-      //ctx.fillStyle = 'black';
-      ctx.fillStyle = `rgba(255, 255, 255, ${multiplier / 5})`;
+      const maskColor = `rgba(255, 255, 255, ${multiplier / 5})`;
 
-      tilesForRemove.forEach((item) => {
-        ctx.fillRect(item[0], item[1], 100, 100);
-        /* ctx.fillRect(
-          item[0] + 50 * (1 - relativeDuration), item[1] + 50 * (1 - relativeDuration),
-          100 * relativeDuration, 100 * relativeDuration,
-        ); */
+      tilesForRemove.forEach(([x, y]) => {
+        drawSquare(ctx, x, y, maskColor);
       });
     }
   }
@@ -593,8 +532,13 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
     if (movingDownTiles) {
       movingDownTiles.forEach((column) => {
         const length = column.reduce((prev, { y }) => (y < 0 ? prev + 1 : prev), 0);
-        column.forEach((tile) => {
-          drawSquare(ctx, tile.x, tile.y + length * 100 * multiplier, 100, tile.color);
+        column.forEach((tile, i) => {
+          let shiftDownValue = tile.y + length * multiplier;
+
+          if (shiftDownValue > i + 1) {
+            shiftDownValue = i + 1;
+          }
+          drawSquare(ctx, tile.x, shiftDownValue, tile.color);
         });
       });
     }
@@ -622,8 +566,8 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
       <div>
           <Canvas
             onClick={memoHandleClick}
-            width={gridSize * 100}
-            height={gridSize * 100}
+            width={gridSize * canvasSquareSize}
+            height={gridSize * canvasSquareSize}
             draw={draw}
             predraw={preDraw}
           />

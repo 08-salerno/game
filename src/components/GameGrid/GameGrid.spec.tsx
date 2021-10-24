@@ -6,6 +6,6 @@ import GameGrid from './GameGrid';
 
 it('GameGrid', () => {
   expect(render(<Provider store={store}>
-                    <GameGrid onGameOver={(score) => {}} />
+                    <GameGrid onGameOver={() => {}} />
                 </Provider>)).toMatchSnapshot();
 });
