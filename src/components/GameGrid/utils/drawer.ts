@@ -1,6 +1,6 @@
 import { Color, getImageByColor, isColor } from './colors';
 import { GridData } from './types';
-import { canvasSquareSize } from './config';
+import { CANVAS_SQUARE_SIZE } from './config';
 
 export function drawSquare(
   ctx: CanvasRenderingContext2D,
@@ -8,12 +8,12 @@ export function drawSquare(
   y: number,
   color: Color | string,
 ): void {
-  const canvasX = x * canvasSquareSize;
-  const canvasY = y * canvasSquareSize;
+  const canvasX = x * CANVAS_SQUARE_SIZE;
+  const canvasY = y * CANVAS_SQUARE_SIZE;
   ctx.fillStyle = color;
-  ctx.fillRect(canvasX, canvasY, canvasSquareSize, canvasSquareSize);
+  ctx.fillRect(canvasX, canvasY, CANVAS_SQUARE_SIZE, CANVAS_SQUARE_SIZE);
   if (isColor(color)) {
-    ctx.drawImage(getImageByColor(color), canvasX, canvasY, canvasSquareSize, canvasSquareSize);
+    ctx.drawImage(getImageByColor(color), canvasX, canvasY, CANVAS_SQUARE_SIZE, CANVAS_SQUARE_SIZE);
   }
 }
 
@@ -29,9 +29,9 @@ export function drawGrid(ctx: CanvasRenderingContext2D, data: GridData): void {
 export function drawSquareBorder(ctx: CanvasRenderingContext2D,
   x: number,
   y: number): void {
-  const canvasX = x * canvasSquareSize;
-  const canvasY = y * canvasSquareSize;
+  const canvasX = x * CANVAS_SQUARE_SIZE;
+  const canvasY = y * CANVAS_SQUARE_SIZE;
   ctx.fillStyle = 'red';
   ctx.lineWidth = 4;
-  ctx.strokeRect(canvasX, canvasY, canvasSquareSize, canvasSquareSize);
+  ctx.strokeRect(canvasX, canvasY, CANVAS_SQUARE_SIZE, CANVAS_SQUARE_SIZE);
 }
