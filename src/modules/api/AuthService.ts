@@ -60,4 +60,26 @@ export default class AuthService {
       }
       return response.json().then(asUser);
     })
+
+  getServiceId = (): Promise<{ 'service_id': string } | void> => fetch(`${apiUrl('/oauth')}/yandex/service-id?redirect_uri=https://localhost:3000`)
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then(asError).then((err) => Promise.reject(err));
+      }
+      return response.json();
+    })
+
+  oAuthSignIn = (code:string): Promise<void> => fetch(`${apiUrl('/oauth')}/yandex`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ code, redirect_uri: 'http://localhost:3000' }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then(asError).then((err) => Promise.reject(err));
+      }
+      return response.json();
+    })
 }

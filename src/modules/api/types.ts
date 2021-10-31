@@ -8,7 +8,10 @@ export type SignUpData = {
     password: string;
     phone: string;
 }
-
+export type OAuthSignInResp = {
+    'code': string,
+    'redirect_uri': string
+}
 export type SignInData = {
     login: string;
     password: string;
