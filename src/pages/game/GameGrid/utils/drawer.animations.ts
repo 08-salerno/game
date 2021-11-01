@@ -1,7 +1,7 @@
-import { drawSquare } from './drawer';
-import { CoordinatesForRemove, GridData, Item } from './types';
-
-export type SwapDirection = 'horizontal' | 'vertical';
+import { drawDeletedSquare, drawGrid, drawSquare } from './drawer';
+import { GridData, Item, SwapDirection } from './types';
+import { CANVAS_SQUARE_SIZE } from './config';
+import { getRandomGrid } from './core.v2';
 
 function drawHorizontalSwapStep(
   ctx: CanvasRenderingContext2D,
@@ -24,7 +24,7 @@ function drawHorizontalSwapStep(
   drawSquare(ctx, rightToLeftSwapStep, to.y, from.color);
 }
 
-function drawVerticalSwapStep(
+export function drawVerticalSwapStep(
   ctx: CanvasRenderingContext2D,
   from: Item,
   to: Item,
@@ -52,6 +52,10 @@ export function drawSwapStep(
   offset: number,
   direction: SwapDirection,
 ): void {
+  // данный кусок закрашивает артефакты при рисовании свапа
+  drawDeletedSquare(ctx, from.x, from.y);
+  drawDeletedSquare(ctx, to.x, to.y);
+
   if (direction === 'horizontal') {
     drawHorizontalSwapStep(ctx, from, to, offset);
     return;
@@ -62,14 +66,16 @@ export function drawSwapStep(
   }
 }
 
-export function drawTilesAsDeleted(
+export function drawDeleteStep(
   ctx: CanvasRenderingContext2D,
-  deletedTiles: CoordinatesForRemove,
+  itemsToDelete: Item[],
+  offset: number,
 ): void {
-  const maskColor = `rgba(255, 255, 255, .9)`;
-
-  deletedTiles.forEach(([x, y]) => {
-    drawSquare(ctx, x, y, maskColor);
+  const size = offset * 100 > CANVAS_SQUARE_SIZE ? 0 : CANVAS_SQUARE_SIZE - offset * 100;
+  const delta = (CANVAS_SQUARE_SIZE - size) / 2;
+  itemsToDelete.forEach(({ x, y, color }) => {
+    drawSquare(ctx, x, y, '#ffffff');
+    drawSquare(ctx, x, y, color, size, delta);
   });
 }
 
@@ -87,4 +93,17 @@ export function drawMovingDownStep(ctx: CanvasRenderingContext2D, movingDownTile
       });
     });
   }
+}
+
+export function drawMoveDownStep(ctx: CanvasRenderingContext2D, from: Item, to: Item, offset: number): void {
+  const steps = Math.abs(from.y) + to.y;
+  let topToBottomSwapStep = from.y + steps * offset;
+  if (topToBottomSwapStep > to.y) {
+    topToBottomSwapStep = to.y;
+  }
+  drawSquare(ctx, from.x, topToBottomSwapStep, from.color);
+}
+
+export function drawShuffleStep(ctx: CanvasRenderingContext2D): void {
+  drawGrid(ctx, getRandomGrid());
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import withFullscreen from '../../components/withFullscreen';
-import GameGrid from '../../components/GameGrid/GameGrid';
+import GameGrid from './GameGrid/GameGrid';
 import { saveScore } from '../leader-bord/api';
 import { useAppSelector } from '../../modules/redux/hooks';
 import { selectUser } from '../../modules/redux/slices/userSlice';

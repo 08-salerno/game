@@ -3,10 +3,13 @@
 import React from 'react';
 import {
   Combination,
-  CombinationListWithCoordinatesForRemove, CombinationPosition,
+  CombinationListWithCoordinatesForRemove,
+  CombinationPosition,
   CombinationWithCoordinatesForRemove,
-  Coordinates, CoordinatesForRemove,
-  GridData, Item,
+  Coordinates,
+  CoordinatesForRemove,
+  GridData,
+  Item,
 } from './types';
 import { CANVAS_SQUARE_SIZE, GRID_SIZE } from './config';
 import { Color, getRandomColor } from './colors';
@@ -20,27 +23,6 @@ export function getItemCoordsByClickCoords([x, y]: Coordinates): Coordinates {
     res[1] = Math.floor(y / CANVAS_SQUARE_SIZE);
   }
   return res;
-}
-
-export function getInitialGrid(): GridData {
-  const gridObj: GridData = [];
-  for (let column = 0; column < GRID_SIZE; column++) {
-    for (let row = 0; row < GRID_SIZE; row++) {
-      const cellX = column;
-      const cellY = row;
-      const color = getRandomColor();
-
-      if (!Array.isArray(gridObj[column])) {
-        gridObj.push([]);
-      }
-      gridObj[column].push({
-        color,
-        x: cellX,
-        y: cellY,
-      });
-    }
-  }
-  return gridObj;
 }
 
 export function arrHasTIR(arr: (string | number)[]): boolean {
@@ -66,9 +48,9 @@ export function gridHasTIR(grid: GridData): boolean {
     grid
       .map((column) => arrHasTIR(column.map((item) => item.color)))
       .some((arrHasDuplicates) => arrHasDuplicates)
-        || turnDataGrid(grid)
-          .map((column) => arrHasTIR(column.map((item) => item.color)))
-          .some((arrHasDuplicates) => arrHasDuplicates)
+    || turnDataGrid(grid)
+      .map((column) => arrHasTIR(column.map((item) => item.color)))
+      .some((arrHasDuplicates) => arrHasDuplicates)
   );
 }
 
@@ -86,11 +68,13 @@ export function combinationsEquals(
 
   return (
     (fistCombinationsEquals && secondCombinationsEquals)
-        || (swappedFistCombinationsEquals && swappedSecondCombinationsEquals)
+    || (swappedFistCombinationsEquals && swappedSecondCombinationsEquals)
   );
 }
 
-export function findCombinations(grid: GridData): CombinationListWithCoordinatesForRemove {
+export function findCombinations(
+  grid: GridData,
+): CombinationListWithCoordinatesForRemove {
   const res: CombinationListWithCoordinatesForRemove = [];
 
   function checkGridBorderCorrect(index: number): boolean {
@@ -137,13 +121,13 @@ export function findCombinations(grid: GridData): CombinationListWithCoordinates
               }
               if (
                 checkGridBorderCorrect(columnIndex - rowSplit)
-                                && checkGridBorderCorrect(columnSplit)
+                && checkGridBorderCorrect(columnSplit)
               ) {
                 itemsForCheck.push(grid[columnIndex - rowSplit][columnSplit]);
               }
               if (
                 checkGridBorderCorrect(columnIndex + rowSplit)
-                                && checkGridBorderCorrect(columnSplit)
+                && checkGridBorderCorrect(columnSplit)
               ) {
                 itemsForCheck.push(grid[columnIndex + rowSplit][columnSplit]);
               }
@@ -181,7 +165,7 @@ export function findCombinations(grid: GridData): CombinationListWithCoordinates
                 const columnSplitForFurther = split < 0 ? itemIndex - 3 : itemIndex + 3;
                 if (
                   checkGridBorderCorrect(columnSplitForFurther)
-                                    && column[columnSplitForFurther].color === currentColor
+                  && column[columnSplitForFurther].color === currentColor
                 ) {
                   const plusTwoSplit = split < 0 ? itemIndex - 2 : itemIndex + 2;
                   const plusOneSplit = split < 0 ? itemIndex - 1 : itemIndex + 1;
@@ -216,48 +200,14 @@ export function findCombinations(grid: GridData): CombinationListWithCoordinates
   return removeDuplicates(res);
 }
 
-export function replaceCombinations(data: GridData): GridData {
-  return replaceHorizontalCombination(replaceVerticalCombination(data));
-}
-
-export function getCursorPosition(event: React.MouseEvent<Element, MouseEvent>): Coordinates {
+export function getCursorPosition(
+  event: React.MouseEvent<Element, MouseEvent>,
+): Coordinates {
   const canvas = event.target as HTMLCanvasElement;
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
   return [x, y];
-}
-
-export function replaceHorizontalCombination(data: GridData): GridData {
-  return turnDataGrid(replaceVerticalCombination(turnDataGrid(data)));
-}
-
-export function replaceVerticalCombination(grid: GridData): GridData {
-  return grid.map((column) => {
-    const duplicateCounter: Partial<Record<Color, number>> = {};
-    column
-      .map((item) => item.color)
-      .forEach((color) => {
-        const currentDuplicateCounter = duplicateCounter[color];
-        if (currentDuplicateCounter !== undefined) {
-          duplicateCounter[color] = currentDuplicateCounter + 1;
-        } else {
-          duplicateCounter[color] = 1;
-        }
-      });
-
-    return column.map((item) => {
-      const colorDuplication = duplicateCounter[item.color];
-      const isColorDuplicated = colorDuplication && colorDuplication >= 3;
-      if (isColorDuplicated) {
-        return {
-          ...item,
-          color: getRandomColor({ except: [item.color] }),
-        };
-      }
-      return item;
-    });
-  });
 }
 
 // todo [sitnik] размер матрицы сильно зависит от работы с этим методом
@@ -283,10 +233,10 @@ export function itemsCoordsEquals(first: Coordinates, second: Coordinates): bool
   return first[0] === second[0] && first[1] === second[1];
 }
 
-export function itemsSiblings(first: Coordinates, second: Coordinates): boolean {
+export function isCoordinateSiblings(first: Coordinates, second: Coordinates): boolean {
   return (
     (Math.abs(first[0] - second[0]) === 1 && Math.abs(first[1] - second[1]) === 0)
-        || (Math.abs(first[1] - second[1]) === 1 && Math.abs(first[0] - second[0]) === 0)
+    || (Math.abs(first[1] - second[1]) === 1 && Math.abs(first[0] - second[0]) === 0)
   );
 }
 
@@ -300,10 +250,10 @@ export function coordsArrIncludesNeededCoords(
 }
 
 export type UpdatedDataGrid = {
-    movingDownTiles: GridData;
-    itemsForRemove: CoordinatesForRemove;
-    newGridData: GridData;
-}
+  movingDownTiles: GridData;
+  itemsForRemove: CoordinatesForRemove;
+  newGridData: GridData;
+};
 
 export function getUpdatedDataGrid(
   data: GridData,
@@ -311,11 +261,9 @@ export function getUpdatedDataGrid(
   firstClickCoord: Coordinates,
   secondClickCoord: Coordinates,
 ): UpdatedDataGrid {
-  const currentCombination = (
-        combinations as CombinationListWithCoordinatesForRemove
-    ).find((combination) => combinationsEquals(combination, [firstClickCoord as Coordinates, secondClickCoord])) as CombinationWithCoordinatesForRemove;
+  const currentCombination = combinations.find((combination) => combinationsEquals(combination, [firstClickCoord, secondClickCoord]));
 
-  const itemsForRemove: CoordinatesForRemove = currentCombination[2];
+  const itemsForRemove: CoordinatesForRemove = currentCombination?.[2]!;
 
   const a = data[firstClickCoord[0]][firstClickCoord[1]].color;
   const b = data[secondClickCoord[0]][secondClickCoord[1]].color;
@@ -332,22 +280,23 @@ export function getUpdatedDataGrid(
       : Math.min(...currentColumnItemsForRemove.map((coords) => coords[1]));
 
     const deletedQuantity = currentColumnItemsForRemove.length;
-    let columnCopy = [...column].filter(
-      (item) => !coordsArrIncludesNeededCoords(currentColumnItemsForRemove, [item.x, item.y]),
-    );
     movingDownTiles[i] = [];
-    columnCopy = columnCopy.map((item, j) => {
-      if (!deletedQuantity) return item;
-      if (j < beginRemovingIndex) {
-        movingDownTiles[i].push(item);
-        return {
-          ...item,
-          x: item.x,
-          y: item.y + deletedQuantity,
-        };
-      }
-      return item;
-    });
+    const columnCopy = column
+      .filter(
+        (item) => !coordsArrIncludesNeededCoords(currentColumnItemsForRemove, [item.x, item.y]),
+      )
+      .map((item, j) => {
+        if (!deletedQuantity) return item;
+        if (j < beginRemovingIndex) {
+          movingDownTiles[i].push(item);
+          return {
+            ...item,
+            x: item.x,
+            y: item.y + deletedQuantity,
+          };
+        }
+        return item;
+      });
     for (let k = columnCopy.length; k !== GRID_SIZE; k++) {
       const newItem = {
         x: column[i].x,
@@ -360,13 +309,13 @@ export function getUpdatedDataGrid(
 
     return columnCopy;
   });
-    // todo [sitnik] эта проверка и анимация свапа должны выполнятся друг за другом пока gridHasTIR == true
-    // if (gridHasTIR(newGridData)) {
-    //   //TODO нету свапа и нужна нормальная рекурсия с подсчетом очков возможно
-    //   // Рекурсивный вызов, чтобы при взрыве НЕ появилось новых TIR,
-    //   // Можно переписать на появление и взрыв новых с использованием findCombination и подсчитать очки
-    //   //Бывает ошибка с слишком большим кол-во вызовов
-    //   newGridData = getUpdatedDataGrid(data, combinations, firstClickCoord, secondClickCoord).newGridData;
-    // }
+  // todo [sitnik] эта проверка и анимация свапа должны выполнятся друг за другом пока gridHasTIR == true
+  // if (gridHasTIR(newGridData)) {
+  //   //TODO нету свапа и нужна нормальная рекурсия с подсчетом очков возможно
+  //   // Рекурсивный вызов, чтобы при взрыве НЕ появилось новых TIR,
+  //   // Можно переписать на появление и взрыв новых с использованием findCombination и подсчитать очки
+  //   //Бывает ошибка с слишком большим кол-во вызовов
+  //   newGridData = getUpdatedDataGrid(data, combinations, firstClickCoord, secondClickCoord).newGridData;
+  // }
   return { movingDownTiles, itemsForRemove, newGridData };
 }
