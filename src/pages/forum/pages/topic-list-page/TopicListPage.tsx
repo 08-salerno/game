@@ -12,7 +12,7 @@ const TopicListPage: React.VFC = () => {
   const [loading, setLoading] = useState(true);
   const [topicsOffset, setTopicsOffset] = useState(0);
 
-  const isUserAuthorized: boolean = useSelector(selectIsAuthorized);
+  const isUserAuthorized = useSelector(selectIsAuthorized);
 
   useEffect(() => {
     setLoading(true);

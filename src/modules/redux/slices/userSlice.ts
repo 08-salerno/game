@@ -38,6 +38,6 @@ export const { putUser, putUserAvatar, setAuthChecked } = userSlice.actions;
 
 export default userSlice.reducer;
 
-export const selectUser = createSelector((state: RootState): UserState => state.user, (user: UserState) => user.value);
+export const selectUser = (state: RootState): UserStateValue => state.user.value;
 export const selectIsAuthorized = createSelector(selectUser, (user: UserStateValue): boolean => !!user);
 export const selectAvatar = createSelector(selectUser, (user: UserStateValue): string | undefined => user?.avatar);

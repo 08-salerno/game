@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,16 +14,15 @@ import Forum from './pages/forum/Forum';
 import ForumRoutes from './pages/forum/routes';
 import { LeaderBordRoutes } from './pages/leader-bord/routes';
 import LeaderBord from './pages/leader-bord/LeaderBord';
-import GameGrid from './components/GameGrid/GameGrid';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import withFullscreen from './components/withFullscreen';
 import PrivateRoute from './components/HOC/PrivateRoute/PrivateRoute';
 import { selectUser } from './modules/redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from './modules/redux/hooks';
 import {
   fetchUserAction,
 } from './modules/redux/sagas/user.saga';
-import useAppRouter from './modules/router/router';
+import gitUrl from './modules/constants/repo-url';
+import Game from './pages/game/Game';
 
 type AppRoute = {
   title: string;
@@ -44,7 +43,7 @@ const routes: AppRoute[] = [
   {
     title: 'game',
     link: '/game',
-    component: withFullscreen(GameGrid),
+    component: Game,
   },
   {
     title: 'Авторизация',
@@ -155,15 +154,15 @@ const App: React.FC = () => {
               <DropDownButton type="button">Routes DD</DropDownButton>
               <DropDownContent>
                 <DropDownLink to="/">Главная</DropDownLink>
-                {routes.map((route: AppRoute, i) => (
-                  <DropDownLink key={i} to={route.link}>
+                {routes.map((route: AppRoute) => (
+                  <DropDownLink key={route.link} to={route.link}>
                     {route.title}
                   </DropDownLink>
                 ))}
               </DropDownContent>
             </DropDown>
             <NavBarLink
-              href="https://github.com/08-salerno/game"
+              href={gitUrl}
               target="_blank"
               rel="noreferrer"
             >
@@ -172,24 +171,25 @@ const App: React.FC = () => {
           </NavBar>
           <Layout>
             <Switch>
-              {routes.map((route: AppRoute, i) => (!route.private ? (
+              {routes.map((route: AppRoute) => (!route.private ? (
                 /**
                  * Добавь недостающий пропс
                  */
                 <Route
-                  key={i}
+                  key={route.link}
                   path={route.path ? route.path : route.link}
                   component={route.component}
                 />
               ) : (
-                authChecked
-                  ? (
-                  <PrivateRoute
-                    key={i}
-                    component={route.component}
-                    path={route.path ? route.path : route.link}
-                  />
-                  ) : null
+                <React.Fragment key={route.link}>
+                    {authChecked && (
+                        <PrivateRoute
+                          key={route.link}
+                          component={route.component}
+                          path={route.path ? route.path : route.link}
+                        />
+                    )}
+                </React.Fragment>
               )))}
               <Route path="/" exact>
                 <h1>Отсюда всё начинается :)</h1>

@@ -19,6 +19,7 @@ module.exports = {
     expect: true,
     jsdom: true,
     JSX: true,
+    PRODUCTION: true,
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -42,7 +43,7 @@ module.exports = {
       rules: {
         'no-multiple-empty-lines': 'warn',
         'no-trailing-spaces': 'warn',
-        'no-console': 'off',
+        'no-console': 'warn',
         'react/require-default-props': 'off',
         'react/jsx-props-no-spreading': 'off',
         'react/jsx-one-expression-per-line': 'off',
@@ -71,7 +72,7 @@ module.exports = {
         ],
         '@typescript-eslint/no-explicit-any': 'error',
         '@typescript-eslint/ban-ts-comment': 'warn',
-        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'warn',
         '@typescript-eslint/no-unsafe-return': 'warn',
         '@typescript-eslint/explicit-module-boundary-types': 'error',
         '@typescript-eslint/no-unsafe-assignment': 'off',
@@ -111,7 +112,6 @@ module.exports = {
     ],
     'dot-notation': 'warn',
     'consistent-return': 'off',
-    'no-unused-vars': 'warn',
     'spaced-comment': 'off',
     'no-alert': 'warn',
     'no-restricted-globals': 'warn',
@@ -141,8 +141,5 @@ module.exports = {
         ignoreRegExpLiterals: true,
       },
     ],
-  },
-  globals: {
-    PRODUCTION: true,
   },
 };

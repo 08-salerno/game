@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { ErrorInfo } from 'react';
 
 export type ErrorBoundaryProps = Record<string, unknown> & {

@@ -50,6 +50,66 @@ const SignUpSchema = object().shape({
     .required('Required'),
 });
 
+const FormContainer = styled(Form)`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  `;
+const Title = styled.h1`
+    font-family: Arial;
+    margin: 20px;
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 500;
+  `;
+const Button = styled.button`
+    display: inline-block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-family: Arial;
+    font-weight: normal;
+    font-size: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    &:disabled {
+      cursor: not-allowed;
+    }
+  `;
+const SubmitButton = styled(Button)`
+    width: auto;
+    height: 37px;
+    margin: 5px auto;
+    padding: 0 8px;
+    border-radius: 8px;
+    color: black;
+    background-color: #D6EAF8;
+
+    &:hover {
+      background-color: #AED6F1;
+    }
+    &:disabled {
+      background-color: #EBF5FB;
+    }
+  `;
+const AuthorizeButton = styled(Button)`
+    width: auto;
+    height: 37px;
+    margin: 5px auto;
+    padding: 0 8px;
+    border-radius: 8px;
+    color: black;
+    background-color: #E8DAEF;
+
+    &:hover {
+      background-color: #D2B4DE;
+    }
+  `;
+
 export const Register: React.FC<{}> = () => {
   const initialValues: SignUpFormValue = {
     firstName: '',
@@ -80,66 +140,6 @@ export const Register: React.FC<{}> = () => {
         checkPassword: err.reason,
       });
     });
-
-  const FormContainer = styled(Form)`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  `;
-  const Title = styled.h1`
-    font-family: Arial;
-    margin: 20px;
-    font-size: 20px;
-    line-height: 20px;
-    font-weight: 500;
-  `;
-  const Button = styled.button`
-    display: inline-block;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    margin: 0;
-    padding: 0;
-    border: none;
-    font-family: Arial;
-    font-weight: normal;
-    font-size: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    &:disabled {
-      cursor: not-allowed;
-    }
-  `;
-  const SubmitButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px auto;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #D6EAF8;
-
-    &:hover {
-      background-color: #AED6F1;
-    }
-    &:disabled {
-      background-color: #EBF5FB;
-    }
-  `;
-  const AuthorizeButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px auto;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #E8DAEF;
-
-    &:hover {
-      background-color: #D2B4DE;
-    }
-  `;
 
   return (
     <div>
