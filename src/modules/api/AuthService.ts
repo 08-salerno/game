@@ -5,6 +5,7 @@ import {
 
 const url = apiUrl('/auth');
 
+
 export default class AuthService {
   signUp = (data: SignUpData): Promise<User | ErrorReason> => fetch(`${url}/signup`, {
     method: 'POST',

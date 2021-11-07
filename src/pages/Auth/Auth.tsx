@@ -132,13 +132,13 @@ export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, Locat
       actions.setErrors({ password: err.reason });
     });
 
-  const OAuthSignIn = ():void => {
-    new AuthService().getServiceId()
-      .then((data) => {
-        // ${(data as {'service_id':string}).service_id}
-        window.location = `https://oauth.yandex.ru/authorize?response_type=code&client_id=${(data as {'service_id':string}).service_id}&redirect_uri=https://localhost:3000/`;
-      });
-  };
+  // const OAuthSignIn = ():void => {
+  //   new AuthService().getServiceId()
+  //     .then((data) => {
+  //       // ${(data as {'service_id':string}).service_id}
+  //       window.location = `https://oauth.yandex.ru/authorize?response_type=code&client_id=${(data as {'service_id':string}).service_id}&redirect_uri=http://local.ya-praktikum.tech`;
+  //     });
+  // };
 
   return (
     <div>
@@ -161,7 +161,7 @@ export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, Locat
       <RegisterButton type="button" onClick={router.goRegister}>
         Don&apos;t have an account?
       </RegisterButton>
-      <OAuthBlock onClick={OAuthSignIn}>
+      <OAuthBlock >
         <img src="https://yastatic.net/q/logoaas/v2/%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.svg?circle=black&color=fff&first=white" alt="" />
       </OAuthBlock>
     </div>
