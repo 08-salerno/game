@@ -23,6 +23,7 @@ import {
 } from './modules/redux/sagas/user.saga';
 import gitUrl from './modules/constants/repo-url';
 import Game from './pages/game/Game';
+import AuthService from './modules/api/AuthService';
 
 type AppRoute = {
   title: string;
@@ -140,11 +141,18 @@ const App: React.FC = () => {
   const authChecked = useAppSelector((state) => state.user.authChecked);
 
   useEffect(() => {
+    const OAuthCode = new URL(window.location.href).searchParams.get('code');
     if (!user) {
-      dispatch(fetchUserAction);
+      if (OAuthCode) {
+        new AuthService().oAuthSignIn(OAuthCode)
+          .then(() => {
+            dispatch(fetchUserAction);
+          });
+      } else {
+        dispatch(fetchUserAction);
+      }
     }
   }, [user]);
-
   return (
     <ErrorBoundary>
       <Router>
