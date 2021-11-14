@@ -37,7 +37,6 @@ import {
   drawSwapTransition,
   drawWrongSwapTransitions,
 } from './utils/transitions';
-import { clickSound } from '../../../components/audio';
 
 const Button = styled.button`
   display: inline-block;
@@ -103,7 +102,6 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
     if (isAnimating) {
       return;
     }
-    clickSound();
 
     const currentItemCoord = getItemCoordsByClickCoords(getCursorPosition(event));
 
