@@ -97,18 +97,18 @@ export function drawWrongSwapTransitions(
 
 export function drawDeleteTransition(
   matched: Item[],
-  afterFn: () => void,
 ): DrawQueueItem {
   return {
     name: 'drawDelete',
     animationTime: DELETE_ANIMATION_TIME,
     drawFn: (ctx, relativeDuration): void => {
       if (relativeDuration) {
-        removeSound();
         drawDeleteStep(ctx, matched, relativeDuration);
       }
     },
-    afterFn,
+    afterFn: (): void => {
+      removeSound();
+    },
   };
 }
 
