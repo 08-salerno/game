@@ -17,7 +17,7 @@ const TopicPage: React.VFC = () => {
   const [topic, setTopic] = useState<Topic | null>(null);
   const [loadingComments, setLoadingComments] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [commentsOffset, setCommentsOffset] = useState<number>(0);
+  const [commentsOffset, setCommentsOffset] = useState(0);
 
   useEffect(() => {
     getTopic(topicId)

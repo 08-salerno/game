@@ -1,6 +1,7 @@
 const { merge } = require('webpack-merge');
-const common = require('./webpack.common');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { DefinePlugin } = require('webpack');
+const common = require('./webpack.common');
 
 module.exports = merge(common, {
   mode: 'development',
@@ -10,11 +11,14 @@ module.exports = merge(common, {
         files: './src/**/*.tsx',
       },
     }),
+    new DefinePlugin({
+      PRODUCTION: JSON.stringify(false),
+    }),
   ],
   devtool: 'source-map',
   devServer: {
-    static: ['dist'],
     port: 3000,
+    hot: false,
     client: {
       overlay: false,
     },
@@ -22,5 +26,5 @@ module.exports = merge(common, {
       'Access-Control-Allow-Origin': '*',
     },
     historyApiFallback: true,
-  }
+  },
 });

@@ -2,11 +2,25 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    'jest/globals': true,
   },
   extends: [
     'plugin:react/recommended',
     'airbnb',
   ],
+  globals: {
+    React: true,
+    google: true,
+    mount: true,
+    mountWithRouter: true,
+    shallow: true,
+    shallowWithRouter: true,
+    context: true,
+    expect: true,
+    jsdom: true,
+    JSX: true,
+    PRODUCTION: true,
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
@@ -17,6 +31,7 @@ module.exports = {
   },
   plugins: [
     'react',
+    'jest',
     '@typescript-eslint',
   ],
   overrides: [
@@ -28,7 +43,7 @@ module.exports = {
       rules: {
         'no-multiple-empty-lines': 'warn',
         'no-trailing-spaces': 'warn',
-        'no-console': 'off',
+        'no-console': 'warn',
         'react/require-default-props': 'off',
         'react/jsx-props-no-spreading': 'off',
         'react/jsx-one-expression-per-line': 'off',
@@ -48,6 +63,7 @@ module.exports = {
         'import/no-extraneous-dependencies': 'off',
         'import/no-named-as-default': 'warn',
         'import/no-cycle': 'off',
+        'no-nested-ternary': 'warn',
         'no-param-reassign': [
           2,
           {
@@ -96,7 +112,6 @@ module.exports = {
     ],
     'dot-notation': 'warn',
     'consistent-return': 'off',
-    'no-unused-vars': 'warn',
     'spaced-comment': 'off',
     'no-alert': 'warn',
     'no-restricted-globals': 'warn',

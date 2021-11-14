@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TopicPage 1`] = `
+LoadedCheerio {
+  "0": Node {
+    "children": Array [
+      Node {
+        "data": "Загрузка",
+        "next": null,
+        "parent": [Circular],
+        "prev": null,
+        "type": "text",
+      },
+    ],
+    "name": "root",
+    "next": null,
+    "parent": null,
+    "prev": null,
+    "type": "root",
+  },
+  "_root": LoadedCheerio {
+    "0": Node {
+      "children": Array [
+        Node {
+          "data": "Загрузка",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "text",
+        },
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+    },
+    "_root": [Circular],
+    "length": 1,
+    "options": Object {
+      "decodeEntities": true,
+      "xml": false,
+    },
+  },
+  "length": 1,
+  "options": Object {
+    "decodeEntities": true,
+    "xml": false,
+  },
+}
+`;

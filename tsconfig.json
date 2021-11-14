@@ -21,18 +21,18 @@
         "strict": true,
         "strictFunctionTypes": true,
         "alwaysStrict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
         "declaration": true,
-        "inlineSourceMap": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "lib": [
             "esnext",
-            "dom"
+            "dom",
+            "WebWorker"
         ],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
     }
 }
