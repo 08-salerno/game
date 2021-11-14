@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import { object, string, ref } from 'yup';
-import FormFiled from '../../components/FormField';
+import { BlueButton, PurpleButton } from '../../styles/Buttons/Buttons';
+import { FormContainer, Title } from '../../styles/Forms/Forms';
+import FormFiled from '../../components/FormField/FormField';
 import AuthService from '../../modules/api/AuthService';
 import { ErrorReason } from '../../modules/api/types';
 import useAppRouter from '../../modules/router/router';
@@ -49,66 +50,6 @@ const SignUpSchema = object().shape({
     .oneOf([ref('password'), null], 'Passwords should match')
     .required('Required'),
 });
-
-const FormContainer = styled(Form)`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  `;
-const Title = styled.h1`
-    font-family: Arial;
-    margin: 20px;
-    font-size: 20px;
-    line-height: 20px;
-    font-weight: 500;
-  `;
-const Button = styled.button`
-    display: inline-block;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    margin: 0;
-    padding: 0;
-    border: none;
-    font-family: Arial;
-    font-weight: normal;
-    font-size: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    &:disabled {
-      cursor: not-allowed;
-    }
-  `;
-const SubmitButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px auto;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #D6EAF8;
-
-    &:hover {
-      background-color: #AED6F1;
-    }
-    &:disabled {
-      background-color: #EBF5FB;
-    }
-  `;
-const AuthorizeButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px auto;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #E8DAEF;
-
-    &:hover {
-      background-color: #D2B4DE;
-    }
-  `;
 
 export const Register: React.FC<{}> = () => {
   const initialValues: SignUpFormValue = {
@@ -158,11 +99,11 @@ export const Register: React.FC<{}> = () => {
           <FormFiled name="phone" label="Phone" type="tel" />
           <FormFiled name="password" label="Password" type="password" />
           <FormFiled name="checkPassword" label="Check Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
+          <BlueButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</BlueButton>
         </FormContainer>
       )}
       </Formik>
-      <AuthorizeButton type="button" onClick={router.goAuth}>Already have an account?</AuthorizeButton>
+      <PurpleButton type="button" onClick={router.goAuth}>Already have an account?</PurpleButton>
     </div>
   );
 };

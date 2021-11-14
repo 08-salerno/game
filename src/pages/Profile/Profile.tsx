@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import { object, string } from 'yup';
-import FormFiled from '../../components/FormField';
+import { BlueButton, GreenButton, PurpleButton } from '../../styles/Buttons/Buttons';
+import { FormContainer, Title } from '../../styles/Forms/Forms';
+import FormFiled from '../../components/FormField/FormField';
 import UserService from '../../modules/api/UserService';
 import { ErrorReason } from '../../modules/api/types';
 import { selectUser } from '../../modules/redux/slices/userSlice';
@@ -58,79 +59,6 @@ const userPasswordSchema = object().shape({
     .min(6, 'Password must contain at least 6 symbols')
     .required('Required'),
 });
-
-const FormContainer = styled(Form)`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  `;
-const Title = styled.h1`
-    font-family: Arial;
-    margin: 20px;
-    font-size: 20px;
-    line-height: 20px;
-    font-weight: 500;
-  `;
-const Button = styled.button`
-    display: inline-block;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    margin: 0;
-    padding: 0;
-    border: none;
-    font-family: Arial;
-    font-weight: normal;
-    font-size: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    &:disabled {
-      cursor: not-allowed;
-    }
-  `;
-const SubmitButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px auto;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #D6EAF8;
-
-    &:hover {
-      background-color: #AED6F1;
-    }
-    &:disabled {
-      background-color: #EBF5FB;
-    }
-  `;
-const GoBackButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #E8DAEF;
-
-    &:hover {
-      background-color: #D2B4DE;
-    }
-  `;
-const LogOutButton = styled(Button)`
-    width: auto;
-    height: 37px;
-    margin: 5px;
-    padding: 0 8px;
-    border-radius: 8px;
-    color: black;
-    background-color: #D1F2EB;
-
-    &:hover {
-      background-color: #A3E4D7;
-    }
-  `;
 
 export const Profile: React.FC<{}> = () => {
   const history = useHistory();
@@ -195,7 +123,7 @@ export const Profile: React.FC<{}> = () => {
           <FormFiled name="email" label="Email" type="email" />
           <FormFiled name="login" label="Login" />
           <FormFiled name="phone" label="Phone" type="tel" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
+          <BlueButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</BlueButton>
         </FormContainer>
       )}
       </Formik>
@@ -214,12 +142,12 @@ export const Profile: React.FC<{}> = () => {
         <FormContainer>
           <FormFiled name="oldPassword" label="Old Password" type="password" />
           <FormFiled name="newPassword" label="New Password" type="password" />
-          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Change Password</SubmitButton>
+          <BlueButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Change Password</BlueButton>
         </FormContainer>
       )}
       </Formik>
-      <GoBackButton type="button" onClick={router.goBack}>Go back</GoBackButton>
-      <LogOutButton type="button" onClick={logOut}>Log out</LogOutButton>
+      <PurpleButton type="button" onClick={router.goBack}>Go back</PurpleButton>
+      <GreenButton type="button" onClick={logOut}>Log out</GreenButton>
     </div>
   );
 };
