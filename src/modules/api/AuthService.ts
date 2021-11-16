@@ -83,6 +83,7 @@ export default class AuthService {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify({ code, redirect_uri: redirectUrl }),
   })
     .then((response) => {
