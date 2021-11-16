@@ -33,7 +33,9 @@ function makeHTMLPage({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <title>From SSR with Love</title>
-        {styleTags}
+        <style>
+            {styleTags}
+        </style>
       </head>
       <body>
         {/* eslint-disable-next-line react/no-danger */}
@@ -56,7 +58,8 @@ app.get('/', (req: Request, res: Response) => {
       </StyleSheetManager>
     </StaticRouter>
   );
-  const styleTags = sheet.getStyleTags();
+  const styleTags = sheet.instance.toString();
+  sheet.seal();
 
   res.send(
     makeHTMLPage({
