@@ -1,5 +1,5 @@
 import webpack from 'webpack';
-import { resolve, join } from 'path';
+import { resolve } from 'path';
 import webpackNodeExternals from 'webpack-node-externals';
 import { merge } from 'webpack-merge';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
@@ -16,7 +16,7 @@ module.exports = (): webpack.Configuration => {
     plugins: [
       new CleanWebpackPlugin(),
       new webpack.ProvidePlugin({
-        Image: resolve(join(__dirname, 'webpack/mock/image.mock')),
+        document: 'global/document',
       }),
     ],
     output: {

@@ -1,6 +1,6 @@
 import mushroom from './mushroom.png';
 
-const mushroomImg = new Image();
+const mushroomImg = document.createElement('img');
 mushroomImg.src = mushroom;
 
 export default mushroomImg;
