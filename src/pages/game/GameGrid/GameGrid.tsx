@@ -37,7 +37,7 @@ import {
   drawSwapTransition,
   drawWrongSwapTransitions,
 } from './utils/transitions';
-import { clickSound } from '../../../components/audio';
+import { clickSound, removeSound } from '../../../components/audio';
 
 const Button = styled.button`
   display: inline-block;
@@ -202,6 +202,7 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
         setGridData(gridClone);
 
         addTransitions(drawDeleteTransition(matched, () => {
+          removeSound();
           setPoints((points) => points + countScore(matched.length));
         }));
 
