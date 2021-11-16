@@ -1,7 +1,6 @@
 // import { hot } from 'react-hot-loader/root';
 import React/*, { useEffect }*/ from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
@@ -149,7 +148,6 @@ const App: React.FC = () => {
 
   return (
         <ErrorBoundary>
-            <Router>
                 <>
                     <NavBar>
                         <DropDown>
@@ -202,7 +200,6 @@ const App: React.FC = () => {
                         </Switch>
                     </Layout>
                 </>
-            </Router>
         </ErrorBoundary>
   );
 };
