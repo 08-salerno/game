@@ -1,6 +1,6 @@
 import webpack from 'webpack';
 
-export default (mode: webpack.Configuration['mode']): webpack.Configuration => ({
+export default (): webpack.Configuration => ({
   module: {
     rules: [
       {
