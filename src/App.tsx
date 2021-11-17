@@ -6,7 +6,7 @@ import {
   RouteProps,
 } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { colors, colorsToChoose, basicColors } from './styles/colors';
+//import { colors, colorsToChoose, basicColors } from './styles/colors';
 import themes from './styles/themes';
 import { Title, Description } from './styles/App/App';
 import {
@@ -81,10 +81,12 @@ const App: React.FC = () => {
   const user = useAppSelector(selectUser);
   const authChecked = useAppSelector((state) => state.user.authChecked);
 
-  const [backgroundColor, setBackgroundColor] = useState('white');
+  // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
+
+  /* const [backgroundColor, setBackgroundColor] = useState('white');
   const [fontColor, setFontColor] = useState('black');
   const [interfaceColor, setInterfaceColor] = useState('blue');
-  const [isMount, setIsMount] = useState(false);
+  const [isMount, setIsMount] = useState(false); */
 
   const [theme, setTheme] = useState(themes.light);
 
@@ -96,33 +98,48 @@ const App: React.FC = () => {
 
   // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
 
-  /*   useEffect(() => {
-      if (!isMount) {
-        setIsMount(true);
-        return;
-      }
-      setTheme({
-        backgroundColor: colors[backgroundColor][backgroundColor],
-        font: colors[fontColor][fontColor],
-        buttons: {
-          main: {
-            main: colors[interfaceColor][`${interfaceColor}_400`],
-            hover: colors[interfaceColor][`${interfaceColor}_600`],
-            disabled: colors[interfaceColor][`${interfaceColor}_100`],
-          },
-          alt: {
-            main: colors[interfaceColor][`${interfaceColor}_400`],
-            hover: colors[interfaceColor][`${interfaceColor}_600`],
-            disabled: colors[interfaceColor][`${interfaceColor}_100`],
-          },
-          exit: {
-            main: colors[interfaceColor][`${interfaceColor}_400`],
-            hover: colors[interfaceColor][`${interfaceColor}_600`],
-            exit: colors[interfaceColor][`${interfaceColor}_100`],
-          },
+  /* useEffect(() => {
+    if (!isMount) {
+      setIsMount(true);
+      return;
+    }
+    setTheme({
+      backgroundColor: colors[backgroundColor][backgroundColor],
+      font: colors[fontColor][fontColor],
+      buttons: {
+        font: colors.black.black,
+        main: {
+          main: colors[interfaceColor][`${interfaceColor}_400`],
+          hover: colors[interfaceColor][`${interfaceColor}_600`],
+          disabled: colors[interfaceColor][`${interfaceColor}_100`],
         },
-      });
-    }, [backgroundColor, fontColor, interfaceColor]); */
+        alt: {
+          main: colors[interfaceColor][`${interfaceColor}_400`],
+          hover: colors[interfaceColor][`${interfaceColor}_600`],
+          disabled: colors[interfaceColor][`${interfaceColor}_100`],
+        },
+        exit: {
+          main: colors[interfaceColor][`${interfaceColor}_400`],
+          hover: colors[interfaceColor][`${interfaceColor}_600`],
+          exit: colors[interfaceColor][`${interfaceColor}_100`],
+        },
+      },
+      navbar: {
+        backgroundColor: colors.grey.grey_800,
+        font: colors.white.white,
+        fontHover: colors.grey.grey_400,
+        buttonBackground: colors.white.white,
+        buttonHover: colors.grey.grey_200,
+        buttonText: colors.black.black,
+      },
+      form: {
+        font: colors.black.black,
+        label: colors.grey.grey_800,
+        background: colors.white.white,
+        underline: colors.grey.grey_800,
+      },
+    });
+  }, [backgroundColor, fontColor, interfaceColor]); */
 
   return (
     <ErrorBoundary>
@@ -155,7 +172,9 @@ const App: React.FC = () => {
                   <DropDownButton onClick={(): void => setTheme(themes.dark)}>Dark</DropDownButton>
                 </DropDownContent>
               </DropDown>
-              <DropDown>
+              {// ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
+
+              /* <DropDown>
                 <DropDownHead type="button">Background color</DropDownHead>
                 <DropDownContent>
                   {Object.entries(colorsToChoose).map((item: string[]) => (
@@ -178,7 +197,7 @@ const App: React.FC = () => {
                     <DropDownButton onClick={(): void => setFontColor(item[0])}>{item[1]}</DropDownButton>
                   ))}
                 </DropDownContent>
-              </DropDown>
+              </DropDown> */}
             </NavBar>
             <Layout id="layout">
               <Switch>
