@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   RouteProps,
 } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import { colors, colorsToChoose, basicColors } from './styles/colors';
+import themes from './styles/themes';
 import {
-  NavBar, NavBarLink, DropDown, DropDownContent, DropDownButton, DropDownLink,
+  NavBar, NavBarLink, DropDown, DropDownContent, DropDownHead, DropDownLink, DropDownButton,
 } from './styles/Navbar/NavBar';
 import Layout from './styles/Layout/Layout';
 import Register from './pages/Register/Register';
@@ -29,7 +32,7 @@ import Game from './pages/game/Game';
 type AppRoute = {
   title: string;
   link: string;
-  private?:boolean;
+  private?: boolean;
 } & RouteProps &
   Required<Pick<RouteProps, 'component'>>;
 
@@ -77,63 +80,126 @@ const App: React.FC = () => {
   const user = useAppSelector(selectUser);
   const authChecked = useAppSelector((state) => state.user.authChecked);
 
+  const [backgroundColor, setBackgroundColor] = useState('white');
+  const [fontColor, setFontColor] = useState('black');
+  const [interfaceColor, setInterfaceColor] = useState('blue');
+  const [isMount, setIsMount] = useState(false);
+
+  const [theme, setTheme] = useState(themes.light);
+
   useEffect(() => {
     if (!user) {
       dispatch(fetchUserAction);
     }
   }, [user]);
 
+  // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
+
+  /*   useEffect(() => {
+      if (!isMount) {
+        setIsMount(true);
+        return;
+      }
+      setTheme({
+        backgroundColor: colors[backgroundColor][backgroundColor],
+        font: colors[fontColor][fontColor],
+        buttons: {
+          main: {
+            main: colors[interfaceColor][`${interfaceColor}_400`],
+            hover: colors[interfaceColor][`${interfaceColor}_600`],
+            disabled: colors[interfaceColor][`${interfaceColor}_100`],
+          },
+          alt: {
+            main: colors[interfaceColor][`${interfaceColor}_400`],
+            hover: colors[interfaceColor][`${interfaceColor}_600`],
+            disabled: colors[interfaceColor][`${interfaceColor}_100`],
+          },
+          exit: {
+            main: colors[interfaceColor][`${interfaceColor}_400`],
+            hover: colors[interfaceColor][`${interfaceColor}_600`],
+            exit: colors[interfaceColor][`${interfaceColor}_100`],
+          },
+        },
+      });
+    }, [backgroundColor, fontColor, interfaceColor]); */
+
   return (
     <ErrorBoundary>
       <Router>
         <>
-          <NavBar>
-            <DropDown>
-              <DropDownButton type="button">Routes DD</DropDownButton>
-              <DropDownContent>
-                <DropDownLink to="/">Главная</DropDownLink>
-                {routes.map((route: AppRoute) => (
-                      <DropDownLink key={route.link} to={route.link}>
-                        {route.title}
-                      </DropDownLink>
-                ))}
-              </DropDownContent>
-            </DropDown>
-            <NavBarLink
-              href={gitUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Github
-            </NavBarLink>
-          </NavBar>
-          <Layout>
-            <Switch>
-              {routes.map((route: AppRoute) => (!route.private ? (
-                /**
-                 * Добавь недостающий пропс
-                 */
-                <Route
-                  key={route.link}
-                  path={route.path ? route.path : route.link}
-                  component={route.component}
-                />
-              ) : (
-                authChecked && (
-                        <PrivateRoute
-                          key={route.link}
-                          component={route.component}
-                          path={route.path ? route.path : route.link}
-                        />
-                )
-              )))}
-              <Route path="/" exact>
-                <h1>Отсюда всё начинается :)</h1>
-                Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять
-                на страницу с игрой при странных рутах
-              </Route>
-            </Switch>
-          </Layout>
+          <ThemeProvider theme={theme}>
+            <NavBar>
+              <DropDown>
+                <DropDownHead type="button">Routes DD</DropDownHead>
+                <DropDownContent>
+                  <DropDownLink to="/">Главная</DropDownLink>
+                  {routes.map((route: AppRoute) => (
+                    <DropDownLink key={route.link} to={route.link}>
+                      {route.title}
+                    </DropDownLink>
+                  ))}
+                </DropDownContent>
+              </DropDown>
+              <NavBarLink
+                href={gitUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Github
+              </NavBarLink>
+              <DropDown>
+                <DropDownHead type="button">Background color</DropDownHead>
+                <DropDownContent>
+                  {Object.entries(colorsToChoose).map((item: string[]) => (
+                    <DropDownButton onClick={(): void => setBackgroundColor(item[0])}>{item[1]}</DropDownButton>
+                  ))}
+                </DropDownContent>
+              </DropDown>
+              <DropDown>
+                <DropDownHead type="button">Interface color</DropDownHead>
+                <DropDownContent>
+                  {Object.entries(colorsToChoose).map((item: string[]) => (
+                    <DropDownButton onClick={(): void => setInterfaceColor(item[0])}>{item[1]}</DropDownButton>
+                  ))}
+                </DropDownContent>
+              </DropDown>
+              <DropDown>
+                <DropDownHead type="button">Font color</DropDownHead>
+                <DropDownContent>
+                  {Object.entries(Object.assign(colorsToChoose, basicColors)).map((item: string[]) => (
+                    <DropDownButton onClick={(): void => setFontColor(item[0])}>{item[1]}</DropDownButton>
+                  ))}
+                </DropDownContent>
+              </DropDown>
+            </NavBar>
+            <Layout id="layout">
+              <Switch>
+                {routes.map((route: AppRoute) => (!route.private ? (
+                  /**
+                   * Добавь недостающий пропс
+                   */
+                  <Route
+                    key={route.link}
+                    path={route.path ? route.path : route.link}
+                    component={route.component}
+                  />
+                ) : (
+                  authChecked && (
+                    <PrivateRoute
+                      key={route.link}
+                      component={route.component}
+                      path={route.path ? route.path : route.link}
+                    />
+                  )
+                )))}
+                <Route path="/" exact>
+                  <h1>Отсюда всё начинается :)</h1>
+                  Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять
+                  на страницу с игрой при странных рутах
+                </Route>
+              </Switch>
+            </Layout>
+          </ThemeProvider>
         </>
       </Router>
     </ErrorBoundary>

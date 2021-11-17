@@ -9,7 +9,7 @@ font-family: Arial;
 `;
 export const Label = styled.label`
 display: block;
-color: grey;
+color: ${(props): string => props.theme.form.label};
 font-size: 9px;
 line-height: 9px;
 font-weight: 500;
@@ -17,7 +17,9 @@ font-weight: 500;
 export const Input = styled(Field)`
 width: 100%;
 border: none;
-border-bottom: 1px solid #333;
+border-bottom: 1px solid ${(props): string => props.theme.form.underline};
+color: ${(props): string => props.theme.form.font};
+background-color: ${(props): string => props.theme.form.background};
 font-weight: 500;
 font-size: 14px;
 line-height: 16px;

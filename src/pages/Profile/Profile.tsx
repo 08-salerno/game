@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik } from 'formik';
 import { object, string } from 'yup';
-import { BlueButton, GreenButton, PurpleButton } from '../../styles/Buttons/Buttons';
+import { SubmitButton, ExitButton, AltButton } from '../../styles/Buttons/Buttons';
 import { FormContainer, Title } from '../../styles/Forms/Forms';
 import FormFiled from '../../components/FormField/FormField';
 import UserService from '../../modules/api/UserService';
@@ -114,18 +114,18 @@ export const Profile: React.FC<{}> = () => {
           })}
         validationSchema={userDataSchema}
       >
-      {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-        <FormContainer>
-          <Title>Profile Page</Title>
-          <FormFiled name="firstName" label="First Name" />
-          <FormFiled name="secondName" label="Second Name" />
-          <FormFiled name="displayName" label="Display Name" />
-          <FormFiled name="email" label="Email" type="email" />
-          <FormFiled name="login" label="Login" />
-          <FormFiled name="phone" label="Phone" type="tel" />
-          <BlueButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</BlueButton>
-        </FormContainer>
-      )}
+        {({ dirty, isValid, isSubmitting }): React.ReactElement => (
+          <FormContainer>
+            <Title>Profile Page</Title>
+            <FormFiled name="firstName" label="First Name" />
+            <FormFiled name="secondName" label="Second Name" />
+            <FormFiled name="displayName" label="Display Name" />
+            <FormFiled name="email" label="Email" type="email" />
+            <FormFiled name="login" label="Login" />
+            <FormFiled name="phone" label="Phone" type="tel" />
+            <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
+          </FormContainer>
+        )}
       </Formik>
       <Formik
         initialValues={userPasswordsInitialValues}
@@ -138,16 +138,16 @@ export const Profile: React.FC<{}> = () => {
           })}
         validationSchema={userPasswordSchema}
       >
-      {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-        <FormContainer>
-          <FormFiled name="oldPassword" label="Old Password" type="password" />
-          <FormFiled name="newPassword" label="New Password" type="password" />
-          <BlueButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Change Password</BlueButton>
-        </FormContainer>
-      )}
+        {({ dirty, isValid, isSubmitting }): React.ReactElement => (
+          <FormContainer>
+            <FormFiled name="oldPassword" label="Old Password" type="password" />
+            <FormFiled name="newPassword" label="New Password" type="password" />
+            <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Change Password</SubmitButton>
+          </FormContainer>
+        )}
       </Formik>
-      <PurpleButton type="button" onClick={router.goBack}>Go back</PurpleButton>
-      <GreenButton type="button" onClick={logOut}>Log out</GreenButton>
+      <AltButton type="button" onClick={router.goBack}>Go back</AltButton>
+      <ExitButton type="button" onClick={logOut}>Log out</ExitButton>
     </div>
   );
 };

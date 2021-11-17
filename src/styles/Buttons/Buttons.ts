@@ -25,33 +25,36 @@ padding: 0 8px;
 border-radius: 8px;
 color: black;
 `;
-export const BlueButton = styled(Button)`
-background-color: #AED6F1;
+export const SubmitButton = styled(Button)`
+background-color: ${(props): string => props.theme.buttons.main.main};
+color: ${(props): string => props.theme.buttons.font};
 
 &:hover {
-  background-color: #5DADE2;
+  background-color: ${(props): string => props.theme.buttons.main.hover};
 }
 &:disabled {
-  background-color: #EBF5FB;
+  background-color: ${(props): string => props.theme.buttons.main.disabled};
 }
 `;
-export const PurpleButton = styled(Button)`
-background-color: #D2B4DE;
+export const AltButton = styled(Button)`
+background-color: ${(props): string => props.theme.buttons.alt.main};
+color: ${(props): string => props.theme.buttons.font};
 
 &:hover {
-  background-color: #A569BD;
+  background-color: ${(props): string => props.theme.buttons.alt.hover};
 }
 &:disabled {
-  background-color: #F4ECF7;
+  background-color: ${(props): string => props.theme.buttons.alt.disabled};
 }
 `;
-export const GreenButton = styled(Button)`
-background-color: #A3E4D7;
+export const ExitButton = styled(Button)`
+background-color: ${(props): string => props.theme.buttons.exit.main};
+color: ${(props): string => props.theme.buttons.font};
 
 &:hover {
-  background-color: #48C9B0;
+  background-color: ${(props): string => props.theme.buttons.exit.hover};
 }
 &:disabled {
-  background-color: #E8F8F5;
+  background-color: ${(props): string => props.theme.buttons.exit.disabled};
 }
 `;

@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { Formik } from 'formik';
 import { object, string, ref } from 'yup';
-import { BlueButton, PurpleButton } from '../../styles/Buttons/Buttons';
+import { SubmitButton, AltButton } from '../../styles/Buttons/Buttons';
 import { FormContainer, Title } from '../../styles/Forms/Forms';
 import FormFiled from '../../components/FormField/FormField';
 import AuthService from '../../modules/api/AuthService';
@@ -99,11 +99,11 @@ export const Register: React.FC<{}> = () => {
           <FormFiled name="phone" label="Phone" type="tel" />
           <FormFiled name="password" label="Password" type="password" />
           <FormFiled name="checkPassword" label="Check Password" type="password" />
-          <BlueButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</BlueButton>
+          <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
         </FormContainer>
       )}
       </Formik>
-      <PurpleButton type="button" onClick={router.goAuth}>Already have an account?</PurpleButton>
+      <AltButton type="button" onClick={router.goAuth}>Already have an account?</AltButton>
     </div>
   );
 };

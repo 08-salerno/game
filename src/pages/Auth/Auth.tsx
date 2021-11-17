@@ -5,7 +5,7 @@ import { object, string } from 'yup';
 import { Location } from 'history';
 import { StaticContext } from 'react-router';
 import { RouteComponentProps } from 'react-router-dom';
-import { BlueButton, PurpleButton } from '../../styles/Buttons/Buttons';
+import { SubmitButton, AltButton } from '../../styles/Buttons/Buttons';
 import { FormContainer, Title } from '../../styles/Forms/Forms';
 import FormFiled from '../../components/FormField/FormField';
 import AuthService from '../../modules/api/AuthService';
@@ -81,15 +81,15 @@ export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, Locat
             <Title>Auth Page</Title>
             <FormFiled name="login" label="Login" />
             <FormFiled name="password" label="Password" type="password" />
-            <BlueButton type="submit" disabled={!dirty || !isValid || isSubmitting}>
+            <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>
               Submit
-            </BlueButton>
+            </SubmitButton>
           </FormContainer>
         )}
       </Formik>
-      <PurpleButton type="button" onClick={router.goRegister}>
+      <AltButton type="button" onClick={router.goRegister}>
         Don&apos;t have an account?
-      </PurpleButton>
+      </AltButton>
     </div>
   );
 };
