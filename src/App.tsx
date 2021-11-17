@@ -8,6 +8,7 @@ import {
 import { ThemeProvider } from 'styled-components';
 import { colors, colorsToChoose, basicColors } from './styles/colors';
 import themes from './styles/themes';
+import { Title, Description } from './styles/App/App';
 import {
   NavBar, NavBarLink, DropDown, DropDownContent, DropDownHead, DropDownLink, DropDownButton,
 } from './styles/Navbar/NavBar';
@@ -148,6 +149,13 @@ const App: React.FC = () => {
                 Github
               </NavBarLink>
               <DropDown>
+                <DropDownHead type="button">Theme</DropDownHead>
+                <DropDownContent>
+                  <DropDownButton onClick={(): void => setTheme(themes.light)}>Light</DropDownButton>
+                  <DropDownButton onClick={(): void => setTheme(themes.dark)}>Dark</DropDownButton>
+                </DropDownContent>
+              </DropDown>
+              <DropDown>
                 <DropDownHead type="button">Background color</DropDownHead>
                 <DropDownContent>
                   {Object.entries(colorsToChoose).map((item: string[]) => (
@@ -193,9 +201,10 @@ const App: React.FC = () => {
                   )
                 )))}
                 <Route path="/" exact>
-                  <h1>Отсюда всё начинается :)</h1>
-                  Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять
-                  на страницу с игрой при странных рутах
+                  <Title>Отсюда всё начинается :)</Title>
+                  <Description>Возможно логично сделать стартовую страницу сразу с игрой и
+                    перенаправлять на страницу с игрой при странных рутах
+                  </Description>
                 </Route>
               </Switch>
             </Layout>

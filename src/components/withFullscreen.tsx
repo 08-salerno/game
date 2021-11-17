@@ -9,7 +9,6 @@ const FullscreenDiv = styled.div<{isFullscreen: boolean}>`
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ isFullscreen }): string => `${isFullscreen ? 'color: white;' : 'color: black;'}`}
 `;
 
 export type WithFullscreenProps = {

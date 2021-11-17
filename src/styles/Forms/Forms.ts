@@ -13,4 +13,5 @@ margin: 20px;
 font-size: 20px;
 line-height: 20px;
 font-weight: 500;
+color: ${(props): string => props.theme.font};
 `;

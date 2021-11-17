@@ -33,7 +33,7 @@ const light = {
     font: colors.black.black,
     label: colors.grey.grey_800,
     background: colors.white.white,
-    underline: colors.grey_800,
+    underline: colors.grey.grey_800,
   },
 };
 
