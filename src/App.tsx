@@ -88,7 +88,7 @@ const App: React.FC = () => {
   const [interfaceColor, setInterfaceColor] = useState('blue');
   const [isMount, setIsMount] = useState(false); */
 
-  const [theme, setTheme] = useState(themes.light);
+  const [theme, setTheme] = useState(themes.dark);
 
   useEffect(() => {
     if (!user) {

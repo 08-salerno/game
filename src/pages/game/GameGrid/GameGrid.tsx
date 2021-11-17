@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GameProps } from '../Game';
-import StatText from '../styles';
+import { StatText } from '../styles';
 import {
   Coordinates,
   CombinationListWithCoordinatesForRemove,
@@ -237,10 +237,10 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
 
   return (
     <div>
-        <StatText>Комбинаций осталось: {combinations?.length}</StatText>
-        <StatText>Ходов осталось: {turns}</StatText>
-        <StatText>Очков набрано {points}</StatText>
-        <SubmitButton onClick={onNewGame}>Начать заново</SubmitButton>
+      <StatText>Комбинаций осталось: {combinations?.length}</StatText>
+      <StatText>Ходов осталось: {turns}</StatText>
+      <StatText>Очков набрано {points}</StatText>
+      <SubmitButton onClick={onNewGame}>Начать заново</SubmitButton>
       <div style={{ marginTop: '10px' }}>
         <Canvas
           onClick={handleClick}

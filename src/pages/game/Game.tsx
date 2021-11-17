@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Modal from 'react-modal';
 import withFullscreen from '../../components/withFullscreen';
 import GameGrid from './GameGrid/GameGrid';
 import { saveScore } from '../leader-bord/api';
@@ -8,9 +7,13 @@ import { selectUser } from '../../modules/redux/slices/userSlice';
 import useAppRouter from '../../modules/router/router';
 import rootElementSelector from '../../modules/utils/root-element-selector';
 import { exitFullscreen } from '../../modules/utils/fullscreen.utils';
+import { AltButton, SubmitButton } from '../../styles/Buttons/Buttons';
+import {
+  Popup, StyledModal, Title, StatText,
+} from './styles';
 
 export type GameProps = {
-    onGameOver: (score: number) => void;
+  onGameOver: (score: number) => void;
 }
 const GameGridWithFullscreen = withFullscreen<GameProps>(GameGrid);
 const Game: React.FC = () => {
@@ -45,21 +48,20 @@ const Game: React.FC = () => {
   };
 
   return (
-        <>
-            <GameGridWithFullscreen onGameOver={onGameOver} />
-            <Modal isOpen={isGameOverModalOpen} appElement={rootElementSelector()}>
-                <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                    <h1>Игра окончена</h1>
-                    <h2>Ваш рекорд: {userScore}</h2>
-                    {!user && (
-                        <p>Вы не авторизированны. Ваш рекорд не будет сохранён :(</p>
-                    )}
-                    <button type="button" onClick={closeGameOverModal}>Сыграть ещё!</button>
-                    <br />
-                    <button type="button" onClick={onNavigateToLeaderBord}>Посмотреть таблицу рекордов</button>
-                </div>
-            </Modal>
-        </>
+    <>
+      <GameGridWithFullscreen onGameOver={onGameOver} />
+      <StyledModal isOpen={isGameOverModalOpen} appElement={rootElementSelector()}>
+        <Popup>
+          <Title>Игра окончена</Title>
+          <StatText>Ваш рекорд: {userScore}</StatText>
+          {!user && (
+            <p>Вы не авторизированны. Ваш рекорд не будет сохранён :(</p>
+          )}
+          <SubmitButton type="button" onClick={closeGameOverModal}>Сыграть ещё!</SubmitButton>
+          <AltButton type="button" onClick={onNavigateToLeaderBord}>Посмотреть таблицу рекордов</AltButton>
+        </Popup>
+      </StyledModal>
+    </>
   );
 };
 
