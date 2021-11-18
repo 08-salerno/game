@@ -19,7 +19,7 @@ import {
   SHUFFLE_ANIMATION_TIME,
   SWAP_ANIMATION_TIME,
 } from './config';
-import { removeSound, shuffleSound } from '../../../../components/audio';
+import { shuffleSound } from '../../../../components/audio';
 
 export function drawSelectTransition(coordinates: Coordinates): DrawQueueItem {
   return {
@@ -97,6 +97,7 @@ export function drawWrongSwapTransitions(
 
 export function drawDeleteTransition(
   matched: Item[],
+  afterFn: () => void,
 ): DrawQueueItem {
   return {
     name: 'drawDelete',
@@ -106,9 +107,7 @@ export function drawDeleteTransition(
         drawDeleteStep(ctx, matched, relativeDuration);
       }
     },
-    afterFn: (): void => {
-      removeSound();
-    },
+    afterFn,
   };
 }
 
