@@ -9,7 +9,6 @@ import './modules/service-worker/service-worker-registrator';
 
 const Root: React.VFC = () => (
     <BrowserRouter>
-        CSR
         <Normalize />
         <Provider store={store}>
             <App />

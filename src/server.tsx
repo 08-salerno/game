@@ -6,6 +6,9 @@ import { renderToStaticMarkup, renderToString } from 'react-dom/server';
 import fs from 'fs';
 import App from './App';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
+import { configureStore } from '@reduxjs/toolkit';
+import userReducer from './modules/redux/slices/userSlice';
+import { Provider } from 'react-redux';
 
 const app = express();
 const PORT = 3000;
@@ -19,11 +22,10 @@ fs.readdirSync('./dist/client').forEach((file) => {
 console.log('prepared scripts', jsFiles.length);
 
 function makeHTMLPage({
-  content,
-  styleTags
+  content, css
 }: {
   content: string;
-  styleTags: string;
+  css: string;
 }): string {
   // const escapedContent = htmlescape(content);
   const html = renderToStaticMarkup(
@@ -33,9 +35,7 @@ function makeHTMLPage({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <title>From SSR with Love</title>
-        <style>
-            {styleTags}
-        </style>
+        <style>{css}</style>
       </head>
       <body>
         {/* eslint-disable-next-line react/no-danger */}
@@ -49,22 +49,34 @@ function makeHTMLPage({
   return `<!DOCTYPE html>${html}`;
 }
 
-app.get('/', (req: Request, res: Response) => {
+app.get('*', (req: Request, res: Response) => {
+  console.log('new request', req.url);
+
+  const store = configureStore({
+    reducer: {
+      user: userReducer
+    }
+    // todo [sitnik] включу проверить, когда заработают руты нормально
+    // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(sagaMiddleware),
+  });
+
   const sheet = new ServerStyleSheet();
   const appContentHTML = renderToString(
     <StaticRouter context={{}} location={req.url}>
       <StyleSheetManager sheet={sheet.instance}>
-        <App />
+        <Provider store={store}>
+          <App />
+        </Provider>
       </StyleSheetManager>
     </StaticRouter>
   );
-  const styleTags = sheet.instance.toString();
+  const css = sheet.instance.toString();
   sheet.seal();
 
   res.send(
     makeHTMLPage({
       content: appContentHTML,
-      styleTags
+        css
     })
   );
 });
