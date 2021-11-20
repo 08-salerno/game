@@ -1,5 +1,5 @@
-// import { hot } from 'react-hot-loader/root';
-import React/*, { useEffect }*/ from 'react';
+import { hot } from 'react-hot-loader/root';
+import React, { useEffect } from 'react';
 import {
   Switch,
   Route,
@@ -7,20 +7,20 @@ import {
   RouteProps,
 } from 'react-router-dom';
 import styled from 'styled-components';
-// import Register from './pages/Register/Register';
-// import Auth from './pages/Auth/Auth';
-// import Profile from './pages/Profile/Profile';
-// import Forum from './pages/forum/Forum';
-// import ForumRoutes from './pages/forum/routes';
-// import { LeaderBordRoutes } from './pages/leader-bord/routes';
-// import LeaderBord from './pages/leader-bord/LeaderBord';
+import Register from './pages/Register/Register';
+import Auth from './pages/Auth/Auth';
+import Profile from './pages/Profile/Profile';
+import Forum from './pages/forum/Forum';
+import ForumRoutes from './pages/forum/routes';
+import { LeaderBordRoutes } from './pages/leader-bord/routes';
+import LeaderBord from './pages/leader-bord/LeaderBord';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import PrivateRoute from './components/HOC/PrivateRoute/PrivateRoute';
-// import { selectUser } from './modules/redux/slices/userSlice';
-// import { useAppDispatch, useAppSelector } from './modules/redux/hooks';
-// import {
-//   fetchUserAction,
-// } from './modules/redux/sagas/user.saga';
+import { selectUser } from './modules/redux/slices/userSlice';
+import { useAppDispatch, useAppSelector } from './modules/redux/hooks';
+import {
+  fetchUserAction,
+} from './modules/redux/sagas/user.saga';
 import gitUrl from './modules/constants/repo-url';
 import Game from './pages/game/Game';
 
@@ -35,38 +35,38 @@ type AppRoute = {
  * Добавляй руты сюда, а не в разметку
  */
 const routes: AppRoute[] = [
-  // {
-  //   title: 'Регистрация',
-  //   link: '/register',
-  //   component: Register,
-  // },
+  {
+    title: 'Регистрация',
+    link: '/register',
+    component: Register,
+  },
   {
     title: 'game',
     link: '/game',
     component: Game,
   },
-  // {
-  //   title: 'Авторизация',
-  //   link: '/auth',
-  //   component: Auth,
-  // },
-  // {
-  //   title: 'Страница пользователя',
-  //   link: '/profile',
-  //   component: Profile,
-  //   private: true,
-  // },
-  // {
-  //   title: 'Форум',
-  //   link: ForumRoutes.HOME,
-  //   component: Forum,
-  //   private: true,
-  // },
-  // {
-  //   title: 'Таблица лидеров',
-  //   link: LeaderBordRoutes.HOME,
-  //   component: LeaderBord,
-  // },
+  {
+    title: 'Авторизация',
+    link: '/auth',
+    component: Auth,
+  },
+  {
+    title: 'Страница пользователя',
+    link: '/profile',
+    component: Profile,
+    private: true,
+  },
+  {
+    title: 'Форум',
+    link: ForumRoutes.HOME,
+    component: Forum,
+    private: true,
+  },
+  {
+    title: 'Таблица лидеров',
+    link: LeaderBordRoutes.HOME,
+    component: LeaderBord,
+  },
 ];
 
 const NavBar = styled.nav`
@@ -134,17 +134,16 @@ const Layout = styled.div`
 `;
 
 const App: React.FC = () => {
-// const dispatch = useAppDispatch();
-//
-// const user = useAppSelector(selectUser);
-// const authChecked = useAppSelector((state) => state.user.authChecked);
-  const authChecked = true;
-  //
-  // useEffect(() => {
-  //   if (!user) {
-  //     dispatch(fetchUserAction);
-  //   }
-  // }, [user]);
+  const dispatch = useAppDispatch();
+
+  const user = useAppSelector(selectUser);
+  const authChecked = useAppSelector((state) => state.user.authChecked);
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(fetchUserAction);
+    }
+  }, [user]);
 
   return (
         <ErrorBoundary>
@@ -195,7 +194,7 @@ const App: React.FC = () => {
                             <Route path="/" exact>
                                 <h1>Отсюда всё начинается :)</h1>
                                 Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять
-                                на страницу с игрой при странных рутах
+                                на страницу с игрой при странных рутах!
                             </Route>
                         </Switch>
                     </Layout>
@@ -204,4 +203,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default hot(App);

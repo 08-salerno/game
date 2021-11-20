@@ -8,7 +8,9 @@
     "build:csr": "webpack --config webpack.csr.ts --mode=production",
     "server": "node server.js",
     "build:ssr": "webpack --config webpack.ssr.ts --mode=development",
+    "watch:ssr": "webpack --watch --config webpack.ssr.ts --mode=development",
     "build:server": "tsc --project server",
+    "start:server": "node dist/server/index.js",
     "test": "jest"
   },
   "engines": {
