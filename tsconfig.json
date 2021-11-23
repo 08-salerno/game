@@ -30,9 +30,9 @@
             "dom",
             "WebWorker"
         ],
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedParameters": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     }
 }
