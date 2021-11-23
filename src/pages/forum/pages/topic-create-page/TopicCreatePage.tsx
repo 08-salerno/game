@@ -7,6 +7,7 @@ import { createTopic } from '../../api';
 import ForumRoutes from '../../routes';
 import { FormikSubmit } from '../../../../modules/utils/formik.utils';
 import useAppRouter from '../../../../modules/router/router';
+import styled from 'styled-components';
 
 const TopicCreateSchema = object().shape<{ title: StringSchema }>({
   title: string().required('').min(3, 'Минимум 3 символа'),
@@ -31,6 +32,17 @@ const TopicCreatePage: React.VFC = () => {
       // todo [sitnik] уведомить пользоователя об ошибке
     });
 
+  const CreateInput = styled.input`
+    font-family: Arial;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid ${(props): string => props.theme.form.underline};
+    color: ${(props): string => props.theme.form.font};
+    background-color: ${(props): string => props.theme.form.background};
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+  `;
   return (
     <Formik
       initialValues={{ title: '' }}

@@ -6,6 +6,8 @@ import { TopicPreview } from '../../types/topic-preview';
 import TopicPreviewer from '../../components/topic-previewer/TopicPreviewer';
 import ForumRoutes from '../../routes';
 import { selectIsAuthorized } from '../../../../modules/redux/slices/userSlice';
+import styled from 'styled-components';
+import { AltButton, SubmitButton } from '../../../../styles/Buttons/Buttons';
 
 const TopicListPage: React.VFC = () => {
   const [topics, setTopics] = useState<TopicPreview[]>([]);
@@ -43,38 +45,51 @@ const TopicListPage: React.VFC = () => {
     setTopicsOffset(topicsOffset + defaultQueryOffset);
   };
 
+  const CreateBlock = styled.div`
+    margin: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `;
+  const TopicsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial;
+  `;
+  const LoadingText = styled.div`
+  font-size: 14px;
+  line-height: 12px;
+  margin: 20px auto;
+  `;
+
   return (
     <div>
-        <div>
-            <span>
-                <input placeholder="Поиск" />
-            </span>
-            {isUserAuthorized && (
-                <span>
-                    <button type="button" onClick={handleCreateTopicButtonClick}>Создать тему</button>
-                </span>
-            )}
-        </div>
-        <div>
-            {
-                topics.map((topic) => (
-                    <TopicPreviewer
-                      key={topic.id}
-                      id={topic.id}
-                      title={topic.title}
-                      author={topic.author}
-                      commentCount={topic.commentCount}
-                      createdAt={topic.createdAt}
-                      onClick={handleTopicClick}
-                    />
-                ))
-            }
-            {loading ? 'Загрузка списка' : (
-                <div>
-                    <button type="button" onClick={handleLoadMoreTopicsButtonClick}>Загрузить ещё</button>
-                </div>
-            )}
-        </div>
+        {isUserAuthorized && (
+          <CreateBlock>
+            <SubmitButton type="button" onClick={handleCreateTopicButtonClick}>Создать тему</SubmitButton>
+          </CreateBlock>
+        )}
+      <TopicsContainer>
+        {
+          topics.map((topic) => (
+            <TopicPreviewer
+              key={topic.id}
+              id={topic.id}
+              title={topic.title}
+              author={topic.author}
+              commentCount={topic.commentCount}
+              createdAt={topic.createdAt}
+              onClick={handleTopicClick}
+            />
+          ))
+        }
+        {loading ? <LoadingText>Загрузка списка</LoadingText> : (
+          <div>
+            <AltButton type="button" onClick={handleLoadMoreTopicsButtonClick}>Загрузить ещё</AltButton>
+          </div>
+        )}
+      </TopicsContainer>
     </div>
   );
 };
