@@ -6,8 +6,8 @@ import { TopicPreview } from '../../types/topic-preview';
 import TopicPreviewer from '../../components/topic-previewer/TopicPreviewer';
 import ForumRoutes from '../../routes';
 import { selectIsAuthorized } from '../../../../modules/redux/slices/userSlice';
-import styled from 'styled-components';
 import { AltButton, SubmitButton } from '../../../../styles/Buttons/Buttons';
+import { CreateBlock, LoadingText, TopicsContainer } from '../../style';
 
 const TopicListPage: React.VFC = () => {
   const [topics, setTopics] = useState<TopicPreview[]>([]);
@@ -44,24 +44,6 @@ const TopicListPage: React.VFC = () => {
     // todo [sitnik] исправить потенциальную ошибку с некорректным смещением
     setTopicsOffset(topicsOffset + defaultQueryOffset);
   };
-
-  const CreateBlock = styled.div`
-    margin: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `;
-  const TopicsContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: Arial;
-  `;
-  const LoadingText = styled.div`
-  font-size: 14px;
-  line-height: 12px;
-  margin: 20px auto;
-  `;
 
   return (
     <div>

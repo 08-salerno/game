@@ -3,6 +3,7 @@ import { colors } from '../colors';
 const dark = {
   backgroundColor: colors.black.black,
   font: colors.white.white,
+  altFont: colors.grey.grey_300,
   buttons: {
     font: colors.black.black,
     main: {
@@ -34,6 +35,11 @@ const dark = {
     label: colors.grey.grey_500,
     background: colors.black.black,
     underline: colors.grey.grey_100,
+  },
+  forum: {
+    underline: colors.grey.grey_900,
+    topicHover: colors.grey.grey_900,
+    underlineHover: colors.blue.blue_200,
   },
 };
 

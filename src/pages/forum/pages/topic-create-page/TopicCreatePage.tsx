@@ -1,19 +1,22 @@
 import React from 'react';
 import {
-  ErrorMessage, Field, FieldProps, Form, Formik, FormikValues,
+  Formik, FormikValues,
 } from 'formik';
-import { object, string, StringSchema } from 'yup';
+import { object, string } from 'yup';
 import { createTopic } from '../../api';
 import ForumRoutes from '../../routes';
 import { FormikSubmit } from '../../../../modules/utils/formik.utils';
 import useAppRouter from '../../../../modules/router/router';
-import styled from 'styled-components';
+import { FormContainer, Title } from '../../../../styles/Forms/Forms';
+import FormFiled from '../../../../components/FormField/FormField';
+import { SubmitButton } from '../../../../styles/Buttons/Buttons';
 
-const TopicCreateSchema = object().shape<{ title: StringSchema }>({
-  title: string().required('').min(3, 'Минимум 3 символа'),
+const TopicCreateSchema = object().shape({
+  topic: string()
+    .min(2, 'Name is too short')
+    .max(50, 'Name is too long')
+    .required('Required'),
 });
-
-const MaxTitleLength = 300;
 
 interface TopicCreateFormValue extends FormikValues {
   title: string;
@@ -32,30 +35,42 @@ const TopicCreatePage: React.VFC = () => {
       // todo [sitnik] уведомить пользоователя об ошибке
     });
 
-  const CreateInput = styled.input`
-    font-family: Arial;
-    width: 100%;
-    border: none;
-    border-bottom: 1px solid ${(props): string => props.theme.form.underline};
-    color: ${(props): string => props.theme.form.font};
-    background-color: ${(props): string => props.theme.form.background};
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 16px;
-  `;
+  /*   const CreateInput = styled(Field)`
+      font-family: Arial;
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid ${(props): string => props.theme.form.underline};
+      color: ${(props): string => props.theme.form.font};
+      background-color: ${(props): string => props.theme.form.background};
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 16px;
+    `; */
   return (
-    <Formik
+    <>
+      <Formik
+        initialValues={{ title: '' }}
+        validationSchema={TopicCreateSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ dirty, isValid, isSubmitting }): React.ReactElement => (
+          <FormContainer>
+            <Title>Создать тему</Title>
+            <FormFiled name="topic" label="topic" type="topic" />
+            <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
+          </FormContainer>
+        )}
+      </Formik>
+      {/*     <Formik
       initialValues={{ title: '' }}
       validationSchema={TopicCreateSchema}
       onSubmit={handleSubmit}
     >
       {({ isSubmitting, isValid, dirty }): React.ReactElement => (
         <Form>
-          {/* todo [sitnik] вынести в переиспользуемый компонент*/}
           <Field name="title" maxLength={MaxTitleLength} placeholder="Описание">
             {(props: FieldProps<string, TopicCreateFormValue>): React.ReactElement => (
               <div>
-                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                 <textarea {...props.field} />
                 <div>
                   {props.field.value.length || 0}/{MaxTitleLength}
@@ -73,7 +88,8 @@ const TopicCreatePage: React.VFC = () => {
           </div>
         </Form>
       )}
-    </Formik>
+    </Formik> */}
+    </>
   );
 };
 

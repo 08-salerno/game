@@ -9,7 +9,7 @@ const Forum: React.FC = () => {
   const { path } = useRouteMatch();
 
   return (
-    <div>
+    <>
       <Switch>
         <Route exact path={path}>
           <TopicListPage />
@@ -21,7 +21,7 @@ const Forum: React.FC = () => {
           <TopicPage />
         </Route>
       </Switch>
-    </div>
+    </>
   );
 };
 
