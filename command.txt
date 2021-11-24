@@ -1,8 +1,0 @@
-sudo docker stop -t 0 {id}
-sudo docker build -t <service_name> .
-sudo docker run -p 4000:3000 <service_name> .
-sudo docker ps
-sudo docker-compose stop
-sudo docker-compose ps --services
-sudo docker-compose up <service_name>
-sudo docker-compose up -d --no-deps --build <service_name>

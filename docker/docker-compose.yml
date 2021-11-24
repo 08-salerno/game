@@ -1,11 +1,6 @@
 version: '3.3'
 services:
-  salerno-app:
-    build:
-      context: .
-    ports:
-        - "4000:3000"
-    restart: always
+
   postgres:
     image: postgres:12
     ports:
@@ -17,6 +12,7 @@ services:
       POSTGRES_PASSWORD: postgres
     networks:
       - awesome
+
   pgadmin:
     image: dpage/pgadmin4:6.2
     restart: always
@@ -28,6 +24,18 @@ services:
       - '5656:80'
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - awesome
+
+  salerno-app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
     depends_on:
       - postgres
     networks:

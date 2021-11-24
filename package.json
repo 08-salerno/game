@@ -7,10 +7,7 @@
     "start": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "server": "node server.js",
-    "test": "jest",
-    "docker:build:app": "sudo docker build -t salerno -f Dockerfile .",
-    "docker:compose:up": "sudo docker-compose up",
-    "docker:compose:stop": "sudo docker-compose stop"
+    "test": "jest"
   },
   "engines": {
     "node": "16.x"
