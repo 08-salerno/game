@@ -6,7 +6,6 @@ import { saveScore } from '../leader-bord/api';
 import { useAppSelector } from '../../modules/redux/hooks';
 import { selectUser } from '../../modules/redux/slices/userSlice';
 import useAppRouter from '../../modules/router/router';
-import rootElementSelector from '../../modules/utils/root-element-selector';
 import { exitFullscreen } from '../../modules/utils/fullscreen.utils';
 
 export type GameProps = {
@@ -47,7 +46,7 @@ const Game: React.FC = () => {
   return (
         <>
             <GameGridWithFullscreen onGameOver={onGameOver} />
-            <Modal isOpen={isGameOverModalOpen} appElement={rootElementSelector()}>
+            <Modal isOpen={isGameOverModalOpen} ariaHideApp={false}>
                 <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
                     <h1>Игра окончена</h1>
                     <h2>Ваш рекорд: {userScore}</h2>

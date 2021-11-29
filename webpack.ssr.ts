@@ -21,6 +21,9 @@ module.exports = (): webpack.Configuration => {
       // для ssr бандла если
       filename: `ssr.bundle.js`,
       path: resolve(__dirname, 'dist/'),
+      library: {
+        type: 'commonjs2',
+      },
     },
     externals: [webpackNodeExternals()],
   });

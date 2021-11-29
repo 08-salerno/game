@@ -170,6 +170,11 @@ const App: React.FC = () => {
                     </NavBar>
                     <Layout>
                         <Switch>
+                            <Route path="/" exact>
+                                <h1>Отсюда всё начинается! :)</h1>
+                                Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять
+                                на страницу с игрой при странных рутах!
+                            </Route>
                             {
                                 routes.map((route: AppRoute) => (!route.private ? (
                                 /* Добавь недостающий пропс */
@@ -180,21 +185,18 @@ const App: React.FC = () => {
                                       component={route.component}
                                     />
                                 ) : (
-                                <React.Fragment key={route.link}>
-                                {authChecked && (
+                                  authChecked && (
                                     <PrivateRoute
                                       key={route.link}
                                       component={route.component}
                                       path={route.path ? route.path : route.link}
                                     />
-                                )}
-                                </React.Fragment>
+                                  )
                                 )))
                             }
-                            <Route path="/" exact>
-                                <h1>Отсюда всё начинается :)</h1>
-                                Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять
-                                на страницу с игрой при странных рутах!
+                            <Route>
+                                404 Упс!
+                                {/*todo [sitnik] редирект 404*/}
                             </Route>
                         </Switch>
                     </Layout>
