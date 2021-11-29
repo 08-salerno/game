@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik } from 'formik';
 import { object, string } from 'yup';
 import { Location } from 'history';
@@ -37,11 +37,27 @@ const SignInSchema = object().shape({
     .required('Required'),
 });
 
+const OAuthBlock = styled.div`
+    margin-top: 20px;
+  `;
+
 export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, LocationState>>> = (props) => {
   const initialValues: MyFormValues = {
     login: '',
     password: '',
   };
+  const [serviceId, setServiceId] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      //@ts-ignore
+      const { service_id } = await authService.getServiceId();
+      console.log(service_id);
+      setServiceId(service_id);
+    })();
+  }, []);
+
+  const oAuthUrl = authService.getOAuthUrl(serviceId);
 
   const router = useAppRouter();
   const dispatch = useAppDispatch();
@@ -81,7 +97,10 @@ export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, Locat
             <Title>Auth Page</Title>
             <FormFiled name="login" label="Login" />
             <FormFiled name="password" label="Password" type="password" />
-            <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>
+            <SubmitButton
+              type="submit"
+              disabled={!dirty || !isValid || isSubmitting}
+            >
               Submit
             </SubmitButton>
           </FormContainer>
@@ -90,6 +109,14 @@ export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, Locat
       <AltButton type="button" onClick={router.goRegister}>
         Don&apos;t have an account?
       </AltButton>
+      <OAuthBlock>
+        <a href={oAuthUrl} target="_self">
+          <img
+            src="https://yastatic.net/q/logoaas/v2/%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.svg?circle=black&color=fff&first=white"
+            alt=""
+          />
+        </a>
+      </OAuthBlock>
     </div>
   );
 };
