@@ -3,9 +3,10 @@ import createSagaMiddleware from 'redux-saga';
 import userReducer from './slices/userSlice';
 import rootSaga from './sagas/root.saga';
 
-/* eslint-disable no-underscore-dangle */
-const preloadedState = window.__PRELOADED_STATE__ || {};
-delete window.__PRELOADED_STATE__;
+/* eslint-disable no-underscore-dangle, @typescript-eslint/no-explicit-any */
+// todo [sitnik] серверный tsconfig почему-то не видит window.d.ts
+const preloadedState = (window as any).__PRELOADED_STATE__ || {};
+delete (window as any).__PRELOADED_STATE__;
 
 const sagaMiddleware = createSagaMiddleware();
 
