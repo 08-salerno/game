@@ -1,6 +1,6 @@
 import bee from './bee.png';
 
-const beeImg = new Image();
+const beeImg = document.createElement('img');
 beeImg.src = bee;
 
 export default beeImg;

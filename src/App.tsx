@@ -1,6 +1,6 @@
+import { hot } from 'react-hot-loader/root';
 import React, { useEffect, useState } from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   RouteProps,
@@ -201,7 +201,14 @@ const App: React.FC = () => {
             </NavBar>
             <Layout id="layout">
               <Switch>
-                {routes.map((route: AppRoute) => (!route.private ? (
+                  <Route path="/" exact>
+                      <Title>Отсюда всё начинается :)</Title>
+                      <Description>Возможно логично сделать стартовую страницу сразу с игрой и
+                          перенаправлять на страницу с игрой при странных рутах
+                      </Description>
+                  </Route>
+                {
+                    routes.map((route: AppRoute) => (!route.private ? (
                   /**
                    * Добавь недостающий пропс
                    */
@@ -218,13 +225,12 @@ const App: React.FC = () => {
                       path={route.path ? route.path : route.link}
                     />
                   )
-                )))}
-                <Route path="/" exact>
-                  <Title>Отсюда всё начинается :)</Title>
-                  <Description>Возможно логично сделать стартовую страницу сразу с игрой и
-                    перенаправлять на страницу с игрой при странных рутах
-                  </Description>
-                </Route>
+                )))
+                }
+                  <Route>
+                      404 Упс!
+                      {/*todo [sitnik] редирект 404*/}
+                  </Route>
               </Switch>
             </Layout>
           </ThemeProvider>
@@ -234,4 +240,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default hot(App);

@@ -1,6 +1,6 @@
 import snow from './snow.png';
 
-const snowImg = new Image();
+const snowImg = document.createElement('img');
 snowImg.src = snow;
 
 export default snowImg;
