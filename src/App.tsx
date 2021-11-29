@@ -143,7 +143,6 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <Router>
         <>
           <ThemeProvider theme={theme}>
             <NavBar>
@@ -217,15 +216,15 @@ const App: React.FC = () => {
                     path={route.path ? route.path : route.link}
                     component={route.component}
                   />
-                ) : (
-                  authChecked && (
+                    ) : (
+                      authChecked && (
                     <PrivateRoute
                       key={route.link}
                       component={route.component}
                       path={route.path ? route.path : route.link}
                     />
-                  )
-                )))
+                      )
+                    )))
                 }
                   <Route>
                       404 Упс!
@@ -235,7 +234,6 @@ const App: React.FC = () => {
             </Layout>
           </ThemeProvider>
         </>
-      </Router>
     </ErrorBoundary>
   );
 };
