@@ -70,7 +70,7 @@ export default class AuthService {
 
   getOAuthUrl = (serviceId: string): string => `https://oauth.yandex.ru/authorize/?response_type=code&client_id=${serviceId}&redirect_uri=${redirectUrl}`;
 
-  getServiceId = (): Promise<{ 'service_id': string } | void> => fetch(`${apiUrl('/oauth')}/yandex/service-id?redirect_uri=${redirectUrl}`)
+  getServiceId = (): Promise<{ 'service_id': string }> => fetch(`${apiUrl('/oauth')}/yandex/service-id?redirect_uri=${redirectUrl}`)
     .then((response) => {
       if (!response.ok) {
         return response.json().then(asError).then((err) => Promise.reject(err));

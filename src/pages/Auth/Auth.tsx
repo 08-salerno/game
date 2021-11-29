@@ -5,7 +5,7 @@ import { object, string } from 'yup';
 import { Location } from 'history';
 import { StaticContext } from 'react-router';
 import { RouteComponentProps } from 'react-router-dom';
-import { SubmitButton, AltButton } from '../../styles/Buttons/Buttons';
+import { SubmitButton, AltButton, OAuthButton } from '../../styles/Buttons/Buttons';
 import { FormContainer, Title } from '../../styles/Forms/Forms';
 import FormFiled from '../../components/FormField/FormField';
 import AuthService from '../../modules/api/AuthService';
@@ -37,10 +37,6 @@ const SignInSchema = object().shape({
     .required('Required'),
 });
 
-const OAuthBlock = styled.div`
-    margin-top: 20px;
-  `;
-
 export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, LocationState>>> = (props) => {
   const initialValues: MyFormValues = {
     login: '',
@@ -49,10 +45,8 @@ export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, Locat
   const [serviceId, setServiceId] = useState('');
 
   useEffect(() => {
-    (async () => {
-      //@ts-ignore
+    (async (): Promise<void> => {
       const { service_id } = await authService.getServiceId();
-      console.log(service_id);
       setServiceId(service_id);
     })();
   }, []);
@@ -109,14 +103,14 @@ export const Auth: React.FC<Partial<RouteComponentProps<{}, StaticContext, Locat
       <AltButton type="button" onClick={router.goRegister}>
         Don&apos;t have an account?
       </AltButton>
-      <OAuthBlock>
+      <OAuthButton>
         <a href={oAuthUrl} target="_self">
           <img
             src="https://yastatic.net/q/logoaas/v2/%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81.svg?circle=black&color=fff&first=white"
             alt=""
           />
         </a>
-      </OAuthBlock>
+      </OAuthButton>
     </div>
   );
 };

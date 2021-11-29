@@ -58,3 +58,6 @@ color: ${(props): string => props.theme.buttons.font};
   background-color: ${(props): string => props.theme.buttons.exit.disabled};
 }
 `;
+export const OAuthButton = styled.div`
+    margin-top: 20px;
+  `;

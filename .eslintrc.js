@@ -141,5 +141,14 @@ module.exports = {
         ignoreRegExpLiterals: true,
       },
     ],
+    camelcase: [
+      'error',
+      {
+        allow: [
+          'service_id',
+          'redirect_uri',
+        ],
+      },
+    ],
   },
 };
