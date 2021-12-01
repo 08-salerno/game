@@ -1,6 +1,6 @@
 import acorn from './acorn.png';
 
-const acornImg = new Image();
+const acornImg = document.createElement('img');
 acornImg.src = acorn;
 
 export default acornImg;

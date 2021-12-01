@@ -1,6 +1,6 @@
 import cactus from './cactus.png';
 
-const cactusImg = new Image();
+const cactusImg = document.createElement('img');
 cactusImg.src = cactus;
 
 export default cactusImg;

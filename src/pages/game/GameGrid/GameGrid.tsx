@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { GameProps } from '../Game';
+import { StatText } from '../styles';
 import {
   Coordinates,
   CombinationListWithCoordinatesForRemove,
@@ -37,33 +37,8 @@ import {
   drawSwapTransition,
   drawWrongSwapTransitions,
 } from './utils/transitions';
-
-const Button = styled.button`
-  display: inline-block;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  border: none;
-  font-family: Arial;
-  font-weight: normal;
-  font-size: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  width: auto;
-  height: 37px;
-  padding: 0 8px;
-  border-radius: 8px;
-  color: black;
-  background-color: #d6eaf8;
-
-  &:hover {
-    background-color: #aed6f1;
-  }
-  &:disabled {
-    background-color: #ebf5fb;
-    cursor: not-allowed;
-  }
-`;
+import { clickSound, removeSound } from '../../../components/audio';
+import { SubmitButton } from '../../../styles/Buttons/Buttons';
 
 type GameGridProps = GameProps;
 
@@ -102,6 +77,7 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
     if (isAnimating) {
       return;
     }
+    clickSound();
 
     const currentItemCoord = getItemCoordsByClickCoords(getCursorPosition(event));
 
@@ -200,6 +176,7 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
         setGridData(gridClone);
 
         addTransitions(drawDeleteTransition(matched, () => {
+          removeSound();
           setPoints((points) => points + countScore(matched.length));
         }));
 
@@ -260,10 +237,10 @@ const GameGrid: React.VFC<GameGridProps> = (props) => {
 
   return (
     <div>
-        <h1>Комбинаций осталось: {combinations?.length}</h1>
-        <h1>Ходов осталось: {turns}</h1>
-        <h1>Очков набрано {points}</h1>
-        <Button onClick={onNewGame}>Начать заново</Button>
+      <StatText>Комбинаций осталось: {combinations?.length}</StatText>
+      <StatText>Ходов осталось: {turns}</StatText>
+      <StatText>Очков набрано {points}</StatText>
+      <SubmitButton onClick={onNewGame}>Начать заново</SubmitButton>
       <div style={{ marginTop: '10px' }}>
         <Canvas
           onClick={handleClick}

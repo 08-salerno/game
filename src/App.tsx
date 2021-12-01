@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react';
+import { hot } from 'react-hot-loader/root';
+import React, { useEffect, useState } from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   RouteProps,
 } from 'react-router-dom';
-import styled from 'styled-components';
+import { ThemeProvider } from 'styled-components';
+//import { colors, colorsToChoose, basicColors } from './styles/colors';
+import themes from './styles/themes';
+import { Title, Description } from './styles/App/App';
+import {
+  NavBar, NavBarLink, DropDown, DropDownContent, DropDownHead, DropDownLink, DropDownButton,
+} from './styles/Navbar/NavBar';
+import Layout from './styles/Layout/Layout';
 import Register from './pages/Register/Register';
 import Auth from './pages/Auth/Auth';
 import Profile from './pages/Profile/Profile';
@@ -23,11 +29,12 @@ import {
 } from './modules/redux/sagas/user.saga';
 import gitUrl from './modules/constants/repo-url';
 import Game from './pages/game/Game';
+import AuthService from './modules/api/AuthService';
 
 type AppRoute = {
   title: string;
   link: string;
-  private?:boolean;
+  private?: boolean;
 } & RouteProps &
   Required<Pick<RouteProps, 'component'>>;
 
@@ -41,7 +48,7 @@ const routes: AppRoute[] = [
     component: Register,
   },
   {
-    title: 'game',
+    title: 'Игра',
     link: '/game',
     component: Game,
   },
@@ -69,139 +76,175 @@ const routes: AppRoute[] = [
   },
 ];
 
-const NavBar = styled.nav`
-  overflow: hidden;
-  background-color: #333;
-  font-family: Arial;
-`;
-const DropDown = styled.div`
-  float: left;
-  overflow: hidden;
-`;
-const DropDownContent = styled.div`
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-
-  ${DropDown}:hover & {
-    display: block;
-  }
-`;
-const DropDownButton = styled.button`
-  font-size: 16px;
-  border: none;
-  outline: none;
-  color: white;
-  padding: 14px 16px;
-  background-color: inherit;
-  font-family: inherit; 
-  margin: 0; 
-
-  ${DropDown}:hover & {
-    color: grey;
-  }
-`;
-const DropDownLink = styled(Link)`
-  float: none;
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-  &:hover {
-    color: grey;
-  }
-`;
-const NavBarLink = styled.a`
-float: left;
-font-size: 16px;
-color: white;
-text-align: center;
-padding: 14px 16px;
-text-decoration: none;
-&:hover {
-  color: grey;
-}
-`;
-const Layout = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const user = useAppSelector(selectUser);
   const authChecked = useAppSelector((state) => state.user.authChecked);
 
+  // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
+
+  /* const [backgroundColor, setBackgroundColor] = useState('white');
+  const [fontColor, setFontColor] = useState('black');
+  const [interfaceColor, setInterfaceColor] = useState('blue');
+  const [isMount, setIsMount] = useState(false); */
+
+  const [theme, setTheme] = useState(themes.light);
+
   useEffect(() => {
+    const OAuthCode = new URL(window.location.href).searchParams.get('code');
     if (!user) {
-      dispatch(fetchUserAction);
+      if (OAuthCode) {
+        new AuthService().oAuthSignIn(OAuthCode)
+          .then(() => {
+            dispatch(fetchUserAction);
+          });
+      } else {
+        dispatch(fetchUserAction);
+      }
     }
   }, [user]);
 
+  // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
+
+  /* useEffect(() => {
+    if (!isMount) {
+      setIsMount(true);
+      return;
+    }
+    setTheme({
+      backgroundColor: colors[backgroundColor][backgroundColor],
+      font: colors[fontColor][fontColor],
+      buttons: {
+        font: colors.black.black,
+        main: {
+          main: colors[interfaceColor][`${interfaceColor}_400`],
+          hover: colors[interfaceColor][`${interfaceColor}_600`],
+          disabled: colors[interfaceColor][`${interfaceColor}_100`],
+        },
+        alt: {
+          main: colors[interfaceColor][`${interfaceColor}_400`],
+          hover: colors[interfaceColor][`${interfaceColor}_600`],
+          disabled: colors[interfaceColor][`${interfaceColor}_100`],
+        },
+        exit: {
+          main: colors[interfaceColor][`${interfaceColor}_400`],
+          hover: colors[interfaceColor][`${interfaceColor}_600`],
+          exit: colors[interfaceColor][`${interfaceColor}_100`],
+        },
+      },
+      navbar: {
+        backgroundColor: colors.grey.grey_800,
+        font: colors.white.white,
+        fontHover: colors.grey.grey_400,
+        buttonBackground: colors.white.white,
+        buttonHover: colors.grey.grey_200,
+        buttonText: colors.black.black,
+      },
+      form: {
+        font: colors.black.black,
+        label: colors.grey.grey_800,
+        background: colors.white.white,
+        underline: colors.grey.grey_800,
+      },
+    });
+  }, [backgroundColor, fontColor, interfaceColor]); */
+
   return (
     <ErrorBoundary>
-      <Router>
         <>
-          <NavBar>
-            <DropDown>
-              <DropDownButton type="button">Routes DD</DropDownButton>
-              <DropDownContent>
-                <DropDownLink to="/">Главная</DropDownLink>
-                {routes.map((route: AppRoute) => (
-                  <DropDownLink key={route.link} to={route.link}>
-                    {route.title}
-                  </DropDownLink>
-                ))}
-              </DropDownContent>
-            </DropDown>
-            <NavBarLink
-              href={gitUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Github
-            </NavBarLink>
-          </NavBar>
-          <Layout>
-            <Switch>
-              {routes.map((route: AppRoute) => (!route.private ? (
-                /**
-                 * Добавь недостающий пропс
-                 */
-                <Route
-                  key={route.link}
-                  path={route.path ? route.path : route.link}
-                  component={route.component}
-                />
-              ) : (
-                <React.Fragment key={route.link}>
-                    {authChecked && (
-                        <PrivateRoute
-                          key={route.link}
-                          component={route.component}
-                          path={route.path ? route.path : route.link}
-                        />
-                    )}
-                </React.Fragment>
-              )))}
-              <Route path="/" exact>
-                <h1>Отсюда всё начинается :)</h1>
-                Возможно логично сделать стартовую страницу сразу с игрой и перенаправлять
-                на страницу с игрой при странных рутах
-              </Route>
-            </Switch>
-          </Layout>
+          <ThemeProvider theme={theme}>
+            <NavBar>
+              <DropDown>
+                <DropDownHead type="button">Routes DD</DropDownHead>
+                <DropDownContent>
+                  <DropDownLink to="/">Главная</DropDownLink>
+                  {routes.map((route: AppRoute) => (
+                    <DropDownLink key={route.link} to={route.link}>
+                      {route.title}
+                    </DropDownLink>
+                  ))}
+                </DropDownContent>
+              </DropDown>
+              <NavBarLink
+                href={gitUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Github
+              </NavBarLink>
+              <DropDown>
+                <DropDownHead type="button">Theme</DropDownHead>
+                <DropDownContent>
+                  <DropDownButton onClick={(): void => setTheme(themes.light)}>Light</DropDownButton>
+                  <DropDownButton onClick={(): void => setTheme(themes.dark)}>Dark</DropDownButton>
+                </DropDownContent>
+              </DropDown>
+              {// ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
+
+              /* <DropDown>
+                <DropDownHead type="button">Background color</DropDownHead>
+                <DropDownContent>
+                  {Object.entries(colorsToChoose).map((item: string[]) => (
+                    <DropDownButton onClick={(): void => setBackgroundColor(item[0])}>{item[1]}</DropDownButton>
+                  ))}
+                </DropDownContent>
+              </DropDown>
+              <DropDown>
+                <DropDownHead type="button">Interface color</DropDownHead>
+                <DropDownContent>
+                  {Object.entries(colorsToChoose).map((item: string[]) => (
+                    <DropDownButton onClick={(): void => setInterfaceColor(item[0])}>{item[1]}</DropDownButton>
+                  ))}
+                </DropDownContent>
+              </DropDown>
+              <DropDown>
+                <DropDownHead type="button">Font color</DropDownHead>
+                <DropDownContent>
+                  {Object.entries(Object.assign(colorsToChoose, basicColors)).map((item: string[]) => (
+                    <DropDownButton onClick={(): void => setFontColor(item[0])}>{item[1]}</DropDownButton>
+                  ))}
+                </DropDownContent>
+              </DropDown> */}
+            </NavBar>
+            <Layout id="layout">
+              <Switch>
+                  <Route path="/" exact>
+                      <Title>Отсюда всё начинается :)</Title>
+                      <Description>Возможно логично сделать стартовую страницу сразу с игрой и
+                          перенаправлять на страницу с игрой при странных рутах
+                      </Description>
+                  </Route>
+                {
+                    routes.map((route: AppRoute) => (!route.private ? (
+                  /**
+                   * Добавь недостающий пропс
+                   */
+                  <Route
+                    key={route.link}
+                    path={route.path ? route.path : route.link}
+                    component={route.component}
+                  />
+                    ) : (
+                      authChecked && (
+                    <PrivateRoute
+                      key={route.link}
+                      component={route.component}
+                      path={route.path ? route.path : route.link}
+                    />
+                      )
+                    )))
+                }
+                  <Route>
+                      404 Упс!
+                      {/*todo [sitnik] редирект 404*/}
+                  </Route>
+              </Switch>
+            </Layout>
+          </ThemeProvider>
         </>
-      </Router>
     </ErrorBoundary>
   );
 };
 
-export default App;
+export default hot(App);

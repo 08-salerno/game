@@ -1,19 +1,6 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import webpack from 'webpack';
 
-module.exports = {
-  mode: 'development',
-  entry: {
-    app: './src/index.tsx',
-    'service-worker': './src/modules/service-worker/service-worker.ts',
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './src/static/index.html',
-      title: '08-salerno',
-      excludeChunks: ['service-worker'],
-    }),
-  ],
+export default (): webpack.Configuration => ({
   module: {
     rules: [
       {
@@ -37,14 +24,16 @@ module.exports = {
           loader: 'url-loader',
         },
       },
+      {
+        test: /\.wav$/,
+        loader: 'file-loader',
+        options: {
+          outputPath: 'assets',
+        },
+      },
     ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
   },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    clean: true,
-    publicPath: '/',
-  },
-};
+});

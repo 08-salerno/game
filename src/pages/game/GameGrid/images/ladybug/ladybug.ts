@@ -1,6 +1,6 @@
 import ladybug from './ladybug.png';
 
-const ladybugImg = new Image();
+const ladybugImg = document.createElement('img');
 ladybugImg.src = ladybug;
 
 export default ladybugImg;

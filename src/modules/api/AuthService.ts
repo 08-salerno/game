@@ -5,6 +5,13 @@ import {
 
 const url = apiUrl('/auth');
 
+// @ts-ignore
+//window.devMode
+// 'http://local.ya-praktikum.tech'
+export const redirectUrl = true
+  ? 'http://localhost:3000'
+  : 'https://salerno-08.herokuapp.com/';
+
 export default class AuthService {
   signUp = (data: SignUpData): Promise<User | ErrorReason> => fetch(`${url}/signup`, {
     method: 'POST',
@@ -59,5 +66,30 @@ export default class AuthService {
         return response.json().then(asError).then((err) => Promise.reject(err));
       }
       return response.json().then(asUser);
+    })
+
+  getOAuthUrl = (serviceId: string): string => `https://oauth.yandex.ru/authorize/?response_type=code&client_id=${serviceId}&redirect_uri=${redirectUrl}`;
+
+  getServiceId = (): Promise<{ 'service_id': string }> => fetch(`${apiUrl('/oauth')}/yandex/service-id?redirect_uri=${redirectUrl}`)
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then(asError).then((err) => Promise.reject(err));
+      }
+      return response.json();
+    })
+
+  oAuthSignIn = (code:string): Promise<string> => fetch(`${apiUrl('/oauth')}/yandex`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify({ code, redirect_uri: redirectUrl }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then(asError).then((err) => Promise.reject(err));
+      }
+      return response.text();
     })
 }
