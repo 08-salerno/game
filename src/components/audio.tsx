@@ -1,7 +1,10 @@
 /* eslint-disable no-console */
+import clickSoundFile from '../static/assets/audio/click.wav';
+import removeSoundFile from '../static/assets/audio/remove.wav';
+import shuffleSoundFile from '../static/assets/audio/shuffle.wav';
 
 const click = document.createElement('audio');
-click.src = 'https://freesound.org/people/joedeshon/sounds/119415/download/119415__joedeshon__rocker-switch.wav';
+click.src = clickSoundFile;
 
 export function clickSound(): void {
   click.play()
@@ -9,7 +12,7 @@ export function clickSound(): void {
 }
 
 const remove = document.createElement('audio');
-remove.src = 'https://freesound.org/people/jalastram/sounds/346338/download/346338__jalastram__fx305.wav';
+remove.src = removeSoundFile;
 
 export function removeSound(): void {
   remove.play()
@@ -17,7 +20,7 @@ export function removeSound(): void {
 }
 
 const shuffle = document.createElement('audio');
-shuffle.src = 'https://freesound.org/people/Breviceps/sounds/447918/download/447918__breviceps__shuffle-cards.wav';
+shuffle.src = shuffleSoundFile;
 
 export function shuffleSound(): void {
   //shuffle.loop = true;

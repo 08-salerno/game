@@ -24,6 +24,13 @@ export default (): webpack.Configuration => ({
           loader: 'url-loader',
         },
       },
+      {
+        test: /\.wav$/,
+        loader: 'file-loader',
+        options: {
+          outputPath: 'assets',
+        },
+      },
     ],
   },
   resolve: {
