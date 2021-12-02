@@ -1,0 +1,49 @@
+version: '3.3'
+services:
+
+  postgres:
+    image: postgres:12
+    ports:
+      - '5555:5432'
+    volumes:
+      - ./postgres-db:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - awesome
+
+  pgadmin:
+    image: dpage/pgadmin4:6.2
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - '5656:80'
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - awesome
+
+  salerno-app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - awesome
+
+volumes:
+  pgadmin-data:
+
+networks:
+  awesome:
+    driver: bridge
