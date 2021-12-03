@@ -28,7 +28,7 @@ const Game: React.FC = () => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && userScore) {
       saveScore({ score: userScore, login: user.login }).then(() => {
         // todo [sitnik]
       }).catch(() => {
