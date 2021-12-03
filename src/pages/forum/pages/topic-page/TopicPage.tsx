@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ForumRouteParams } from '../../routes';
 import {
-  defaultQueryOffset, getComments, getTopic, leaveComment,
+  getComments, getTopic, getTopicCommentCount, leaveComment,
 } from '../../api';
 import { Topic } from '../../types/topic';
 import TopicPreviewer from '../../components/topic-previewer/TopicPreviewer';
 import { Comment } from '../../types/comment';
 import CommentViewer from './components/comment-viewer/CommentViewer';
 import CommentLeaver from './components/comment-leaver/CommentLeaver';
+import { useAppSelector } from '../../../../modules/redux/hooks';
+import { selectUser } from '../../../../modules/redux/slices/userSlice';
 
 const TopicPage: React.VFC = () => {
   const { topicId } = useParams<ForumRouteParams>();
+
+  const user = useAppSelector(selectUser)!;
 
   const [loading, setLoading] = useState(true);
   const [topic, setTopic] = useState<Topic | null>(null);
@@ -21,7 +25,7 @@ const TopicPage: React.VFC = () => {
 
   useEffect(() => {
     getTopic(topicId)
-      .then((topic) => setTopic(topic || null))
+      .then((topic) => setTopic(topic))
       .catch(() => setTopic(null))
       .finally(() => setLoading(false));
   }, []);
@@ -36,15 +40,20 @@ const TopicPage: React.VFC = () => {
       .finally(() => setLoadingComments(false));
   }, [commentsOffset]);
 
-  const handleLeaveComment = (text: string): Promise<void> => {
-    // todo [sitnik] получить текущего пользователя из контекста или тп
-    const userId = 1;
-    return leaveComment(topicId, text, userId);
-  };
+  const handleLeaveComment = (text: string): Promise<void> => leaveComment(topicId, text, user.id)
+    .then((comment) => {
+      setComments((prevComments) => ([...prevComments, comment]));
+      return getTopicCommentCount(topicId);
+    }).then((commentsCount) => {
+      if (topic) {
+        topic.commentsCount = commentsCount;
+        setTopic({ ...topic });
+      }
+    });
 
   const handleLoadMoreCommentButtonClick = (): void => {
     // todo [sitnik] исправить потенциальную ошибку с некорректным смещением
-    setCommentsOffset(commentsOffset + defaultQueryOffset);
+    setCommentsOffset(comments.length);
   };
 
   return (
@@ -61,7 +70,7 @@ const TopicPage: React.VFC = () => {
                 id={topic.id}
                 title={topic.title}
                 author={topic.author}
-                commentCount={topic.commentCount}
+                commentsCount={topic.commentsCount}
                 createdAt={topic.createdAt}
               />
               <CommentLeaver handleLeaveComment={handleLeaveComment} />

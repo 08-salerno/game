@@ -1,18 +1,20 @@
 import React from 'react';
+import { format } from 'date-fns';
 import { TopicPreview } from '../../types/topic-preview';
-import FakeAvatar from '../styled/FakeAvatar';
 import FlexContainer from '../styled/FlexContainer';
 import TopicContainer from '../styled/TopicContainer';
 import LineItem from '../styled/LineItem';
 import TopicInfo from '../styled/TopicInfo';
+import Avatar from '../avatar/avatar';
+import { dateFormat } from '../../../../modules/utils/constants';
 
 export type TopicItemProps = TopicPreview & {
-  onClick?: (topicId: string) => void;
+  onClick?: (topicId: number) => void;
 };
 
 const TopicPreviewer: React.VFC<TopicItemProps> = (props) => {
   const {
-    createdAt, title, commentCount, id, onClick,
+    createdAt, title, commentsCount, id, onClick, author,
   } = props;
 
   const handleTopicClick = (): void => {
@@ -25,15 +27,14 @@ const TopicPreviewer: React.VFC<TopicItemProps> = (props) => {
     <TopicContainer hoverable={hasOnClick} onClick={handleTopicClick}>
       <FlexContainer>
         <LineItem>
-            <FakeAvatar />
+            <Avatar url={author.avatar} />
         </LineItem>
-        <LineItem>Name</LineItem>
-        {/* todo [sitnik] подумать над парсингом даты */}
-        <LineItem>{createdAt}</LineItem>
+        <LineItem>{author?.login}</LineItem>
+        <LineItem>{format(new Date(createdAt), dateFormat)}</LineItem>
       </FlexContainer>
       <h1>{title}</h1>
       <FlexContainer>
-        <TopicInfo>Комментариев: {commentCount || 0}</TopicInfo>
+        <TopicInfo>Комментариев: {commentsCount || 0}</TopicInfo>
       </FlexContainer>
     </TopicContainer>
   );

@@ -39,4 +39,12 @@ export default class UserService {
       }
       return Promise.resolve();
     })
+
+  getUser = (id: number): Promise<User> => fetch(`${url}/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then(asUser)
 }

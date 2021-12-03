@@ -1,92 +1,69 @@
 import { Topic } from './types/topic';
 import { TopicPreview } from './types/topic-preview';
 import { Comment } from './types/comment';
+import UserService from '../../modules/api/UserService';
+import { User } from '../../modules/api/types';
 
-/* eslint-disable no-void */
+export const defaultQueryLimit = 10;
 
-function mockTopics(): TopicPreview[] {
-  const topics: TopicPreview[] = [];
-  for (let i = 0; i < 100; i++) {
-    topics.push({
-      id: String(i),
-      title: `Topic title for ${i}`,
-      author: {
-        id: i,
-        first_name: '',
-        second_name: '',
-        display_name: '',
-        login: `Test User_${i}`,
-        email: '',
-        phone: '',
-        avatar: '',
-      },
-      commentCount: i === 1 ? '100' : '0',
-      createdAt: 'Date',
+const url = '/api';
+const topicUrl = `${url}/topic`;
+const commentUrl = `${url}/comment`;
+
+/* eslint-disable @typescript-eslint/no-explicit-any*/
+// todo [sitnik] надо переделать
+function getAuthorForSmth(smth: {author: User} & {authorId: number}): Promise<any> {
+  const { authorId } = smth;
+  return new UserService().getUser(authorId)
+    .then((user) => {
+      smth.author = user;
+      return smth;
     });
-  }
-  return topics;
 }
-
-function mockComments(topicId: string): Comment[] {
-  const comments: Comment[] = [];
-  for (let i = 0; i < 100; i++) {
-    comments.push({
-      id: String(i),
-      topicId,
-      text: 'Bla bla bla',
-      author: {
-        id: i,
-        first_name: '',
-        second_name: '',
-        display_name: '',
-        login: `Test User_${i}`,
-        email: '',
-        phone: '',
-        avatar: '',
-      }, // User
-      createdAt: 'Date',
-    });
-  }
-  return comments;
-}
-
-export const defaultQueryOffset = 25;
-export const defaultQueryLimit = 25;
+/* eslint-enable @typescript-eslint/no-explicit-any*/
 
 export function getTopicPreviews(
   offset: number = 0,
   limit: number = defaultQueryLimit,
 ): Promise<TopicPreview[]> {
-  return new Promise<TopicPreview[]>((resolve) => {
-    setTimeout(() => {
-      const topics = mockTopics();
-      resolve(topics.slice(offset, offset + limit));
-    }, 1000);
-  });
+  return fetch(`${topicUrl}/${offset}/${limit}`, {
+    credentials: 'include',
+  })
+    .then((response) => response.json())
+    .then((topics) => Promise.all(topics.map(getAuthorForSmth)));
 }
 
-export function getTopic(id: string): Promise<Topic | undefined> {
-  return new Promise<Topic | undefined>((resolve, reject) => {
-    setTimeout(() => {
-      const topic = mockTopics().find((t) => t.id === id) as Topic | undefined;
+export function getTopic(id: string): Promise<Topic | null> {
+  return fetch(`${topicUrl}/${id}`, {
+    credentials: 'include',
+  })
+    .then((response) => response.json())
+    .then((topic) => {
       if (!topic) {
-        reject();
-        return;
+        return null;
       }
-      topic.somethingElse = false;
-      resolve(topic);
-    }, 1000);
-  });
+      return getAuthorForSmth(topic);
+    });
 }
 
-export function createTopic(title: string): Promise<string> {
-  void title;
-  return new Promise<string>((resolve) => {
-    setTimeout(() => {
-      const randomPostId = Math.floor(Math.random() * 100) + 100;
-      resolve(randomPostId.toString());
-    }, 1000);
-  });
+export function getTopicCommentCount(id: string): Promise<number> {
+  return fetch(`${commentUrl}/${id}/count`, {
+    credentials: 'include',
+  })
+    .then((response) => response.text())
+    .then((count) => Promise.resolve(Number(count)));
+}
+
+export function createTopic(title: string, authorId: number): Promise<number> {
+  return fetch(`${topicUrl}`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ title, authorId }),
+  }).then((response) => response.text())
+    .then((id) => Number(id));
 }
 
 export function getComments(
@@ -94,29 +71,25 @@ export function getComments(
   offset: number = 0,
   limit: number = defaultQueryLimit,
 ): Promise<Comment[]> {
-  return new Promise<Comment[]>((resolve) => {
-    setTimeout(() => {
-      const comments = mockComments(topicId);
-      resolve(comments.slice(offset, offset + limit));
-    }, 1000);
-  });
+  return fetch(`${commentUrl}/${topicId}/${offset}/${limit}`, {
+    credentials: 'include',
+  })
+    .then((response) => response.json())
+    .then((comments) => Promise.all(comments.map(getAuthorForSmth)));
 }
 
 export function leaveComment(
   topicId: string,
   text: string,
   authorId: number,
-): Promise<void> {
-  void topicId;
-  void text;
-  void authorId;
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      // eslint-disable-next-line no-console
-      console.log('Комментарий улетел на сервер');
-      resolve();
-    }, 1000);
-  });
+): Promise<Comment> {
+  return fetch(`${commentUrl}`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ topicId, text, authorId }),
+  }).then((response) => response.json())
+    .then((comment) => getAuthorForSmth(comment));
 }
-
-/* eslint-enable no-void */

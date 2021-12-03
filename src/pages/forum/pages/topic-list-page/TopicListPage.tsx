@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { defaultQueryOffset, getTopicPreviews } from '../../api';
+import { getTopicPreviews } from '../../api';
 import { TopicPreview } from '../../types/topic-preview';
 import TopicPreviewer from '../../components/topic-previewer/TopicPreviewer';
 import ForumRoutes from '../../routes';
@@ -21,8 +21,7 @@ const TopicListPage: React.VFC = () => {
         setTopics([...topics, ...newTopics]);
       })
       .catch(() => {
-        // todo [sitnik] уведомить об шибке + вернуть offset на изначальную позицю-
-        // setTopicsOffset(topicsOffset - defaultQueryOffset);
+        // todo [sitnik] уведомить об шибке
       })
       .finally(() => setLoading(false));
   }, [topicsOffset]);
@@ -30,7 +29,7 @@ const TopicListPage: React.VFC = () => {
   const { url } = useRouteMatch();
   const history = useHistory();
 
-  const handleTopicClick = (topicId: string): void => {
+  const handleTopicClick = (topicId: number): void => {
     history.push(`${url}/${topicId}`);
   };
 
@@ -39,8 +38,7 @@ const TopicListPage: React.VFC = () => {
   };
 
   const handleLoadMoreTopicsButtonClick = (): void => {
-    // todo [sitnik] исправить потенциальную ошибку с некорректным смещением
-    setTopicsOffset(topicsOffset + defaultQueryOffset);
+    setTopicsOffset(topics.length);
   };
 
   return (
@@ -63,7 +61,7 @@ const TopicListPage: React.VFC = () => {
                       id={topic.id}
                       title={topic.title}
                       author={topic.author}
-                      commentCount={topic.commentCount}
+                      commentsCount={topic.commentsCount}
                       createdAt={topic.createdAt}
                       onClick={handleTopicClick}
                     />

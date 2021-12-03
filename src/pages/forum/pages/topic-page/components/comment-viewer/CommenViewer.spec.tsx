@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { render } from 'enzyme';
 import { Provider } from 'react-redux';
