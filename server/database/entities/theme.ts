@@ -1,11 +1,28 @@
 import { DataTypes, Model } from 'sequelize';
 import dbClient from '../db-client';
 
-export class Theme extends Model {}
+interface ThemeAttributes {
+    id: number;
+    name: string;
+}
+
+type ThemeCreationAttributes = Omit<ThemeAttributes, 'id'>
+
+export class Theme extends Model<ThemeAttributes, ThemeCreationAttributes> implements ThemeAttributes {
+    id!: number;
+
+    name!: string;
+}
 
 Theme.init({
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: DataTypes.STRING,
 }, {
   sequelize: dbClient,
+  indexes: [
+    {
+      unique: true,
+      fields: ['name'],
+    },
+  ],
 });

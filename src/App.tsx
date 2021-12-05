@@ -1,16 +1,18 @@
 import { hot } from 'react-hot-loader/root';
 import React, { useEffect, useState } from 'react';
-import {
-  Switch,
-  Route,
-  RouteProps,
-} from 'react-router-dom';
+import { Switch, Route, RouteProps } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 //import { colors, colorsToChoose, basicColors } from './styles/colors';
 import themes from './styles/themes';
 import { Title, Description } from './styles/App/App';
 import {
-  NavBar, NavBarLink, DropDown, DropDownContent, DropDownHead, DropDownLink, DropDownButton,
+  NavBar,
+  NavBarLink,
+  DropDown,
+  DropDownContent,
+  DropDownHead,
+  DropDownLink,
+  DropDownButton,
 } from './styles/Navbar/NavBar';
 import Layout from './styles/Layout/Layout';
 import Register from './pages/Register/Register';
@@ -24,12 +26,11 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import PrivateRoute from './components/HOC/PrivateRoute/PrivateRoute';
 import { selectUser } from './modules/redux/slices/userSlice';
 import { useAppDispatch, useAppSelector } from './modules/redux/hooks';
-import {
-  fetchUserAction,
-} from './modules/redux/sagas/user.saga';
+import { fetchUserAction } from './modules/redux/sagas/user.saga';
 import gitUrl from './modules/constants/repo-url';
 import Game from './pages/game/Game';
 import AuthService from './modules/api/AuthService';
+import { loadUserTheme, saveUserTheme } from './modules/api/theme.service';
 
 type AppRoute = {
   title: string;
@@ -95,15 +96,33 @@ const App: React.FC = () => {
     const OAuthCode = new URL(window.location.href).searchParams.get('code');
     if (!user) {
       if (OAuthCode) {
-        new AuthService().oAuthSignIn(OAuthCode)
-          .then(() => {
-            dispatch(fetchUserAction);
-          });
+        new AuthService().oAuthSignIn(OAuthCode).then(() => {
+          dispatch(fetchUserAction);
+        });
       } else {
         dispatch(fetchUserAction);
       }
+    } else {
+      loadUserTheme(user.id)
+        .then((theme) => {
+          setTheme(themes[theme] || themes.light);
+        })
+        .catch(() => {
+          setTheme(themes.light);
+        });
     }
   }, [user]);
+
+  // todo [sitnik] лишний запрос на save в начале, когда по умолчанию light, а апи возвращает иное
+  useEffect(() => {
+    if (user) {
+      saveUserTheme(user.id, theme.name).then(() => {
+        // saved
+      }).catch(() => {
+        // todo [sitnik]
+      });
+    }
+  }, [theme]);
 
   // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
 
@@ -152,36 +171,36 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-        <>
-          <ThemeProvider theme={theme}>
-            <NavBar>
-              <DropDown>
-                <DropDownHead type="button">Routes DD</DropDownHead>
-                <DropDownContent>
-                  <DropDownLink to="/">Главная</DropDownLink>
-                  {routes.map((route: AppRoute) => (
-                    <DropDownLink key={route.link} to={route.link}>
-                      {route.title}
-                    </DropDownLink>
-                  ))}
-                </DropDownContent>
-              </DropDown>
-              <NavBarLink
-                href={gitUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Github
-              </NavBarLink>
-              <DropDown>
-                <DropDownHead type="button">Theme</DropDownHead>
-                <DropDownContent>
-                  <DropDownButton onClick={(): void => setTheme(themes.light)}>Light</DropDownButton>
-                  <DropDownButton onClick={(): void => setTheme(themes.dark)}>Dark</DropDownButton>
-                </DropDownContent>
-              </DropDown>
-              {// ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
-
+      <>
+        <ThemeProvider theme={theme}>
+          <NavBar>
+            <DropDown>
+              <DropDownHead type="button">Routes DD</DropDownHead>
+              <DropDownContent>
+                <DropDownLink to="/">Главная</DropDownLink>
+                {routes.map((route: AppRoute) => (
+                  <DropDownLink key={route.link} to={route.link}>
+                    {route.title}
+                  </DropDownLink>
+                ))}
+              </DropDownContent>
+            </DropDown>
+            <NavBarLink href={gitUrl} target="_blank" rel="noreferrer">
+              Github
+            </NavBarLink>
+            <DropDown>
+              <DropDownHead type="button">Theme</DropDownHead>
+              <DropDownContent>
+                <DropDownButton onClick={(): void => setTheme(themes.light)}>
+                  Light
+                </DropDownButton>
+                <DropDownButton onClick={(): void => setTheme(themes.dark)}>
+                  Dark
+                </DropDownButton>
+              </DropDownContent>
+            </DropDown>
+            {
+              // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
               /* <DropDown>
                 <DropDownHead type="button">Background color</DropDownHead>
                 <DropDownContent>
@@ -205,18 +224,19 @@ const App: React.FC = () => {
                     <DropDownButton onClick={(): void => setFontColor(item[0])}>{item[1]}</DropDownButton>
                   ))}
                 </DropDownContent>
-              </DropDown> */}
-            </NavBar>
-            <Layout id="layout">
-              <Switch>
-                  <Route path="/" exact>
-                      <Title>Отсюда всё начинается :)</Title>
-                      <Description>Возможно логично сделать стартовую страницу сразу с игрой и
-                          перенаправлять на страницу с игрой при странных рутах
-                      </Description>
-                  </Route>
-                {
-                    routes.map((route: AppRoute) => (!route.private ? (
+              </DropDown> */
+            }
+          </NavBar>
+          <Layout id="layout">
+            <Switch>
+              <Route path="/" exact>
+                <Title>Отсюда всё начинается :)</Title>
+                <Description>
+                  Возможно логично сделать стартовую страницу сразу с игрой и
+                  перенаправлять на страницу с игрой при странных рутах
+                </Description>
+              </Route>
+              {routes.map((route: AppRoute) => (!route.private ? (
                   /**
                    * Добавь недостающий пропс
                    */
@@ -225,24 +245,23 @@ const App: React.FC = () => {
                     path={route.path ? route.path : route.link}
                     component={route.component}
                   />
-                    ) : (
-                      authChecked && (
+              ) : (
+                authChecked && (
                     <PrivateRoute
                       key={route.link}
                       component={route.component}
                       path={route.path ? route.path : route.link}
                     />
-                      )
-                    )))
-                }
-                  <Route>
-                      404 Упс!
-                      {/*todo [sitnik] редирект 404*/}
-                  </Route>
-              </Switch>
-            </Layout>
-          </ThemeProvider>
-        </>
+                )
+              )))}
+              <Route>
+                404 Упс!
+                {/*todo [sitnik] редирект 404*/}
+              </Route>
+            </Switch>
+          </Layout>
+        </ThemeProvider>
+      </>
     </ErrorBoundary>
   );
 };

@@ -1,6 +1,8 @@
 import { colors } from '../colors';
+import { Theme } from './types';
 
-const light = {
+const light: Theme = {
+  name: 'light',
   backgroundColor: colors.white.white,
   font: colors.black.black,
   buttons: {

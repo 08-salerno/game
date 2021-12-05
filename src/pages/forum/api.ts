@@ -3,12 +3,12 @@ import { TopicPreview } from './types/topic-preview';
 import { Comment } from './types/comment';
 import UserService from '../../modules/api/UserService';
 import { User } from '../../modules/api/types';
+import { salernoEndpoint } from '../../modules/utils/constants';
 
 export const defaultQueryLimit = 10;
 
-const url = '/api';
-const topicUrl = `${url}/topic`;
-const commentUrl = `${url}/comment`;
+const topicUrl = `${salernoEndpoint}/topic`;
+const commentUrl = `${salernoEndpoint}/comment`;
 
 /* eslint-disable @typescript-eslint/no-explicit-any*/
 // todo [sitnik] надо переделать
