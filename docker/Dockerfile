@@ -8,10 +8,10 @@ RUN npm install
 
 COPY  . .
 
-RUN npm run build
+RUN npm run build:csr && npm run build:ssr && npm run build:server
 
 ENV PORT=3000
 
 EXPOSE $PORT
 
-CMD  ["node", "server.js"]
+CMD  ["npm", "run", "start:server"]
