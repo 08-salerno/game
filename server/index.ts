@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
+import https from 'https';
+import selfSigned from 'openssl-self-signed-certificate';
 import render from './middlewares/render/render';
 import dbClient from './database/db-client';
-import { Theme } from './database/entities/index';
+import { Theme } from './database/entities';
 import api from './middlewares/api';
 
 const app = express();
@@ -21,7 +23,6 @@ app
   .use('/api', api)
 // потом всё остальное, что скорее всего запрос за html'кой
   .use(render);
-// todo [sitnik] вариат use('/', render) тоже не помог
 
 dbClient
   .authenticate()
@@ -34,8 +35,11 @@ dbClient
     })();
 
     // Start server
-    app.listen(PORT, () => {
-      console.log('Server up and running on ', `http://localhost:${PORT}/`);
+    https.createServer({
+      key: selfSigned.key,
+      cert: selfSigned.cert,
+    }, app).listen(PORT, () => {
+      console.log('Server up and running on ', `https://localhost:${PORT}/`);
     });
   })
   .catch((err) => {
