@@ -54,14 +54,14 @@ export function getTopicCommentCount(id: string): Promise<number> {
     .then((count) => Promise.resolve(Number(count)));
 }
 
-export function createTopic(title: string, authorId: number): Promise<number> {
+export function createTopic(title: string): Promise<number> {
   return fetch(`${topicUrl}`, {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ title, authorId }),
+    body: JSON.stringify({ title }),
   }).then((response) => response.text())
     .then((id) => Number(id));
 }
@@ -81,7 +81,6 @@ export function getComments(
 export function leaveComment(
   topicId: string,
   text: string,
-  authorId: number,
 ): Promise<Comment> {
   return fetch(`${commentUrl}`, {
     method: 'POST',
@@ -89,7 +88,7 @@ export function leaveComment(
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ topicId, text, authorId }),
+    body: JSON.stringify({ topicId, text }),
   }).then((response) => response.json())
     .then((comment) => getAuthorForSmth(comment));
 }

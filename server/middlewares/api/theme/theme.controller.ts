@@ -5,9 +5,9 @@ const router = Router();
 
 // todo [sitnik] знаю, что лучше не миксовать типы для body
 router.use(express.text())
-  .route('/:userId')
+  .route('/')
   .get((req, res) => {
-    const { userId } = req.params;
+    const { id: userId } = req.authorizedUser;
     Theme.findOrCreateLight().then(([lightTheme]) => Promise.all([lightTheme, UserTheme.findOrCreate({
       where: {
         userId: Number(userId),
@@ -30,7 +30,7 @@ router.use(express.text())
       });
   })
   .patch((req, res) => {
-    const { userId } = req.params;
+    const { id: userId } = req.authorizedUser;
     const themeName = req.body;
     Promise.all<Theme | null, UserTheme | null>([
       Theme.findOne({ where: { name: themeName } }),

@@ -7,8 +7,6 @@ import { createTopic } from '../../api';
 import ForumRoutes from '../../routes';
 import { FormikSubmit } from '../../../../modules/utils/formik.utils';
 import useAppRouter from '../../../../modules/router/router';
-import { useAppSelector } from '../../../../modules/redux/hooks';
-import { selectUser } from '../../../../modules/redux/slices/userSlice';
 
 const TopicCreateSchema = object().shape<{ title: StringSchema }>({
   title: string().required('').min(3, 'Минимум 3 символа'),
@@ -23,11 +21,9 @@ interface TopicCreateFormValue extends FormikValues {
 const TopicCreatePage: React.VFC = () => {
   const router = useAppRouter();
 
-  const user = useAppSelector(selectUser)!;
-
   const handleSubmit: FormikSubmit<TopicCreateFormValue> = (
     values: TopicCreateFormValue,
-  ): Promise<void> => createTopic(values.title, user.id)
+  ): Promise<void> => createTopic(values.title)
     .then((id: number) => {
       router.go(`${ForumRoutes.HOME}/${id}`);
     })

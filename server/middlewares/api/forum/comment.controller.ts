@@ -23,8 +23,8 @@ router.get('/:topicId/:offset/:limit', (req, res) => {
 
 router.post('/', (req, res) => {
   // todo [sitnik] проверка на application/json
-  const { text, topicId, authorId } = req.body;
-  Comment.create({ text, topicId, authorId: Number(authorId) })
+  const { text, topicId } = req.body;
+  Comment.create({ text, topicId, authorId: req.authorizedUser.id })
     .then((comment) => {
       res.send(comment);
     })

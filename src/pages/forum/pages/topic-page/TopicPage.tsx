@@ -9,13 +9,9 @@ import TopicPreviewer from '../../components/topic-previewer/TopicPreviewer';
 import { Comment } from '../../types/comment';
 import CommentViewer from './components/comment-viewer/CommentViewer';
 import CommentLeaver from './components/comment-leaver/CommentLeaver';
-import { useAppSelector } from '../../../../modules/redux/hooks';
-import { selectUser } from '../../../../modules/redux/slices/userSlice';
 
 const TopicPage: React.VFC = () => {
   const { topicId } = useParams<ForumRouteParams>();
-
-  const user = useAppSelector(selectUser)!;
 
   const [loading, setLoading] = useState(true);
   const [topic, setTopic] = useState<Topic | null>(null);
@@ -40,7 +36,7 @@ const TopicPage: React.VFC = () => {
       .finally(() => setLoadingComments(false));
   }, [commentsOffset]);
 
-  const handleLeaveComment = (text: string): Promise<void> => leaveComment(topicId, text, user.id)
+  const handleLeaveComment = (text: string): Promise<void> => leaveComment(topicId, text)
     .then((comment) => {
       setComments((prevComments) => ([...prevComments, comment]));
       return getTopicCommentCount(topicId);

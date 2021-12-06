@@ -19,7 +19,7 @@ const CommentViewer = React.memo<CommentViewerProps>((props) => {
             <LineItem>
                 <Avatar url={author.avatar} />
             </LineItem>
-            <LineItem>Name</LineItem>
+            <LineItem>{author.login}</LineItem>
             <LineItem>{format(new Date(createdAt), dateFormat)}</LineItem>
         </FlexContainer>
         <CommentTextContainer>

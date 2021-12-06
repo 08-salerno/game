@@ -103,7 +103,7 @@ const App: React.FC = () => {
         dispatch(fetchUserAction);
       }
     } else {
-      loadUserTheme(user.id)
+      loadUserTheme()
         .then((theme) => {
           setTheme(themes[theme] || themes.light);
         })
@@ -115,13 +115,11 @@ const App: React.FC = () => {
 
   // todo [sitnik] лишний запрос на save в начале, когда по умолчанию light, а апи возвращает иное
   useEffect(() => {
-    if (user) {
-      saveUserTheme(user.id, theme.name).then(() => {
-        // saved
-      }).catch(() => {
-        // todo [sitnik]
-      });
-    }
+    saveUserTheme(theme.name).then(() => {
+      // saved
+    }).catch(() => {
+      // todo [sitnik]
+    });
   }, [theme]);
 
   // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
