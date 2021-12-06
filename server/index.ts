@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import render from './middlewares/render/render';
 import dbClient from './database/db-client';
-import './database/entities/index';
+import { Theme } from './database/entities/index';
 import api from './middlewares/api';
 
 const app = express();
@@ -29,6 +29,8 @@ dbClient
     console.log('Server connected to database');
     (async () => {
       await dbClient.sync();
+      await Theme.findOrCreateLight();
+      await Theme.findOrCreateDark();
     })();
 
     // Start server

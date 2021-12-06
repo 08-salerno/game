@@ -9,9 +9,21 @@ interface ThemeAttributes {
 type ThemeCreationAttributes = Omit<ThemeAttributes, 'id'>
 
 export class Theme extends Model<ThemeAttributes, ThemeCreationAttributes> implements ThemeAttributes {
+    static LIGHT='light'
+
+    static DARK='dark'
+
     id!: number;
 
     name!: string;
+
+    static findOrCreateLight(): Promise<[Theme, boolean]> {
+      return Theme.findOrCreate({ where: { name: Theme.LIGHT } });
+    }
+
+    static findOrCreateDark(): Promise<[Theme, boolean]> {
+      return Theme.findOrCreate({ where: { name: Theme.DARK } });
+    }
 }
 
 Theme.init({

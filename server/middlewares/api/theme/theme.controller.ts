@@ -8,7 +8,7 @@ router.use(express.text())
   .route('/:userId')
   .get((req, res) => {
     const { userId } = req.params;
-    Theme.findOrCreate({ where: { name: 'light' } }).then(([lightTheme]) => Promise.all([lightTheme, UserTheme.findOrCreate({
+    Theme.findOrCreateLight().then(([lightTheme]) => Promise.all([lightTheme, UserTheme.findOrCreate({
       where: {
         userId: Number(userId),
       },
