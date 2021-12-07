@@ -41,7 +41,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           
-      - name: multiple command
+      - name: Deploy new version via ssh
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -50,5 +50,5 @@ jobs:
           script: |
             cd test
             sudo docker-compose stop salerno-app
-            docker pull ghcr.io/08-salerno/game:actions-autodeploy
+            sudo docker pull ghcr.io/08-salerno/game:actions-autodeploy
             sudo docker-compose up -d salerno-app
