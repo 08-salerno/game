@@ -48,5 +48,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.ACTIONS }}
           script: |
-            whoami
-            ls -al
+            cd test
+            sudo docker-compose stop salerno-app
+            docker pull ghcr.io/08-salerno/game:actions-autodeploy
+            sudo docker-compose up salerno-app
