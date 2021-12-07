@@ -31,6 +31,7 @@ import gitUrl from './modules/constants/repo-url';
 import Game from './pages/game/Game';
 import AuthService from './modules/api/AuthService';
 import { loadUserTheme, saveUserTheme } from './modules/api/theme.service';
+import { Theme } from './styles/themes/types';
 
 type AppRoute = {
   title: string;
@@ -113,14 +114,14 @@ const App: React.FC = () => {
     }
   }, [user]);
 
-  // todo [sitnik] лишний запрос на save в начале, когда по умолчанию light, а апи возвращает иное
-  useEffect(() => {
+  const handleThemeChange = (theme: Theme): void => {
+    setTheme(theme);
     saveUserTheme(theme.name).then(() => {
       // saved
     }).catch(() => {
       // todo [sitnik]
     });
-  }, [theme]);
+  };
 
   // ТУТ ЗАГОТОВКА ДЛЯ ПОЛЬЗОВАТЕЛЬСКОЙ КАСТОМИЗАЦИИ ТЕМЫ
 
@@ -189,10 +190,10 @@ const App: React.FC = () => {
             <DropDown>
               <DropDownHead type="button">Theme</DropDownHead>
               <DropDownContent>
-                <DropDownButton onClick={(): void => setTheme(themes.light)}>
+                <DropDownButton onClick={(): void => handleThemeChange(themes.light)}>
                   Light
                 </DropDownButton>
-                <DropDownButton onClick={(): void => setTheme(themes.dark)}>
+                <DropDownButton onClick={(): void => handleThemeChange(themes.dark)}>
                   Dark
                 </DropDownButton>
               </DropDownContent>
