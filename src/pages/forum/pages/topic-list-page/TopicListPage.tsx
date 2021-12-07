@@ -12,21 +12,8 @@ import { CreateBlock, LoadingText, TopicsContainer } from '../../style';
 const TopicListPage: React.VFC = () => {
   const [topics, setTopics] = useState<TopicPreview[]>([]);
   const [loading, setLoading] = useState(true);
-  const [topicsOffset, setTopicsOffset] = useState(0);
 
   const isUserAuthorized = useSelector(selectIsAuthorized);
-
-  useEffect(() => {
-    setLoading(true);
-    getTopicPreviews(topicsOffset)
-      .then((newTopics) => {
-        setTopics([...topics, ...newTopics]);
-      })
-      .catch(() => {
-        // todo [sitnik] уведомить об шибке
-      })
-      .finally(() => setLoading(false));
-  }, [topicsOffset]);
 
   const { url } = useRouteMatch();
   const history = useHistory();
@@ -40,8 +27,20 @@ const TopicListPage: React.VFC = () => {
   };
 
   const handleLoadMoreTopicsButtonClick = (): void => {
-    setTopicsOffset(topics.length);
+    setLoading(true);
+    getTopicPreviews(topics.length)
+      .then((newTopics) => {
+        setTopics([...topics, ...newTopics]);
+      })
+      .catch(() => {
+        // todo [sitnik] уведомить об шибке
+      })
+      .finally(() => setLoading(false));
   };
+
+  useEffect(() => {
+    handleLoadMoreTopicsButtonClick();
+  }, []);
 
   return (
     <div>

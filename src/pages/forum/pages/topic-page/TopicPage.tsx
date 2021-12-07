@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Formik, FormikValues } from 'formik';
-import { object, string } from 'yup';
 import { ForumRouteParams } from '../../routes';
 import {
   getComments, getTopic, getTopicCommentCount, leaveComment,
@@ -11,10 +9,8 @@ import TopicPreviewer from '../../components/topic-previewer/TopicPreviewer';
 import { Comment } from '../../types/comment';
 import CommentViewer from './components/comment-viewer/CommentViewer';
 import { CommentsContainer, LoadingText, TopicPageContainer } from '../../style';
-import { FormContainer } from '../../../../styles/Forms/Forms';
-import FormFiled from '../../../../components/FormField/FormField';
-import { AltButton, SubmitButton } from '../../../../styles/Buttons/Buttons';
-import { FormikSubmit } from '../../../../modules/utils/formik.utils';
+import { AltButton } from '../../../../styles/Buttons/Buttons';
+import CommentLeaver from './components/comment-leaver/CommentLeaver';
 
 const TopicPage: React.VFC = () => {
   const { topicId } = useParams<ForumRouteParams>();
@@ -23,7 +19,6 @@ const TopicPage: React.VFC = () => {
   const [topic, setTopic] = useState<Topic | null>(null);
   const [loadingComments, setLoadingComments] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [commentsOffset, setCommentsOffset] = useState(0);
 
   useEffect(() => {
     getTopic(topicId)
@@ -31,16 +26,6 @@ const TopicPage: React.VFC = () => {
       .catch(() => setTopic(null))
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    setLoadingComments(true);
-    getComments(topicId, commentsOffset)
-      .then((newComments) => setComments([...comments, ...newComments]))
-      .catch(() => {
-        // todo [sitnik] придумать обработку ошибки
-      })
-      .finally(() => setLoadingComments(false));
-  }, [commentsOffset]);
 
   const handleLeaveComment = (text: string): Promise<void> => leaveComment(topicId, text)
     .then((comment) => {
@@ -54,15 +39,18 @@ const TopicPage: React.VFC = () => {
     });
 
   const handleLoadMoreCommentButtonClick = (): void => {
-    // todo [sitnik] исправить потенциальную ошибку с некорректным смещением
-    setCommentsOffset(comments.length);
+    setLoadingComments(true);
+    getComments(topicId, comments.length)
+      .then((newComments) => setComments([...comments, ...newComments]))
+      .catch(() => {
+        // todo [sitnik] придумать обработку ошибки
+      })
+      .finally(() => setLoadingComments(false));
   };
 
-  const CommentSchema = object().shape({
-    comment: string()
-      .min(2, 'Comment is too short')
-      .max(300, 'Comment is too long'),
-  });
+  useEffect(() => {
+    handleLoadMoreCommentButtonClick();
+  }, []);
 
   return (
     <TopicPageContainer>
@@ -81,18 +69,8 @@ const TopicPage: React.VFC = () => {
                 commentsCount={topic.commentsCount}
                 createdAt={topic.createdAt}
               />
-              <Formik
-                initialValues={{ comment: '' }}
-                validationSchema={CommentSchema}
-                onSubmit={handleLeaveComment}
-              >
-                {({ dirty, isValid, isSubmitting }): React.ReactElement => (
-                  <FormContainer>
-                    <FormFiled name="comment" label="comment" type="comment" />
-                    <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
-                  </FormContainer>
-                )}
-              </Formik>
+              <br />
+              <CommentLeaver handleLeaveComment={handleLeaveComment} />
               <CommentsContainer>
                 {comments.map((comment) => (
                   <CommentViewer

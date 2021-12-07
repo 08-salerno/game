@@ -11,10 +11,12 @@ import { FormContainer, Title } from '../../../../styles/Forms/Forms';
 import FormFiled from '../../../../components/FormField/FormField';
 import { SubmitButton } from '../../../../styles/Buttons/Buttons';
 
+const MaxTitleLength = 300;
+
 const TopicCreateSchema = object().shape({
-  topic: string()
+  title: string()
     .min(2, 'Name is too short')
-    .max(50, 'Name is too long')
+    .max(MaxTitleLength, 'Name is too long')
     .required('Required'),
 });
 
@@ -35,17 +37,6 @@ const TopicCreatePage: React.VFC = () => {
       // todo [sitnik] уведомить пользоователя об ошибке
     });
 
-  /*   const CreateInput = styled(Field)`
-      font-family: Arial;
-      width: 100%;
-      border: none;
-      border-bottom: 1px solid ${(props): string => props.theme.form.underline};
-      color: ${(props): string => props.theme.form.font};
-      background-color: ${(props): string => props.theme.form.background};
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 16px;
-    `; */
   return (
     <>
       <Formik
@@ -56,39 +47,11 @@ const TopicCreatePage: React.VFC = () => {
         {({ dirty, isValid, isSubmitting }): React.ReactElement => (
           <FormContainer>
             <Title>Создать тему</Title>
-            <FormFiled name="topic" label="topic" type="topic" />
+            <FormFiled name="title" label="title" type="title" />
             <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
           </FormContainer>
         )}
       </Formik>
-      {/*     <Formik
-      initialValues={{ title: '' }}
-      validationSchema={TopicCreateSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ isSubmitting, isValid, dirty }): React.ReactElement => (
-        <Form>
-          <Field name="title" maxLength={MaxTitleLength} placeholder="Описание">
-            {(props: FieldProps<string, TopicCreateFormValue>): React.ReactElement => (
-              <div>
-                <textarea {...props.field} />
-                <div>
-                  {props.field.value.length || 0}/{MaxTitleLength}
-                </div>
-              </div>
-            )}
-          </Field>
-          <div>
-            <ErrorMessage name="title" />
-          </div>
-          <div>
-            <button type="submit" disabled={isSubmitting || !(dirty && isValid)}>
-              Создать тему
-            </button>
-          </div>
-        </Form>
-      )}
-    </Formik> */}
     </>
   );
 };

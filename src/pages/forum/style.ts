@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { colors } from '../../styles/colors';
 
 export const CreateBlock = styled.div`
   margin: 20px;
@@ -67,6 +66,9 @@ export const TopicInfo = styled.div`
   font-size: 18px;
   padding: 10px 10px 0;
 `;
+export const TopicAvatar = styled.div`
+  padding: 0 10px 0 0;
+`;
 export const TopicUser = styled.div`
   justify-self: flex-start;
   margin-right: auto;
@@ -95,6 +97,9 @@ export const CommentInfo = styled.div`
   justify-content: flex-start;
   font-size: 14px;
   padding: 10px;
+`;
+export const CommentAvatar = styled.div`
+  padding-right: 10px
 `;
 export const CommentUser = styled.div`
   font-weight: bold;
