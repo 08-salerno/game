@@ -10,6 +10,7 @@
     "build:ssr": "webpack --config webpack.ssr.ts --mode=production",
     "build:server": "tsc --project server",
     "start:server": "node dist/server/index.js",
+    "compose:up:postgres": "cd docker && sudo docker-compose up postgres",
     "test": "jest"
   },
   "engines": {
@@ -97,6 +98,7 @@
     "eslint-plugin-react": "^7.26.0",
     "express": "^4.17.1",
     "formik": "^2.2.9",
+    "helmet": "^4.6.0",
     "https": "^1.0.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.6",

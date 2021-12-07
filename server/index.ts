@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import https from 'https';
 import selfSigned from 'openssl-self-signed-certificate';
+import helmet from 'helmet';
 import render from './middlewares/render/render';
 import dbClient from './database/db-client';
 import { Theme } from './database/entities';
@@ -12,6 +13,9 @@ const app = express();
 const PORT = 3000;
 
 app
+  .use(helmet.contentSecurityPolicy())
+  .use(helmet.xssFilter())
+  .use(helmet.noSniff())
   .use(
     cors({
       origin: 'https://ya-praktikum.tech',
