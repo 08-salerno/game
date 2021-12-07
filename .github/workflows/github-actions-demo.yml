@@ -51,4 +51,4 @@ jobs:
             cd test
             sudo docker-compose stop salerno-app
             docker pull ghcr.io/08-salerno/game:actions-autodeploy
-            sudo docker-compose up salerno-app
+            sudo docker-compose up -d salerno-app
