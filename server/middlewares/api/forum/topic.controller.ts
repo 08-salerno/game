@@ -39,7 +39,7 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
   // todo [sitnik] проверка на application/json
   const { title } = req.body;
-  Topic.create({ title, authorId: req.authorizedUser.id })
+  Topic.create({ title, authorId: req.authorizedUser!.id })
     .then((topic) => {
       res.send(topic.id.toString());
     })

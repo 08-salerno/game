@@ -59,17 +59,19 @@ const render: RequestHandler = (req, res, next) => {
   // eslint-disable-next-line import/no-dynamic-require,global-require
   const { bundle: App } = require(bundlePath);
 
+  const initialState = req.authorizedUser ? {
+    user: {
+      value: req.authorizedUser,
+      authChecked: true,
+    },
+  } : {};
+
   const store = configureStore({
     reducer: {
       user: userReducer,
     },
     // todo [sitnik] было бы неплохо стипизировать
-    preloadedState: {
-      user: {
-        value: req.authorizedUser,
-        authChecked: true,
-      },
-    },
+    preloadedState: initialState,
   });
 
   const sheet = new ServerStyleSheet();

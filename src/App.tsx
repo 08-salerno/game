@@ -75,6 +75,7 @@ const routes: AppRoute[] = [
     title: 'Таблица лидеров',
     link: LeaderBordRoutes.HOME,
     component: LeaderBord,
+    private: true,
   },
 ];
 

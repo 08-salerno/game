@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import fetch from 'node-fetch';
 import { asError, asUser } from '../../src/modules/api/utils';
 
-const practicumUserChecker: RequestHandler = (req, res, next) => {
+const practicumUserChecker: RequestHandler = (req, _, next) => {
   // todo [sitnik] вынести в переменные окружения
   const url = 'https://ya-praktikum.tech/api/v2/auth/user';
 
@@ -28,7 +28,7 @@ const practicumUserChecker: RequestHandler = (req, res, next) => {
     })
     .catch((err) => {
       console.error('Practicum user checker: Error ', err);
-      res.sendStatus(401);
+      next();
     });
 };
 

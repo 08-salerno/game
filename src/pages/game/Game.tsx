@@ -13,7 +13,7 @@ import {
 
 export type GameProps = {
   onGameOver: (score: number) => void;
-}
+};
 const GameGridWithFullscreen = withFullscreen<GameProps>(GameGrid);
 const Game: React.FC = () => {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -29,11 +29,13 @@ const Game: React.FC = () => {
 
   useEffect(() => {
     if (user && userScore) {
-      saveScore({ score: userScore, login: user.login }).then(() => {
-        // todo [sitnik]
-      }).catch(() => {
-        // todo [sitnik]
-      });
+      saveScore({ score: userScore, login: user.login })
+        .then(() => {
+          // todo [sitnik]
+        })
+        .catch(() => {
+          // todo [sitnik]
+        });
     }
   }, [userScore]);
 
@@ -53,11 +55,15 @@ const Game: React.FC = () => {
         <Popup>
           <Title>Игра окончена</Title>
           <StatText>Ваш рекорд: {userScore}</StatText>
-          {!user && (
-            <p>Вы не авторизированны. Ваш рекорд не будет сохранён :(</p>
+          {!user && <p>Вы не авторизированны. Ваш рекорд не будет сохранён :(</p>}
+          <SubmitButton type="button" onClick={closeGameOverModal}>
+            Сыграть ещё!
+          </SubmitButton>
+          {user && (
+            <AltButton type="button" onClick={onNavigateToLeaderBord}>
+              Посмотреть таблицу рекордов
+            </AltButton>
           )}
-          <SubmitButton type="button" onClick={closeGameOverModal}>Сыграть ещё!</SubmitButton>
-          <AltButton type="button" onClick={onNavigateToLeaderBord}>Посмотреть таблицу рекордов</AltButton>
         </Popup>
       </StyledModal>
     </>

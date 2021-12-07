@@ -3,7 +3,7 @@ import { User } from '../../src/modules/api/types';
 declare global {
     namespace Express {
         interface Request {
-            authorizedUser: User
+            authorizedUser?: User
         }
 
         interface Response {

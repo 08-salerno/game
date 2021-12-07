@@ -20,7 +20,7 @@ app
 // перехват отдачи статики
   .use('/client', express.static('./dist/client'))
   .use('/assets', express.static('./dist/assets'))
-// проверка на авторизованность
+// проверка на авторизованность на стороне практикума
   .use(practicumUserChecker)
 // наше апи
   .use('/api', api)
