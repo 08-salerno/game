@@ -52,3 +52,4 @@ jobs:
             sudo docker-compose stop salerno-app
             sudo docker pull ghcr.io/08-salerno/game:actions-autodeploy
             sudo docker-compose up -d salerno-app
+            sudo nginx -s reload
