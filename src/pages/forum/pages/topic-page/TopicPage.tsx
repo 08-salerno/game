@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Formik, FormikValues } from 'formik';
+import { object, string } from 'yup';
 import { ForumRouteParams } from '../../routes';
 import {
   getComments, getTopic, getTopicCommentCount, leaveComment,
@@ -8,7 +10,11 @@ import { Topic } from '../../types/topic';
 import TopicPreviewer from '../../components/topic-previewer/TopicPreviewer';
 import { Comment } from '../../types/comment';
 import CommentViewer from './components/comment-viewer/CommentViewer';
-import CommentLeaver from './components/comment-leaver/CommentLeaver';
+import { CommentsContainer, LoadingText, TopicPageContainer } from '../../style';
+import { FormContainer } from '../../../../styles/Forms/Forms';
+import FormFiled from '../../../../components/FormField/FormField';
+import { AltButton, SubmitButton } from '../../../../styles/Buttons/Buttons';
+import { FormikSubmit } from '../../../../modules/utils/formik.utils';
 
 const TopicPage: React.VFC = () => {
   const { topicId } = useParams<ForumRouteParams>();
@@ -52,14 +58,20 @@ const TopicPage: React.VFC = () => {
     setCommentsOffset(comments.length);
   };
 
+  const CommentSchema = object().shape({
+    comment: string()
+      .min(2, 'Comment is too short')
+      .max(300, 'Comment is too long'),
+  });
+
   return (
-    <>
+    <TopicPageContainer>
       {loading ? (
-        'Загрузка'
+        <LoadingText>Загрузка</LoadingText>
       ) : (
         <>
           {!topic ? (
-            <div>Не найдено или редирект</div>
+            <LoadingText>Не найдено или редирект</LoadingText>
           ) : (
             <>
               <TopicPreviewer
@@ -69,8 +81,19 @@ const TopicPage: React.VFC = () => {
                 commentsCount={topic.commentsCount}
                 createdAt={topic.createdAt}
               />
-              <CommentLeaver handleLeaveComment={handleLeaveComment} />
-              <div>
+              <Formik
+                initialValues={{ comment: '' }}
+                validationSchema={CommentSchema}
+                onSubmit={handleLeaveComment}
+              >
+                {({ dirty, isValid, isSubmitting }): React.ReactElement => (
+                  <FormContainer>
+                    <FormFiled name="comment" label="comment" type="comment" />
+                    <SubmitButton type="submit" disabled={!dirty || !isValid || isSubmitting}>Submit</SubmitButton>
+                  </FormContainer>
+                )}
+              </Formik>
+              <CommentsContainer>
                 {comments.map((comment) => (
                   <CommentViewer
                     key={comment.id}
@@ -81,20 +104,18 @@ const TopicPage: React.VFC = () => {
                   />
                 ))}
                 {loadingComments ? (
-                  'Загрузка комментариев'
+                  <LoadingText>Загрузка комментариев</LoadingText>
                 ) : (
-                  <div>
-                    <button type="button" onClick={handleLoadMoreCommentButtonClick}>
+                    <AltButton type="button" onClick={handleLoadMoreCommentButtonClick}>
                       Загрузить ещё
-                    </button>
-                  </div>
+                    </AltButton>
                 )}
-              </div>
+              </CommentsContainer>
             </>
           )}
         </>
       )}
-    </>
+    </TopicPageContainer>
   );
 };
 

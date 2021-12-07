@@ -5,6 +5,7 @@ const light: Theme = {
   name: 'light',
   backgroundColor: colors.white.white,
   font: colors.black.black,
+  altFont: colors.grey.grey_800,
   buttons: {
     font: colors.black.black,
     main: {
@@ -36,6 +37,11 @@ const light: Theme = {
     label: colors.grey.grey_800,
     background: colors.white.white,
     underline: colors.grey.grey_800,
+  },
+  forum: {
+    underline: colors.grey.grey_300,
+    topicHover: colors.grey.grey_100,
+    underlineHover: colors.blue.blue_200,
   },
 };
 
