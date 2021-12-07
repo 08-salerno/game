@@ -4,7 +4,8 @@ import { renderToStaticMarkup, renderToString } from 'react-dom/server';
 import fs from 'fs';
 import { configureStore, Store } from '@reduxjs/toolkit';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
-import { StaticRouter } from 'react-router';
+import { StaticRouterContext } from 'react-router';
+import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import renderObject from '../../utils/renderObject';
 import userReducer from '../../../src/modules/redux/slices/userSlice';
@@ -62,11 +63,19 @@ const render: RequestHandler = (req, res, next) => {
     reducer: {
       user: userReducer,
     },
+    // todo [sitnik] было бы неплохо стипизировать
+    preloadedState: {
+      user: {
+        value: req.authorizedUser,
+        authChecked: true,
+      },
+    },
   });
 
   const sheet = new ServerStyleSheet();
+  const context: StaticRouterContext = {};
   const appContentHTML = renderToString(
-    <StaticRouter context={{}} location={req.url}>
+    <StaticRouter context={context} location={req.url}>
       <StyleSheetManager sheet={sheet.instance}>
         <Provider store={store}>
           <App />

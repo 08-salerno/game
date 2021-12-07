@@ -6,6 +6,7 @@ import render from './middlewares/render/render';
 import dbClient from './database/db-client';
 import { Theme } from './database/entities';
 import api from './middlewares/api';
+import practicumUserChecker from './middlewares/practicum-user-hecker';
 
 const app = express();
 const PORT = 3000;
@@ -19,6 +20,8 @@ app
 // перехват отдачи статики
   .use('/client', express.static('./dist/client'))
   .use('/assets', express.static('./dist/assets'))
+// проверка на авторизованность
+  .use(practicumUserChecker)
 // наше апи
   .use('/api', api)
 // потом всё остальное, что скорее всего запрос за html'кой
