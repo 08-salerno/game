@@ -234,7 +234,6 @@ const App: React.FC = () => {
                 <Description>
                   Возможно логично сделать стартовую страницу сразу с игрой и
                   перенаправлять на страницу с игрой при странных рутах
-                  Если ты видишь этот текст значит actions заработал 1
                 </Description>
               </Route>
               {routes.map((route: AppRoute) => (!route.private ? (
