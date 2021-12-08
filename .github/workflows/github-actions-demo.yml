@@ -2,7 +2,7 @@ name: Create and publish a Docker image
 
 on:
   push:
-    branches: ['actions-autodeploy']
+    branches: ['dev']
 
 env:
   REGISTRY: ghcr.io
@@ -50,6 +50,6 @@ jobs:
           script: |
             cd test
             sudo docker-compose stop salerno-app
-            sudo docker pull ghcr.io/08-salerno/game:actions-autodeploy
+            sudo docker pull ghcr.io/08-salerno/game:dev
             sudo docker-compose up -d salerno-app
             sudo nginx -s reload
