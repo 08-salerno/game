@@ -39,7 +39,7 @@ function makeHTMLPage({
         ))}
       </head>
       <body>
-        <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
+        <div id="root" dangerouslySetInnerHTML={{ __html: content }}  style={{width: '100%', height: '100%', position: 'absolute'}}/>
         <script
           nonce={nonce}
           dangerouslySetInnerHTML={{
