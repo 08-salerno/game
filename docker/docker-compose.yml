@@ -9,7 +9,8 @@ services:
       - ./postgres-db:/var/lib/postgresql/data
     restart: always
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${APP_DB_USER}
+      POSTGRES_PASSWORD: ${APP_DB_PASS}
     networks:
       - awesome
 
@@ -34,12 +35,14 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     ports:
-      - "3000:3000"
+      - "${APP_PORT}:3000"
     restart: always
     depends_on:
       - postgres
     networks:
       - awesome
+    env_file:
+      - ../.env
 
 volumes:
   pgadmin-data:

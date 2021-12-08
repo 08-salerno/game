@@ -17,10 +17,12 @@ function makeHTMLPage({
   content,
   css,
   store,
+  nonce,
 }: {
   content: string;
   css: string;
   store: Store;
+  nonce: string
 }): string {
   // const escapedContent = htmlescape(content);
   const html = renderToStaticMarkup(
@@ -29,15 +31,17 @@ function makeHTMLPage({
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
+          <meta property="csp-nonce" content={nonce} />
         <title>From SSR with Love</title>
-        <style>{css}</style>
+        <style nonce={nonce}>{css}</style>
         {jsFiles.map((script, index) => (
-          <script defer src={script} key={index} />
+          <script nonce={nonce} defer src={script} key={index} />
         ))}
       </head>
       <body>
         <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
         <script
+          nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: `window.__PRELOADED_STATE__ = ${renderObject(store.getState())}`,
           }}
@@ -93,6 +97,7 @@ const render: RequestHandler = (req, res, next) => {
       content: appContentHTML,
       css,
       store,
+      nonce: res.locals.nonce,
     }),
   );
 

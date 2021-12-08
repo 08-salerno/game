@@ -33,3 +33,7 @@ sudo docker-compose up postgre (pgadmin)
 Можно разрабатывать и в обход SSR, но черевато, что сломается SSR:<br>
 `serve:csr` - если хочешь поднять клиентскую часть на webpack dev server, 
 но тогда наше апи не будет работать
+
+
+// При запуске из docker обязательно host: postgres; port: 5432
+// При запуске с хостовой машины host: localhost; port: 5555
