@@ -1,9 +1,9 @@
 import { User } from '../../../modules/api/types';
 
 export type TopicPreview = {
-    id: string;
+    id: number;
     title: string;
     author: User;
-    commentCount: string;
+    commentsCount: number;
     createdAt: string;
 }

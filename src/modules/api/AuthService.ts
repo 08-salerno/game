@@ -5,12 +5,11 @@ import {
 
 const url = apiUrl('/auth');
 
-// @ts-ignore
-//window.devMode
-// 'http://local.ya-praktikum.tech'
-export const redirectUrl = true
-  ? 'http://localhost:3000'
-  : 'https://salerno-08.herokuapp.com/';
+export const redirectUrl = 'https://salerno-match3-08.ya-praktikum.tech/';
+// export const redirectUrl = PRODUCTION
+//   ? 'https://salerno-match3-08.ya-praktikum.tech/'
+// // todo [sitnik] расшить порт 443
+//   : 'https://local.ya-praktikum.techt:3000/';
 
 export default class AuthService {
   signUp = (data: SignUpData): Promise<User | ErrorReason> => fetch(`${url}/signup`, {

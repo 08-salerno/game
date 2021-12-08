@@ -1,8 +1,10 @@
 import React from 'react';
 import { object, string, StringSchema } from 'yup';
 import {
-  Formik, Form, Field, FormikValues, FieldProps, FormikConfig,
+  Formik, Field, FormikValues, FieldProps, FormikConfig,
 } from 'formik';
+import { FormContainer } from '../../../../../../styles/Forms/Forms';
+import { SubmitButton } from '../../../../../../styles/Buttons/Buttons';
 
 export type CommentLeaverProps = {
   handleLeaveComment: (text: string) => Promise<void>;
@@ -40,25 +42,29 @@ const CommentLeaver: React.VFC<CommentLeaverProps> = (props) => {
       onSubmit={handleSubmit}
     >
       {({ isSubmitting, isValid, dirty }): React.ReactElement => (
-        <Form>
-        {/* todo [sitnik] вынести в переиспользуемый компонент*/}
+        <FormContainer>
+          {/* todo [sitnik] вынести в переиспользуемый компонент*/}
           <Field name="comment">
             {(props: FieldProps<string, CommentFormValue>): React.ReactElement => (
-              <div>
+              <div style={{ width: '100%' }}>
                 {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                <textarea placeholder="Ваш комментарий" maxLength={MaxCommentLength} {...props.field} />
-                <div>
+                <textarea
+                  style={{ width: '100%' }}
+                  placeholder="Ваш комментарий"
+                  maxLength={MaxCommentLength}
+                  rows={5}
+                  {...props.field}
+                />
+                <div style={{ textAlign: 'right' }}>
                   {props.field.value.length || 0}/{MaxCommentLength}
                 </div>
               </div>
             )}
           </Field>
-          <div>
-            <button type="submit" disabled={isSubmitting || !(dirty && isValid)}>
-              Прокомментировать
-            </button>
-          </div>
-        </Form>
+          <SubmitButton type="submit" disabled={isSubmitting || !(dirty && isValid)}>
+            Прокомментировать
+          </SubmitButton>
+        </FormContainer>
       )}
     </Formik>
   );

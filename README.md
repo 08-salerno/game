@@ -6,11 +6,17 @@ https://salerno-08.herokuapp.com/
 
 # Development
 
->SSR не поддерживает hot reloading!<br>
+Для локальной разработки:
 
-Но всё ещё можно собрать через SSR
+1) server/database/db-client
+Переписать на localhost и порт, в todo подробности
 
-В первый раз:
+2) Запустить базу
+cd docker
+sudo docker-compose up postgre (pgadmin)
+или из package.json - compose:up:postgres
+
+3) Идём в package.json и по очереди запускаем:
 1. Собирай клиент `(watch | build):csr`
 1. Собери SSR бандл `build:ssr`
    1. Придётся пересобирать вручную по необходимости, если пункт 1 = watch
@@ -27,3 +33,7 @@ https://salerno-08.herokuapp.com/
 Можно разрабатывать и в обход SSR, но черевато, что сломается SSR:<br>
 `serve:csr` - если хочешь поднять клиентскую часть на webpack dev server, 
 но тогда наше апи не будет работать
+
+
+// При запуске из docker обязательно host: postgres; port: 5432
+// При запуске с хостовой машины host: localhost; port: 5555

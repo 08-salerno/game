@@ -1,29 +1,32 @@
 import React from 'react';
-import FakeAvatar from '../../../../components/styled/FakeAvatar';
-import FlexContainer from '../../../../components/styled/FlexContainer';
-import LineItem from '../../../../components/styled/LineItem';
+import { format } from 'date-fns';
+import {
+  CommentContainer,
+  CommentText,
+  CommentInfo,
+  CommentUser,
+  CommentDate,
+  CommentAvatar,
+} from '../../../../style';
 import { Comment } from '../../../../types/comment';
-import CommentContainer from '../styled/CommentContainer';
-import CommentTextContainer from '../styled/CommentTextContainer';
+import Avatar from '../../../../components/avatar/avatar';
+import { dateFormat } from '../../../../../../modules/utils/constants';
 
-type CommentViewerProps = Omit<Comment, 'topicId'>
+type CommentViewerProps = Omit<Comment, 'topicId'>;
 
 const CommentViewer = React.memo<CommentViewerProps>((props) => {
-  const { createdAt, text } = props;
+  const { createdAt, text, author } = props;
 
   return (
     <CommentContainer>
-        <FlexContainer>
-            <LineItem>
-                <FakeAvatar />
-            </LineItem>
-            <LineItem>Name</LineItem>
-            { /* todo [sitnik] подумать над парсингом даты */}
-            <LineItem>{createdAt}</LineItem>
-        </FlexContainer>
-        <CommentTextContainer>
-            {text}
-        </CommentTextContainer>
+      <CommentInfo>
+        <CommentAvatar>
+          <Avatar url={author.avatar} />
+        </CommentAvatar>
+        <CommentUser>{author.login}</CommentUser>
+        <CommentDate>{format(new Date(createdAt), dateFormat)}</CommentDate>
+      </CommentInfo>
+      <CommentText>{text}</CommentText>
     </CommentContainer>
   );
 });

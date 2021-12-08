@@ -20,6 +20,10 @@ module.exports = (): webpack.Configuration => {
     output: {
       // для ssr бандла если
       filename: `ssr.bundle.js`,
+      // todo [sitnik] сборка ssr дополнительно генерит папку dist/assets из-за дефолтного конфига
+      //   но если добавить здесь dist/client, то лишних ассетов не будет
+      //   но запросы за ними почему не будут по пути /client/assets
+      //   а останутся на /assets
       path: resolve(__dirname, 'dist/'),
       library: {
         type: 'commonjs2',

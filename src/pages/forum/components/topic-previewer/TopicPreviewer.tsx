@@ -1,41 +1,50 @@
 import React from 'react';
+import { format } from 'date-fns';
+import { ThemeProvider } from 'styled-components';
+import {
+  TopicCommentsCounter,
+  TopicContainer,
+  TopicDate,
+  TopicInfo,
+  TopicTitle,
+  TopicUser,
+  TopicAvatar,
+} from '../../style';
 import { TopicPreview } from '../../types/topic-preview';
-import FakeAvatar from '../styled/FakeAvatar';
-import FlexContainer from '../styled/FlexContainer';
-import TopicContainer from '../styled/TopicContainer';
-import LineItem from '../styled/LineItem';
-import TopicInfo from '../styled/TopicInfo';
+import { dateFormat } from '../../../../modules/utils/constants';
+import Avatar from '../avatar/avatar';
 
 export type TopicItemProps = TopicPreview & {
-  onClick?: (topicId: string) => void;
+  onClick?: (topicId: number) => void;
 };
 
 const TopicPreviewer: React.VFC<TopicItemProps> = (props) => {
   const {
-    createdAt, title, commentCount, id, onClick,
+    createdAt, title, commentsCount, id, onClick, author,
   } = props;
 
   const handleTopicClick = (): void => {
     if (onClick) onClick(id);
   };
 
-  const hasOnClick = !!onClick;
+  const theme = {
+    hasOnClick: !!onClick,
+  };
 
   return (
-    <TopicContainer hoverable={hasOnClick} onClick={handleTopicClick}>
-      <FlexContainer>
-        <LineItem>
-            <FakeAvatar />
-        </LineItem>
-        <LineItem>Name</LineItem>
-        {/* todo [sitnik] подумать над парсингом даты */}
-        <LineItem>{createdAt}</LineItem>
-      </FlexContainer>
-      <h1>{title}</h1>
-      <FlexContainer>
-        <TopicInfo>Комментариев: {commentCount || 0}</TopicInfo>
-      </FlexContainer>
-    </TopicContainer>
+    <ThemeProvider theme={theme}>
+      <TopicContainer onClick={handleTopicClick}>
+        <TopicTitle>{title}</TopicTitle>
+        <TopicInfo>
+            <TopicAvatar>
+                <Avatar url={author.avatar} />
+            </TopicAvatar>
+          <TopicUser>{author?.login}</TopicUser>
+          <TopicCommentsCounter>Комментариев: {commentsCount || 0}</TopicCommentsCounter>
+          <TopicDate>{format(new Date(createdAt), dateFormat)}</TopicDate>
+        </TopicInfo>
+      </TopicContainer>
+    </ThemeProvider>
   );
 };
 

@@ -6,6 +6,7 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
+width: 100%;
 `;
 export const Title = styled.h1`
 font-family: Arial;
